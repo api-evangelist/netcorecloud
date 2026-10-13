@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/netcorecloud/main/json-schema/netcorecloud-refund-response-schema.json",
+  "title": "RefundResponse",
+  "description": "Contains the refund initiation response details.",
+  "x-generated": "2026-10-13",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/netcorecloud-whatsapp-api-openapi.yml#/components/schemas/RefundResponse",
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string",
+      "description": "Status of the API call."
+    },
+    "message": {
+      "type": "string",
+      "description": "Description of the response result."
+    },
+    "data": {
+      "type": "object",
+      "description": "Provides information about the processed refund.",
+      "properties": {
+        "refund_id": {
+          "type": "string",
+          "description": "Unique ID of the refund transaction."
+        },
+        "reference_id": {
+          "type": "string",
+          "description": "Payment reference ID linked to the refund."
+        },
+        "amount_refunded": {
+          "$ref": "#/$defs/amount"
+        },
+        "speed": {
+          "type": "string",
+          "description": "Refund processing speed used.",
+          "enum": [
+            "normal",
+            "instant"
+          ]
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Date and time when the refund was processed."
+        }
+      },
+      "required": [
+        "refund_id",
+        "reference_id",
+        "amount_refunded",
+        "speed",
+        "timestamp"
+      ]
+    }
+  },
+  "required": [
+    "status",
+    "message",
+    "data"
+  ]
+}

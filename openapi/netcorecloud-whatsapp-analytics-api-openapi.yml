@@ -1,0 +1,353 @@
+openapi: 3.2.0
+info:
+  title: WhatsApp Analytics API
+  version: '1.0'
+  description: Comprehensive collection of WhatsApp APIs that allow users to interact with WhatsApp Flows, Templates, Message Sending, Conversations, Consent Management, Webhooks, Payments, and Media associated with a specific WABA (WhatsApp Business Account).
+  license:
+    name: Proprietary
+    identifier: proprietary
+servers:
+- url: https://cpaaswa.netcorecloud.net/api
+  description: WhatsApp APIs Server
+- url: https://cpaaswa.netcorecloud.net
+  description: WhatsApp Root Server
+security:
+- bearerAuth: []
+tags:
+- name: WhatsApp Analytics
+paths:
+  /v3/metainfo/template/analytics:
+    get:
+      summary: Fetch Template Analytics API
+      tags:
+      - WhatsApp Analytics
+      operationId: fetchTemplateAnalytics
+      description: 'Call this endpoint to retrieve analytics metrics for one or more WhatsApp templates.
+
+        Pass template identifiers and a valid date range to receive time-bucketed performance data, including delivery, read, click, cost, and conversion metrics.'
+      parameters:
+      - in: query
+        name: template_id
+        required: true
+        schema:
+          type: string
+        example: 1234567890,1234567891
+        description: 'Enter one or more WhatsApp template IDs separated by commas.
+
+          You can pass up to 10 template IDs in a single request.
+
+          Use this when you want analytics grouped by Meta template ID.
+
+          '
+      - in: query
+        name: nc_template_id
+        schema:
+          type: string
+        example: nc_tpl_98231
+        description: 'Enter a single Netcore template ID.
+
+          Pass only one value. Do not combine with multiple IDs.
+
+          Use this when you want analytics using Netcore’s internal template reference.
+
+          '
+      - in: query
+        name: date_start
+        required: true
+        schema:
+          type: string
+        example: '2024-01-01'
+        description: 'Provide the start date for the analytics range.
+
+          Use YYYY-MM-DD format.
+
+          Metrics are included from this date onward.
+
+          '
+      - in: query
+        name: date_end
+        required: true
+        schema:
+          type: string
+        example: '2024-01-31'
+        description: 'Provide the end date for the analytics range.
+
+          Use YYYY-MM-DD format.
+
+          Ensure this date is the same as or later than date_start.
+
+          '
+      - in: query
+        name: granularity
+        schema:
+          type: string
+        example: DAILY
+        description: 'Set the time grouping level for the results (for example DAILY).
+
+          Use this if you want metrics split into time buckets.
+
+          If you skip this parameter, the default aggregation is applied.
+
+          '
+      - in: query
+        name: limit
+        schema:
+          type: integer
+        example: 50
+        description: 'Set how many records to return in this response page.
+
+          Use this together with cursors to paginate through large datasets.
+
+          If not set, the system default limit is used.
+
+          '
+      - in: query
+        name: use_waba_timezone
+        schema:
+          type: boolean
+        example: true
+        description: 'Set this to true to calculate metrics using your WABA timezone.
+
+          Set to false or omit to use the system default timezone.
+
+          '
+      - in: query
+        name: product_type
+        schema:
+          type: string
+          enum:
+          - CLOUD_API
+          - cloud_api
+          - MARKETING_MESSAGES_LITE_API
+          - marketing_messages_lite_api
+        example: MARKETING_MESSAGES_LITE_API
+        description: 'Pass the product type to filter analytics by template channel.
+
+          Use cloud_api for utility templates.
+
+          Use MARKETING_MESSAGES_LITE_API for marketing templates on MMLite.
+
+          Skip this parameter to get combined metrics across product types.
+
+          '
+      - in: query
+        name: after
+        schema:
+          type: string
+        example: QVFIUjR3T2ZAj...
+        description: 'Pass the “after” cursor value from the previous response
+
+          to fetch the next page of results.
+
+          '
+      - in: query
+        name: before
+        schema:
+          type: string
+        example: QVFIUkpXc3h5...
+        description: 'Pass the “before” cursor value from the previous response
+
+          to fetch the previous page of results.
+
+          '
+      - in: query
+        name: metric_types
+        schema:
+          type: string
+        example: APP_PURCHASES,APP_PURCHASES_CONVERSION_VALUE,WEB_PURCHASES
+        description: 'Provide a comma-separated list of metric names to return.
+
+          Use this to limit the response to specific conversion metrics.
+
+          Skip this parameter to return all supported metrics.
+
+          '
+      responses:
+        '200':
+          description: Template analytics fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                    description: Capture this request ID when contacting support for this API call.
+                  status:
+                    type: string
+                    description: Check this field to confirm whether the request succeeded or failed.
+                  message:
+                    type: string
+                    description: Read this message for a short summary of the API result.
+                  data:
+                    type: array
+                    description: Review this array to access analytics grouped by granularity and product type.
+                    items:
+                      type: object
+                      properties:
+                        granularity:
+                          type: string
+                          description: Shows the time aggregation level applied to these metrics.
+                        product_type:
+                          type: string
+                          description: Identifies which product type these metrics belong to.
+                        waba_timezone:
+                          type: string
+                          description: Shows the timezone used to compute the time buckets.
+                        data_points:
+                          type: array
+                          description: Iterate through each object to read metrics for a time window.
+                          items:
+                            type: object
+                            properties:
+                              app_activations:
+                                type: integer
+                                description: Read how many app activation events were attributed to template clicks.
+                              app_add_to_cart:
+                                type: integer
+                                description: Read how many app add-to-cart events came from template clicks.
+                              app_checkouts_initiated:
+                                type: integer
+                                description: Read how many app checkout starts came from template clicks.
+                              app_purchases:
+                                type: integer
+                                description: Read how many completed app purchases were attributed to template clicks.
+                              app_purchases_conversion_value:
+                                type: integer
+                                description: Read the total purchase value from app conversions.
+                              clicked:
+                                type: array
+                                description: Check button-level click counts grouped by button text and type.
+                                items:
+                                  type: object
+                                  properties:
+                                    button_content:
+                                      type: string
+                                      description: Read the exact button label shown to users.
+                                    count:
+                                      type: integer
+                                      description: Read how many times this button was clicked.
+                                    type:
+                                      type: string
+                                      description: Identify the button type used in the template.
+                              cost:
+                                type: array
+                                description: Review cost metrics related to sends and clicks.
+                                items:
+                                  type: object
+                                  properties:
+                                    type:
+                                      type: string
+                                      description: Identify the cost metric name.
+                                    value:
+                                      type: number
+                                      description: Read the numeric value for this cost metric.
+                              delivered:
+                                type: integer
+                                description: Read how many messages were successfully delivered.
+                              end:
+                                type: integer
+                                description: Convert this Unix timestamp to get the bucket end time.
+                              read:
+                                type: integer
+                                description: Read how many delivered messages were opened.
+                              sent:
+                                type: integer
+                                description: Read how many messages were sent for delivery.
+                              start:
+                                type: integer
+                                description: Convert this Unix timestamp to get the bucket start time.
+                              template_id:
+                                type: string
+                                description: Match metrics to this WhatsApp template ID.
+                              web_add_to_cart:
+                                type: integer
+                                description: Read how many website add-to-cart events came from template clicks.
+                              web_checkouts_initiated:
+                                type: integer
+                                description: Read how many website checkout starts came from template clicks.
+                              web_purchases:
+                                type: integer
+                                description: Read how many completed website purchases were attributed to template clicks.
+                              web_purchases_conversion_value:
+                                type: integer
+                                description: Read the total purchase value from website conversions.
+                  paging:
+                    type: object
+                    description: Use these cursor values to navigate between pages.
+                    properties:
+                      cursors:
+                        type: object
+                        description: Copy these cursor tokens into your next request.
+                        properties:
+                          before:
+                            type: string
+                            description: Pass this cursor in the before parameter to load the previous page.
+                          after:
+                            type: string
+                            description: Pass this cursor in the after parameter to load the next page.
+              example:
+                request_id: 1768911884765515842-cc93948023a9bc4d
+                status: success
+                message: Template analytics fetched successfully.
+                data:
+                - granularity: DAILY
+                  product_type: marketing_messages_lite_api
+                  waba_timezone: Asia/Kolkata
+                  data_points:
+                  - app_activations: 50
+                    app_add_to_cart: 34
+                    app_checkouts_initiated: 123
+                    app_purchases: 3
+                    app_purchases_conversion_value: 13
+                    clicked:
+                    - button_content: Contact Support
+                      count: 108
+                      type: quick_reply_button
+                    - button_content: Tell me more
+                      count: 16
+                      type: unique_url_button
+                    - button_content: Let's get going
+                      count: 14
+                      type: unique_url_button
+                    - button_content: Let's get going
+                      count: 36
+                      type: url_button
+                    - button_content: Tell me more
+                      count: 46
+                      type: url_button
+                    cost:
+                    - type: amount_spent
+                      value: 349.93
+                    - type: cost_per_delivered
+                      value: 0.78
+                    - type: cost_per_url_button_click
+                      value: 9.72
+                    delivered: 30
+                    end: 1763836200
+                    read: 26
+                    sent: 30
+                    start: 1763749800
+                    template_id: '833526612643726'
+                    web_add_to_cart: 22
+                    web_checkouts_initiated: 12
+                    web_purchases: 43
+                    web_purchases_conversion_value: 1223
+                paging:
+                  cursors:
+                    before: ''
+                    after: ''
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer token authentication using JWT. Include the token in the Authorization header as 'Bearer <your_token>'.
+x-stoplight:
+  id: o7al2fnfvhxlr
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

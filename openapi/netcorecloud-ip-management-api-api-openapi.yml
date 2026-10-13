@@ -1,0 +1,1914 @@
+openapi: 3.2.0
+info:
+  title: Email API V6 IP Management API
+  description: ''
+  version: 1.0.0
+servers:
+- url: https://emailapi.netcorecloud.net/v6
+  description: For Non EU region
+- url: https://apieu.netcorecloud.net/v6
+  description: For EU region
+security: []
+tags:
+- name: IP Management API
+paths:
+  /ip/pool/assign-ips:
+    post:
+      tags:
+      - IP Management API
+      summary: Assign IPs to Pool
+      description: This allows a parent account to add one or more dedicated IP addresses to an existing IP pool. This is useful for organizing IPs into logical groups for different sending stream.
+      operationId: assignIPsToPool
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                pool_name:
+                  type: string
+                  example: marketing-pool
+                  description: The name of the IP pool to which the IPs should be added.
+                ips_to_add:
+                  type: array
+                  description: A list of IP addresses to be assigned to the pool.At least one IP must be provided. maximum 100 IPs per request. All IPs must belong to the same region. Each IP must be valid, owned by the parent account, and not already assigned to the pool.
+                  items:
+                    type: string
+                    format: ipv4
+                  minItems: 1
+                  maxItems: 100
+                  example:
+                  - 192.168.1.100
+                  - 192.168.1.101
+              required:
+              - pool_name
+              - ips_to_add
+            example:
+              pool_name: marketing-pool
+              ips_to_add:
+              - 192.168.1.100
+              - 192.168.1.101
+      responses:
+        '200':
+          description: IPs assigned to pool successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pool_name:
+                    type: string
+                    example: marketing-pool
+                  region:
+                    type: string
+                    example: US
+                  assigned_ips:
+                    type: array
+                    items:
+                      type: string
+                    example:
+                    - 192.168.1.100
+                    - 192.168.1.101
+                  updated_on:
+                    type: string
+                    format: date-time
+                    example: '2024-01-15T10:30:00Z'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+        '403':
+          description: Pool not owned or IP not owned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+      security:
+      - bearer: []
+  /ip/assign:
+    post:
+      tags:
+      - IP Management API
+      summary: Assign IPs to subaccount
+      description: This allows a parent account to allocate one or more dedicated IP addresses to a subaccount by linking them with a specified sending domain. This ensures that the subaccount can send emails using the assigned IPs. The request must include the subaccount name, sending domain, and IP addresses, with all IPs belonging to the same region and owned by the parent account.
+      operationId: assignIPsToSubaccount
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                assignments:
+                  type: array
+                  description: A list of assignment objects. Each obejct defines the mapping of one or more IP addresses to a specific subaccount and domain. You can send 1 to 10 assignments per request.
+                  items:
+                    type: object
+                    properties:
+                      ip_address:
+                        type: array
+                        description: The dedicated IP addresses to assign to the subaccount. Must be valid IPs owned by the parent account. Atleast one IP is required; up to 100 can be included per assignment. All IPs must belong to the same region.
+                        items:
+                          type: string
+                          format: ipv4
+                        minItems: 1
+                        maxItems: 100
+                        example:
+                        - 192.168.1.100
+                        - 192.168.1.101
+                      account_name:
+                        type: string
+                        description: The Subaccount username that will receive the IPs. The subaccount must exit and belong to the authenticated parent account. Used to ensure the assignment is correctly linked.
+                        example: subaccount1
+                      sending_domain:
+                        type: string
+                        description: The domain that the subaccount will use with the assigned IPs. Must be an active, valid domain associated with the subaccount. Ensures email authentication and reputation are tied to the correct domain.
+                        format: hostname
+                        example: mail.example.com
+                      region:
+                        type: string
+                        description: The geographic region of the IP addresses being assigned. Supported values are `US`, `EU`, `IND`. If provided, all IPs in the assignment must match the region.
+                        enum:
+                        - US
+                        - EU
+                        - IND
+                        example: US
+                    required:
+                    - ip_address
+                    - account_name
+                    - sending_domain
+                  minItems: 1
+                  maxItems: 10
+              required:
+              - assignments
+            example:
+              assignments:
+              - ip_address:
+                - 192.168.1.100
+                - 192.168.1.101
+                account_name: subaccount1
+                sending_domain: mail.example.com
+                region: US
+      responses:
+        '200':
+          description: IPs assigned successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - success
+                    - partial_success
+                    - error
+                    example: success
+                  message:
+                    type: string
+                    example: All IPs were assigned successfully
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        account_name:
+                          type: string
+                          example: subaccount1
+                        ip:
+                          type: string
+                          example: 192.168.1.100
+                        sending_domain:
+                          type: string
+                          example: mail.example.com
+                        status:
+                          type: string
+                          enum:
+                          - success
+                          - error
+                          example: success
+                        message:
+                          type: string
+                          example: IP assigned successfully
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+        '403':
+          description: Access forbidden or ownership validation failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+      security:
+      - bearer: []
+  /ip/pool/subaccount/assign-pools:
+    post:
+      tags:
+      - IP Management API
+      summary: Assign pools to Subaccount
+      description: This allows a parent account to manage which IP pools are available to a subaccount. You can add new pools or remove existing ones from a subaccount, ensuring that eacg subaccount has the correct set of IP pools for its sending need.
+      operationId: assignPoolsToSubaccount
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                account:
+                  type: string
+                  description: The username of the subaccount to which pools will be assigned or removed. The subaccount must exist and belong to the authenticated parent account.
+                  example: subaccount1
+                sending_domain:
+                  type: string
+                  description: The domain associated with the subaccount. This must be a valid domain owned by the account and is used to link pool assignments to the correct sending domain.
+                  format: hostname
+                  example: mail.example.com
+                pools_to_add:
+                  type: array
+                  description: A list of pool names to assign to the subaccount. Maximum of 10 pools per request. Each pool must exist, belong to the parent account, and not already be assigned to the subaccount.
+                  items:
+                    type: string
+                  maxItems: 10
+                  example:
+                  - marketing-pool
+                  - support-pool
+                pools_to_remove:
+                  type: array
+                  description: A list of pool names to remove from the subaccount. Maximum of 10 pools per request. Each pool must currently be assigned to the subaccount.
+                  items:
+                    type: string
+                  maxItems: 10
+                  example:
+                  - old-pool
+              required:
+              - account
+              - sending_domain
+            example:
+              account: subaccount1
+              sending_domain: mail.example.com
+              pools_to_add:
+              - marketing-pool
+              - support-pool
+              pools_to_remove:
+              - old-pool
+      responses:
+        '200':
+          description: Pools assigned successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: IP pools assigned successfully
+                  result:
+                    type: object
+                    properties:
+                      account:
+                        type: string
+                        example: subaccount1
+                      assigned_pools:
+                        type: array
+                        items:
+                          type: string
+                        example:
+                        - marketing-pool
+                        - support-pool
+                      updated_on:
+                        type: string
+                        format: date-time
+                        example: '2024-01-15T10:30:00Z'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+        '403':
+          description: Access forbidden or ownership validation failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+      security:
+      - bearer: []
+  /ip/request/rdns/configure:
+    post:
+      tags:
+      - IP Management API
+      summary: Configure Reverse DNS
+      description: This allows a parent account to configure reverse DNS for a dedicated IP address by mapping it to a sending domian.
+      operationId: configureRDNS
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ip_address:
+                  type: string
+                  format: ipv4
+                  description: The dedicated IP address for which reverse DNS should be configured. Must ve a valid IPv4 or IPv6 address. The IP must belong to the authenticated parent account.
+                  example: 192.168.1.100
+                sending_domain:
+                  type: string
+                  format: hostname
+                  description: The sending domain that should be mapped to the IP. Must be a valid domain name format. The domain must be owned and active for the account.
+                  example: mail.example.com
+              required:
+              - ip_address
+              - sending_domain
+            example:
+              ip_address: 192.168.1.100
+              sending_domain: mail.example.com
+      responses:
+        '200':
+          description: RDNS configuration request submitted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                    example: RDNS-REQ-2024-001-XYZ789
+                  ip:
+                    type: string
+                    example: 192.168.1.100
+                  rdns:
+                    type: string
+                    example: mail.example.com
+                  sending_domain:
+                    type: string
+                    example: mail.example.com
+                  message:
+                    type: string
+                    example: Reverse DNS configuration request submitted successfully
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+        '403':
+          description: IP not owned or domain not owned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+      security:
+      - bearer: []
+  /ip/pool:
+    post:
+      tags:
+      - IP Management API
+      summary: Create IP Pool
+      description: This allows a parent account to create a new pool for organizing dedicated IP addresses. Each pool must have a unique name within the parent account and be associated with a specific region.
+      operationId: createIPPool
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                pool_name:
+                  type: string
+                  minLength: 3
+                  maxLength: 50
+                  pattern: ^[a-zA-Z0-9_-]+$
+                  description: The name of the IP pool. Allowed characters are alphanumeric, hyphens, and underscore. Must not already exist under the parent account in the same region.
+                  example: marketing-pool
+                region:
+                  type: string
+                  enum:
+                  - US
+                  - EU
+                  - IND
+                  example: US
+                  description: The region where the pool will be created. The supported values are US, EU, and IND.
+              required:
+              - pool_name
+              - region
+            example:
+              pool_name: marketing-pool
+              region: US
+      responses:
+        '200':
+          description: IP pool created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  pool_name:
+                    type: string
+                    example: marketing-pool
+                  region:
+                    type: string
+                    example: US
+                  message:
+                    type: string
+                    example: IP pool created successfully
+        '400':
+          description: Validation error or pool already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+        '403':
+          description: Access forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+                          security: null
+      security:
+      - bearer: []
+  /ip/request/rdns/delete/request:
+    post:
+      tags:
+      - IP Management API
+      summary: Delete reverse DNS request
+      description: This allows a parent account to remove an existing reverse DNS configuration for a dedicated IP address. This is used when an IP should no longer be associated with a specific sending domain.
+      operationId: deleteRDNS
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ip_address:
+                  type: string
+                  format: ipv4
+                  description: The dedicated IP address whose reverse DNS configuration should be deleted. Must be a valid IPv4 or IPv6 address. The IP must belong to the authenticated parent account.
+                  example: 192.168.1.100
+                sending_domain:
+                  type: string
+                  format: hostname
+                  description: The sending domain currently linked to the reverse DNS configuration. Must be in valid domain name format. Must also owned and active for the account.
+                  example: mail.example.com
+              required:
+              - ip_address
+              - sending_domain
+      responses:
+        '200':
+          description: RDNS deletion request submitted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                    example: RDNS-REQ-2024-001-XYZ789
+                  ip:
+                    type: string
+                    example: 192.168.1.100
+                  rdns:
+                    type: string
+                    example: mail.example.com
+                  sending_domain:
+                    type: string
+                    example: mail.example.com
+                  message:
+                    type: string
+                    example: Reverse DNS deletion request submitted successfully
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+        '403':
+          description: IP not owned or domain not owned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+      security:
+      - bearer: []
+  /ip/requests:
+    get:
+      tags:
+      - IP Management API
+      summary: Get all IP requests
+      description: This allows a parent account to retrieve a list of all dedicated IP requests submitted for the account. Optional filters are available to narrow down results.
+      operationId: getAllIPRequests
+      parameters:
+      - name: page
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+        description: The page number for pagination. Default value is 1
+      - name: per_page
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 10
+        description: The number of records to return per page. Default value is 10.
+      - name: start_date
+        in: query
+        schema:
+          type: string
+          format: date
+        description: Filters requests created on or after this date. Format should be YYYY-MM-DD
+      - name: end_date
+        in: query
+        schema:
+          type: string
+          format: date
+        description: Filters requests created on or before this date. Format should be YYYY-MM-DD
+      - name: status
+        in: query
+        schema:
+          type: string
+          enum:
+          - pending
+          - approved
+          - rejected
+          - processing
+        description: Filters requests by their current status. Supported values are pending, approved, and rejected.
+      responses:
+        '200':
+          description: IP requests retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  requests:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        request_id:
+                          type: string
+                          example: IP-REQ-2024-001-ABC123
+                        status:
+                          type: string
+                          enum:
+                          - pending
+                          - approved
+                          - rejected
+                          - processing
+                          example: approved
+                        requested_ips:
+                          type: integer
+                          example: 5
+                        allocated_ips:
+                          type: integer
+                          example: 5
+                        region:
+                          type: string
+                          example: US
+                        description:
+                          type: string
+                          example: Additional IPs for marketing campaigns
+                        remarks:
+                          type: string
+                          example: Request approved and IPs allocated successfully
+                  pagination:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                        minimum: 1
+                        example: 1
+                      per_page:
+                        type: integer
+                        minimum: 1
+                        maximum: 100
+                        example: 10
+                      total_count:
+                        type: integer
+                        example: 25
+                      total_pages:
+                        type: integer
+                        example: 3
+        '400':
+          description: Invalid query parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+      security:
+      - bearer: []
+  /ip/details:
+    get:
+      tags:
+      - IP Management API
+      summary: Get IP details
+      description: This allows a parent account to fetch detailed information about dedicated IPs allocated to the account.
+      operationId: getIPDetails
+      parameters:
+      - name: account
+        in: query
+        schema:
+          type: string
+        description: Filter results by subaccount name.
+      - name: page
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+        description: The page number for pagination.
+      - name: per_page
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 10
+        description: The number of records to return per page.
+      responses:
+        '200':
+          description: IP details retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dedicated_ips:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        ip_address:
+                          type: string
+                          format: ipv4
+                          example: 192.168.1.100
+                        status:
+                          type: string
+                          enum:
+                          - active
+                          - inactive
+                          - pending
+                          example: active
+                        region:
+                          type: string
+                          example: US
+                        rdns_status:
+                          type: string
+                          enum:
+                          - configured
+                          - pending
+                          - not_configured
+                          example: configured
+                        assigned_accounts:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              account_name:
+                                type: string
+                                example: subaccount1
+                              domain:
+                                type: string
+                                example: mail.example.com
+                              region:
+                                type: string
+                                example: US
+                        assigned_ip_pools:
+                          type: array
+                          items:
+                            type: string
+                          example:
+                          - marketing-pool
+                  pagination:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                        minimum: 1
+                        example: 1
+                      per_page:
+                        type: integer
+                        minimum: 1
+                        maximum: 100
+                        example: 10
+                      total_count:
+                        type: integer
+                        example: 25
+                      total_pages:
+                        type: integer
+                        example: 3
+                  account:
+                    type: string
+                    example: subaccount1
+        '400':
+          description: Invalid query parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+      security:
+      - bearer: []
+  /ip/pool-details:
+    get:
+      tags:
+      - IP Management API
+      summary: Get Pool Details
+      description: This allows aparent account to fetch detailed information about an IP pool.
+      operationId: getIPPoolDetails
+      parameters:
+      - name: pool_name
+        in: query
+        required: true
+        schema:
+          type: string
+        description: Name of the IP pool to retrieve details for. Must refer to an exisiting pool owned by the parent account.
+      - name: region
+        in: query
+        schema:
+          type: string
+          enum:
+          - US
+          - EU
+          - IND
+        description: The region of the pool. Supported values are US, EU, and IND.If not provided, the system uses the pool's defined region.
+      responses:
+        '200':
+          description: Pool details retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pool_name:
+                    type: string
+                    example: marketing-pool
+                  region:
+                    type: string
+                    example: US
+                  ips_in_pool:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        ip_address:
+                          type: string
+                          format: ipv4
+                          example: 192.168.1.100
+                        region:
+                          type: string
+                          example: US
+                        rdns_status:
+                          type: string
+                          enum:
+                          - configured
+                          - pending
+                          - not_configured
+                          example: configured
+                  assigned_sub_accounts:
+                    type: array
+                    items:
+                      type: string
+                    example:
+                    - subaccount1
+                    - subaccount2
+        '400':
+          description: Pool name required
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+        '404':
+          description: Pool not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+      security:
+      - bearer: []
+  /ip/request/{request_id}:
+    get:
+      tags:
+      - IP Management API
+      summary: Get IP Request Status
+      description: This allows a parent account to retrieve the current status and details of a specific dedicated IP request. By providing the unique request_id, you can track whether the request is pending, approved, partially approved, or rejected, along with related information such as the number of IPs requested, allocated, and any remarks.
+      operationId: getIPRequestStatus
+      parameters:
+      - name: request_id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The unique identifier of the dedicated IP request to retrieve. This ID is returned when a new IP request is submitted. Must be a valid request ID format. If the ID does not exist or is invalid, the API returns an error.
+        example: IP-REQ-2024-001-ABC123
+      responses:
+        '200':
+          description: IP request status retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                    example: IP-REQ-2024-001-ABC123
+                  status:
+                    type: string
+                    enum:
+                    - pending
+                    - approved
+                    - rejected
+                    - processing
+                    example: approved
+                  requested_ips:
+                    type: integer
+                    example: 5
+                  allocated_ips:
+                    type: integer
+                    example: 5
+                  region:
+                    type: string
+                    example: US
+                  description:
+                    type: string
+                    example: Additional IPs for marketing campaigns
+                  remarks:
+                    type: string
+                    example: Request approved and IPs allocated successfully
+        '400':
+          description: Invalid request ID format
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+        '404':
+          description: IP request not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+      security:
+      - bearer: []
+  /ip/pool/remove-ips:
+    post:
+      tags:
+      - IP Management API
+      summary: Remove IPs from Pool
+      description: This allows a parent account to remove specific dedicated IP addresses from an existing pool.
+      operationId: removeIPsFromPool
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                pool_name:
+                  type: string
+                  example: marketing-pool
+                  description: The name of the IP pool from which the IPs should be removed. Must refer to an exisiting pool owned by the parent account.
+                ips_to_add:
+                  type: array
+                  items:
+                    type: string
+                    format: ipv4
+                  minItems: 1
+                  maxItems: 100
+                  example:
+                  - 192.168.1.100
+                  description: A list of IP addresses to remove from the pool. At least one IP must be provided. Each IP must already be assigned to the specified pool.
+              required:
+              - pool_name
+              - ips_to_add
+            example:
+              pool_name: marketing-pool
+              ips_to_add:
+              - 192.168.1.100
+      responses:
+        '200':
+          description: IPs removed from pool successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pool_name:
+                    type: string
+                    example: marketing-pool
+                  region:
+                    type: string
+                    example: US
+                  assigned_ips:
+                    type: array
+                    items:
+                      type: string
+                    example:
+                    - 192.168.1.100
+                  updated_on:
+                    type: string
+                    format: date-time
+                    example: '2024-01-15T10:30:00Z'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+        '403':
+          description: Pool not owned or IP not in pool
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+      security:
+      - bearer: []
+  /ip/pool/subaccount/remove-pools:
+    post:
+      tags:
+      - IP Management API
+      summary: Remove Pools from Subaccount
+      description: This allows a parent account to unassign IP pools from a subaccount.
+      operationId: removePoolsFromSubaccount
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                account:
+                  type: string
+                  description: The username of the subaccount from which the pools will be removed.
+                  example: subaccount1
+                sending_domain:
+                  type: string
+                  format: hostname
+                  description: The sending domain associated with the subaccount. Must be valid and active for the account.
+                  example: mail.example.com
+                pools_to_remove:
+                  type: array
+                  items:
+                    type: string
+                  maxItems: 10
+                  example:
+                  - old-pool
+                  description: A list of IP pool names to remove from the subaccount. At least one pool must be provided. Each pool must already be assigned to the subaccount. Maximum of 10 pools per request.
+              required:
+              - account
+              - sending_domain
+            example:
+              account: subaccount1
+              sending_domain: mail.example.com
+              pools_to_remove:
+              - old-pool
+      responses:
+        '200':
+          description: Pools removed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: IP pools removed successfully
+                  result:
+                    type: object
+                    properties:
+                      account:
+                        type: string
+                        example: subaccount1
+                      assigned_pools:
+                        type: array
+                        items:
+                          type: string
+                        example:
+                        - marketing-pool
+                        - support-pool
+                      updated_on:
+                        type: string
+                        format: date-time
+                        example: '2024-01-15T10:30:00Z'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+        '403':
+          description: Access forbidden or ownership validation failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+      security:
+      - bearer: []
+  /ip/request:
+    post:
+      tags:
+      - IP Management API
+      summary: Request New Dedicated IP Addresses
+      description: This allows a parent account to request additional dedicated IPs for email sending. The request specifies the number of IPs required, the estimated daily sending volume, the region, and an optional description.
+      operationId: requestIP
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                requested_ips:
+                  type: integer
+                  minimum: 1
+                  maximum: 100
+                  description: The number of dedicated IP addresses being requested. Minimum 1, maximum 100 per request.
+                  example: 5
+                daily_estimated_volume:
+                  type: integer
+                  minimum: 1
+                  description: The estimated daily email volume (number of emails per day) that the requested IPs will be used for.
+                  example: 10000
+                region:
+                  type: string
+                  enum:
+                  - US
+                  - EU
+                  - IND
+                  description: The geographic region where the IPs should be provisioned. Supported values are US, EU, and IND.
+                  example: US
+                description:
+                  type: string
+                  maxLength: 255
+                  description: A short description of the intended IP usage. Maximum length 255 characters and alphanumeric text only.
+                  example: Additional IPs for marketing campaigns
+                enableWarmup:
+                  type: boolean
+                  description: Indicates whether to enable the automated IP warm-up process. Values are true (enable warmup) or false (disable warmup).When enabled, the warmup logic assigns the appropriate plan based on engagement, bounce behavior, and unsubscribes. The delivery engine increases send volumes gradually using ISP feedback and performance signals to reduce throttling and spam-filtering risk. Netcore manages the full warmup process. Approved volume is sent through the assigned dedicated IP pool, and any excess volume is routed through the Netcore or client shared pool.
+                  example: true
+              required:
+              - requested_ips
+              - daily_estimated_volume
+            example:
+              requested_ips: 5
+              daily_estimated_volume: 10000
+              region: US
+              description: Additional IPs for marketing campaigns
+              enableWarmup: true
+      responses:
+        '200':
+          description: IP request submitted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: Success
+                  request_id:
+                    type: string
+                    description: Unique request identifier
+                    example: IP-REQ-2024-001-ABC123
+                  message:
+                    type: string
+                    example: IP request submitted successfully
+        '400':
+          description: Validation error or business logic error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                          example: Field validation failed
+                        field:
+                          type: string
+                          description: Field name where error occurred
+                          example: requested_ips
+              examples:
+                validation_error:
+                  summary: Validation Error
+                  value:
+                    error:
+                      message: requested_ips must be greater than 0
+                      field: requested_ips
+                business_logic_error:
+                  summary: Business Logic Error
+                  value:
+                    error:
+                      message: 'Daily request limit exceeded. You have already made 5 requests today. Limit: 5 requests per day.'
+                      field: null
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+        '403':
+          description: Access forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+      security:
+      - bearer: []
+  /ip/unassign:
+    post:
+      tags:
+      - IP Management API
+      summary: Unassign IPs from Subaccount
+      description: This allows a parent account to remove one or more dedicated IP addresses that were previously assigned to a subaccount. Each request specifies the subaccount, sending domain, and the IPs to be unassigned.
+      operationId: unassignIPsFromSubaccount
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                removals:
+                  type: array
+                  description: A list of removal objects specifying the IPs to unassign from subaccounts. Minimum 1 and maximum 10 removal objects per request.
+                  items:
+                    type: object
+                    properties:
+                      ip_address:
+                        type: array
+                        description: One or more IP addresses to remove from the subaccount. Must be valid dedicated IPs that are already assigned to the target subaccount. Atleast 1 IP, maximum 100 IPs per removal object.
+                        items:
+                          type: string
+                          format: ipv4
+                        minItems: 1
+                        maxItems: 100
+                        example:
+                        - 192.168.1.100
+                      account_name:
+                        type: string
+                        description: The username of the subaccount from which the IPs should be unassigned. The subaccount must exist under the parent account.
+                        example: subaccount1
+                      sending_domain:
+                        type: string
+                        description: The sending domain currently linked with the IP assignment. Must be valid and associated with the subaccount.
+                        format: hostname
+                        example: mail.example.com
+                    required:
+                    - ip_address
+                    - account_name
+                    - sending_domain
+                  minItems: 1
+                  maxItems: 10
+              required:
+              - removals
+            example:
+              removals:
+              - ip_address:
+                - 192.168.1.100
+                account_name: subaccount1
+                sending_domain: mail.example.com
+      responses:
+        '200':
+          description: IPs unassigned successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - success
+                    - partial_success
+                    - error
+                    example: success
+                  message:
+                    type: string
+                    example: All IPs removed successfully
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        account_name:
+                          type: string
+                          example: subaccount1
+                        ip:
+                          type: string
+                          example: 192.168.1.100
+                        sending_domain:
+                          type: string
+                          example: mail.example.com
+                        status:
+                          type: string
+                          enum:
+                          - success
+                          - error
+                          example: success
+                        message:
+                          type: string
+                          example: IP unassigned successfully
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+        '403':
+          description: Access forbidden or IP not assigned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+      security:
+      - bearer: []
+  /ip/request/rdns/validate:
+    post:
+      tags:
+      - IP Management API
+      summary: Validate reverse DNS
+      description: This allows a parent account to verify whether the reverse DNS configuration for a dedicated IP address is correctly set up.
+      operationId: validateRDNS
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ip_address:
+                  type: string
+                  format: ipv4
+                  description: The dedicated IP address for RDNS configuration. Must be a valid IPv4 or IPv6 address. The IP must belong to the authenticated parent account.
+                  example: 192.168.1.100
+                sending_domain:
+                  type: string
+                  format: hostname
+                  description: The sending domain associated with theIP. Must be in valid domain name format. Must also be owned and active account.
+                  example: mail.example.com
+              required:
+              - ip_address
+              - sending_domain
+      responses:
+        '200':
+          description: RDNS validation completed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                    example: RDNS-REQ-2024-001-XYZ789
+                  ip:
+                    type: string
+                    example: 192.168.1.100
+                  rdns:
+                    type: string
+                    example: mail.example.com
+                  sending_domain:
+                    type: string
+                    example: mail.example.com
+                  message:
+                    type: string
+                    example: Reverse DNS validation completed
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+        '403':
+          description: IP not owned or domain not owned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Error message
+                        field:
+                          type: string
+                          description: Field name where error occurred
+      security:
+      - bearer: []
+components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

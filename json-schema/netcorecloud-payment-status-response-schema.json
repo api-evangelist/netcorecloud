@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/netcorecloud/main/json-schema/netcorecloud-payment-status-response-schema.json",
+  "title": "PaymentStatusResponse",
+  "description": "Contains payment status response details.",
+  "x-generated": "2026-10-13",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/netcorecloud-whatsapp-api-openapi.yml#/components/schemas/PaymentStatusResponse",
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string",
+      "description": "Status of the API call."
+    },
+    "message": {
+      "type": "string",
+      "description": "Description of the response result."
+    },
+    "data": {
+      "type": "object",
+      "description": "Provides details about the payment status.",
+      "properties": {
+        "reference_id": {
+          "type": "string",
+          "description": "Unique identifier for the payment transaction."
+        },
+        "payment_config_id": {
+          "type": "string",
+          "description": "Payment configuration ID used for the transaction."
+        },
+        "status": {
+          "type": "string",
+          "description": "Current payment status.",
+          "enum": [
+            "completed",
+            "pending",
+            "failed",
+            "cancelled"
+          ]
+        },
+        "amount": {
+          "type": "object",
+          "description": "Defines the amount details including currency and value.",
+          "properties": {
+            "currency": {
+              "type": "string",
+              "description": "Currency code in ISO 4217 format."
+            },
+            "value": {
+              "type": "string",
+              "description": "Amount value as a string for precision."
+            }
+          },
+          "required": [
+            "currency",
+            "value"
+          ]
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Date and time when the payment status was last updated."
+        }
+      },
+      "required": [
+        "reference_id",
+        "payment_config_id",
+        "status",
+        "amount",
+        "timestamp"
+      ]
+    }
+  },
+  "required": [
+    "status",
+    "message",
+    "data"
+  ]
+}

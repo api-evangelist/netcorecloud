@@ -1,0 +1,1940 @@
+openapi: 3.2.0
+info:
+  title: WHATSAPP Message Sending API
+  version: '1.0'
+  description: Comprehensive collection of WhatsApp APIs that allow users to interact with WhatsApp Flows, Templates, Message Sending, Conversations, Consent Management, Webhooks, Payments, and Media associated with a specific WABA (WhatsApp Business Account).
+  license:
+    name: Proprietary
+    identifier: proprietary
+servers:
+- url: https://cpaaswa.netcorecloud.net/api
+  description: WhatsApp APIs Server
+- url: https://cpaaswa.netcorecloud.net
+  description: WhatsApp Root Server
+security:
+- bearerAuth: []
+tags:
+- name: Message Sending
+paths:
+  /v2/message/nc:
+    post:
+      tags:
+      - Message Sending
+      summary: Send Template Message
+      operationId: sendTemplateMessage
+      description: 'Use this endpoint to send WhatsApp **template messages** (text, media, coupon, carousel, product, order, interactive, LTO).
+
+        The request body structure determines the template type.
+
+        Batching is supported: include up to **100** messages in the `message` array per request.
+
+
+        **Workflow**
+
+        1. Confirm user opt-in and template approval.
+
+        2. Build the payload using the appropriate template structure.
+
+        3. Send the request and track delivery via webhooks.'
+      requestBody:
+        required: true
+        description: Provide the message payload. Use different sections based on template type.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - message
+              properties:
+                message:
+                  type: array
+                  description: Add one or more message objects to send different WhatsApp templates.
+                  items:
+                    type: object
+                    required:
+                    - recipient_type
+                    - recipient_whatsapp
+                    - source
+                    properties:
+                      recipient_type:
+                        type: string
+                        description: Enter the type of recipient (e.g., individual or group).
+                        example: individual
+                      recipient_whatsapp:
+                        type: string
+                        description: Enter the recipient’s WhatsApp number in international format.
+                        example: '916267725099'
+                      category:
+                        type: string
+                        description: Only valid for direct utility message sending.
+                        example: utility
+                      ttl_seconds:
+                        type: integer
+                        description: Optional. TTL for messages in seconds, only for direct utility message sending.
+                        example: 600
+                      source:
+                        type: string
+                        description: Enter the source identifier for this message.
+                        example: source-sample
+                      cta_link_track:
+                        type: string
+                        description: Set **1** to enable CTA link tracking, or **0** to disable.
+                        example: '1'
+                      retry_enabled:
+                        type: string
+                        description: Set **1** to enable message retry on temporary failures, or **0** to disable. When enabled, the system will automatically retry sending the message if it encounters a transient error.
+                        enum:
+                        - '0'
+                        - '1'
+                        example: '1'
+                      message_type:
+                        type: string
+                        description: Choose the WhatsApp message type to send (e.g., limited_time_offer_template, product_card_carousel_template, interactive_template).
+                        enum:
+                        - text
+                        - media
+                        - template
+                        - sms
+                        - media_template
+                        - location
+                        - contacts
+                        - interactive
+                        - mpm_template
+                        - catalog_template
+                        - carousel_template
+                        - order_details_template
+                        - order_status_template
+                        - typing_indicator
+                        - product_card_carousel_template
+                        - spm_template
+                        - limited_time_offer_template
+                        - call_permission_request
+                        example: limited_time_offer_template
+                      x-apiheader:
+                        type: string
+                        description: Enter custom header text used for routing or authentication.
+                        example: netcore_api_header
+                      type_template:
+                        type: array
+                        description: Add template details such as name, placeholders, and language.
+                        items:
+                          type: object
+                          required:
+                          - name
+                          - language
+                          properties:
+                            name:
+                              type: string
+                              description: Name of the template.
+                              example: lto_template_image_qa_2_3
+                            attributes:
+                              type: array
+                              description: Template parameters to replace placeholders.
+                              items:
+                                type: string
+                              example:
+                              - something
+                              - everything
+                              - https://www.amazon.com
+                            language:
+                              type: object
+                              description: Language and policy settings for the template.
+                              required:
+                              - locale
+                              - policy
+                              properties:
+                                locale:
+                                  type: string
+                                  description: Locale of the message.
+                                  example: en
+                                policy:
+                                  type: string
+                                  description: Language fallback policy.
+                                  example: deterministic
+                      type_media_template:
+                        type: object
+                        description: Media content and metadata for LTO message.
+                        required:
+                        - type
+                        properties:
+                          type:
+                            type: string
+                            description: Media type (e.g., image, video).
+                            example: image
+                          url:
+                            type: string
+                            format: uri
+                            description: Public URL of the media file.
+                            example: https://cpaas-media-us.s3.us-east-1.amazonaws.com/whatsapp-media-stage/Web%201920%20%E2%80%93%203_20251014130024_1760446824780.jpeg
+                          media_id:
+                            type: string
+                            description: Media ID of the media file.
+                            example: '731736671839227'
+                          filename:
+                            type: string
+                            description: Filename of the media file.
+                            example: document.pdf
+                          button:
+                            type: array
+                            description: List of interactive buttons for the message.
+                            items:
+                              type: object
+                              required:
+                              - index
+                              - payload
+                              - sub_type
+                              properties:
+                                index:
+                                  type: string
+                                  description: Button index (starting from 0).
+                                  example: '0'
+                                payload:
+                                  type: string
+                                  description: Payload value sent when button is clicked.
+                                  example: '12345'
+                                sub_type:
+                                  type: string
+                                  description: Type of button action.
+                                  enum:
+                                  - copy_code
+                                  - url
+                                  - quick_reply
+                                  - voice_call
+                                  example: copy_code
+                          expiration_time_ms:
+                            type: string
+                            description: Epoch timestamp (in ms) when the offer expires.
+                            example: '1756980336345'
+                      type_mpm_template:
+                        type: object
+                        properties:
+                          thumbnail_product_retailer_id:
+                            type: string
+                            description: Thumbnail product retailer ID.
+                            example: J11124551
+                          sections:
+                            type: array
+                            description: List of sections.
+                            items:
+                              type: object
+                              properties:
+                                title:
+                                  type: string
+                                  description: Title of the section.
+                                  example: Hetvi 1
+                                product_items:
+                                  type: array
+                                  description: List of product items.
+                                  items:
+                                    type: object
+                                    properties:
+                                      product_retailer_id:
+                                        type: string
+                                        description: Product retailer ID.
+                                        example: JVS1204476
+                      type_spm_template:
+                        type: object
+                        properties:
+                          product:
+                            type: object
+                            properties:
+                              product_retailer_id:
+                                type: string
+                                description: Product retailer ID.
+                                example: '33398614556808'
+                              catalog_id:
+                                type: string
+                                description: Catalog ID.
+                                example: '1139381570069099'
+                          button:
+                            type: array
+                            description: List of buttons.
+                            items:
+                              type: object
+                              properties:
+                                sub_type:
+                                  type: string
+                                  description: type of button
+                                  enum:
+                                  - copy_code
+                                  - url
+                                  - quick_reply
+                                  example: copy_code
+                                payload:
+                                  type: string
+                                  description: payload of the button
+                                  example: '12345'
+                                index:
+                                  type: string
+                                  description: index of the button
+                                  example: '0'
+                      type_product_card_carousel:
+                        type: object
+                        properties:
+                          cards:
+                            type: array
+                            description: List of cards.
+                            items:
+                              type: object
+                              properties:
+                                card_index:
+                                  type: string
+                                  description: index of the card
+                                  example: '0'
+                                product_retailer_id:
+                                  type: string
+                                  description: product retailer ID
+                                  example: '1139381570069099'
+                                catalog_id:
+                                  type: string
+                                  description: catalog ID
+                                  example: '33398614556808'
+                                button:
+                                  type: array
+                                  description: List of buttons.
+                                  items:
+                                    type: object
+                                    properties:
+                                      sub_type:
+                                        type: string
+                                        description: type of button
+                                        enum:
+                                        - copy_code
+                                        - url
+                                        - quick_reply
+                                        example: copy_code
+                                      payload:
+                                        type: string
+                                        description: payload of the button
+                                        example: '12345'
+                                      index:
+                                        type: string
+                                        description: index of the button
+                                        example: '0'
+                      type_carousel_template:
+                        type: object
+                        properties:
+                          cards:
+                            type: array
+                            description: List of cards.
+                            items:
+                              type: object
+                              properties:
+                                card_index:
+                                  type: string
+                                  description: index of the card
+                                  example: '0'
+                                components:
+                                  type: array
+                                  description: List of components.
+                                  items:
+                                    type: object
+                                    properties:
+                                      type:
+                                        type: string
+                                        description: type of component
+                                        enum:
+                                        - header
+                                        - body
+                                        - button
+                                        example: header
+                                      parameters:
+                                        type: array
+                                        description: List of parameters.
+                                        items:
+                                          type: object
+                                          properties:
+                                            type:
+                                              type: string
+                                              description: type of parameter
+                                              enum:
+                                              - image
+                                              - text
+                                              - button
+                                              example: image
+                                            image:
+                                              type: object
+                                              description: Image parameter (used when type is 'image')
+                                              properties:
+                                                id:
+                                                  type: string
+                                                  description: image ID
+                                                  example: '1234567890'
+                                                url:
+                                                  type: string
+                                                  description: url of the image
+                                                  example: https://www.example.com
+                                            text:
+                                              type: string
+                                              description: text of the parameter (used when type is 'text')
+                                              example: text
+                                            button:
+                                              type: object
+                                              description: Button parameter (used when type is 'button')
+                                              properties:
+                                                sub_type:
+                                                  type: string
+                                                  description: type of button
+                                                  enum:
+                                                  - copy_code
+                                                  - url
+                                                  - quick_reply
+                                                  example: copy_code
+                                                payload:
+                                                  type: string
+                                                  description: payload of the button
+                                                  example: '12345'
+                                                index:
+                                                  type: string
+                                                  description: index of the button
+                                                  example: '0'
+                      type_location:
+                        type: array
+                        description: Location information to be sent with the message.
+                        items:
+                          type: object
+                          required:
+                          - longitude
+                          - latitude
+                          properties:
+                            longitude:
+                              type: number
+                              format: float
+                              description: Longitude coordinate of the location.
+                              example: -122.425332
+                            latitude:
+                              type: number
+                              format: float
+                              description: Latitude coordinate of the location.
+                              example: 37.758056
+                            name:
+                              type: string
+                              description: Name of the location.
+                              example: Facebook HQ
+                            address:
+                              type: string
+                              description: Full address of the location.
+                              example: 1 Hacker Way, Menlo Park, CA 94025
+                      type_contact:
+                        type: array
+                        description: Contact information to be sent with the message.
+                        items:
+                          type: object
+                          properties:
+                            addresses:
+                              type: array
+                              description: List of addresses for the contact.
+                              items:
+                                type: object
+                                properties:
+                                  city:
+                                    type: string
+                                    description: City name.
+                                    example: Pune
+                                  country:
+                                    type: string
+                                    description: Country name.
+                                    example: india
+                                  country_code:
+                                    type: string
+                                    description: Country dialing code.
+                                    example: '91'
+                                  state:
+                                    type: string
+                                    description: State or province name.
+                                    example: Maharashtra
+                                  street:
+                                    type: string
+                                    description: Street address.
+                                    example: sample
+                                  type:
+                                    type: string
+                                    description: Type of address.
+                                    enum:
+                                    - home
+                                    - work
+                                    example: home
+                                  zip:
+                                    type: string
+                                    description: Postal or ZIP code.
+                                    example: '421501'
+                            birthday:
+                              type: string
+                              format: date
+                              description: Contact's birthday in YYYY-MM-DD format.
+                              example: '1998-10-23'
+                            emails:
+                              type: array
+                              description: List of email addresses.
+                              items:
+                                type: object
+                                properties:
+                                  email:
+                                    type: string
+                                    format: email
+                                    description: Email address.
+                                    example: htshmadsf@gmail.com
+                                  type:
+                                    type: string
+                                    description: Type of email.
+                                    enum:
+                                    - personal
+                                    - work
+                                    example: personal
+                            name:
+                              type: object
+                              description: Contact's name information.
+                              properties:
+                                first_name:
+                                  type: string
+                                  description: First name of the contact.
+                                  example: hitesh
+                                formatted_name:
+                                  type: string
+                                  description: Formatted full name of the contact.
+                                  example: hitesh
+                                last_name:
+                                  type: string
+                                  description: Last name of the contact.
+                                  example: madgulkar
+                            org:
+                              type: object
+                              description: Organization information for the contact.
+                              properties:
+                                company:
+                                  type: string
+                                  description: Company name.
+                                  example: netcore
+                                department:
+                                  type: string
+                                  description: Department name.
+                                  example: engineering
+                                title:
+                                  type: string
+                                  description: Job title.
+                                  example: developer
+                            phones:
+                              type: array
+                              description: List of phone numbers.
+                              items:
+                                type: object
+                                properties:
+                                  phone:
+                                    type: string
+                                    description: Phone number without country code.
+                                    example: '9049871578'
+                                  type:
+                                    type: string
+                                    description: Type of phone number.
+                                    enum:
+                                    - mobile
+                                    - home
+                                    - work
+                                    example: mobile
+                                  wa_id:
+                                    type: string
+                                    description: WhatsApp ID with country code.
+                                    example: '919049871578'
+                            urls:
+                              type: array
+                              description: List of URLs associated with the contact.
+                              items:
+                                type: object
+                                properties:
+                                  type:
+                                    type: string
+                                    description: Type of URL.
+                                    example: email
+                                  url:
+                                    type: string
+                                    format: uri
+                                    description: URL or email address.
+                                    example: hcfgftshmadfgfghhulhhkar@gmail.com
+                      type_text:
+                        type: array
+                        description: Interactive text message without header.
+                        items:
+                          type: object
+                          properties:
+                            content:
+                              type: string
+                              description: Text content of the message.
+                              example: Visit our office website - https://netcorecloud.com/industries/business-and-financial-services/
+                      type_interactive:
+                        type: array
+                        description: Interactive message configuration with various action types.
+                        items:
+                          type: object
+                          required:
+                          - type
+                          properties:
+                            type:
+                              type: string
+                              description: Type of interactive message.
+                              enum:
+                              - button
+                              - list
+                              - product
+                              - product_list
+                              - flow
+                              - cta_url
+                              - location_request_message
+                              - address_message
+                              - order_status
+                              - order_detail
+                              example: button
+                            header:
+                              type: object
+                              description: Header content for the interactive message.
+                              properties:
+                                type:
+                                  type: string
+                                  description: Type of header media.
+                                  enum:
+                                  - document
+                                  - image
+                                  - video
+                                  - text
+                                  example: image
+                                url:
+                                  type: string
+                                  format: uri
+                                  description: URL of the header media file.
+                                  example: https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg
+                                filename:
+                                  type: string
+                                  description: Filename for document headers.
+                                  example: document.pdf
+                                text:
+                                  type: string
+                                  description: Text content for text headers.
+                                  example: Header text
+                            footer:
+                              type: string
+                              description: Footer text for the message.
+                              example: This is Footer
+                            body:
+                              type: string
+                              description: Main body text of the interactive message.
+                              example: body text here
+                            action:
+                              type: array
+                              description: Action configuration for interactive elements.
+                              items:
+                                type: object
+                                properties:
+                                  name:
+                                    type: string
+                                    description: Name of the action type.
+                                    enum:
+                                    - send_location
+                                    - address_message
+                                    example: send_location
+                                  buttons:
+                                    type: array
+                                    description: List of interactive buttons.
+                                    items:
+                                      type: object
+                                      properties:
+                                        type:
+                                          type: string
+                                          description: Type of button.
+                                          enum:
+                                          - reply
+                                          example: reply
+                                        name:
+                                          type: string
+                                          description: Name of the button (for cta_url type).
+                                          example: cta_url
+                                        reply:
+                                          type: object
+                                          description: Reply button configuration.
+                                          properties:
+                                            id:
+                                              type: string
+                                              description: Unique ID for the reply button.
+                                              example: '1'
+                                            title:
+                                              type: string
+                                              description: Display title for the reply button.
+                                              example: hi
+                                        parameters:
+                                          type: object
+                                          description: Parameters for CTA URL buttons.
+                                          properties:
+                                            display_text:
+                                              type: string
+                                              description: Text displayed on the button.
+                                              example: Visit Website
+                                            url:
+                                              type: string
+                                              format: uri
+                                              description: URL to open when button is clicked.
+                                              example: https://www.example.com
+                                  parameters:
+                                    type: object
+                                    description: Parameters for address_message action.
+                                    properties:
+                                      payment_type:
+                                        type: string
+                                        description: Payment mode for order details flow.
+                                        example: upi
+                                      payment_configuration:
+                                        type: string
+                                        description: Payment configuration name configured for the selected payment type.
+                                        example: dhruv_upi
+                                      country:
+                                        type: string
+                                        description: Country code for address validation.
+                                        example: IN
+                                      values:
+                                        type: object
+                                        description: Address field values.
+                                        properties:
+                                          name:
+                                            type: string
+                                            description: Customer name.
+                                            example: CUSTOMER_NAME
+                                          phone_number:
+                                            type: string
+                                            description: Customer phone number with country code.
+                                            example: +91xxxxxxxxxx
+                                          in_pin_code:
+                                            type: string
+                                            description: PIN code (India specific).
+                                            example: '666666'
+                                          address:
+                                            type: string
+                                            description: Street address.
+                                            example: Some other location
+                                          city:
+                                            type: string
+                                            description: City name.
+                                            example: Delhi
+                                          state:
+                                            type: string
+                                            description: State or province.
+                                            example: Maha
+                                          building_name:
+                                            type: string
+                                            description: Building or apartment name.
+                                            example: Nandgopal
+                      type_media:
+                        type: array
+                        description: Media attachments to be sent with the message.
+                        items:
+                          type: object
+                          properties:
+                            attachments:
+                              type: array
+                              description: List of media attachments.
+                              items:
+                                type: object
+                                properties:
+                                  attachment_type:
+                                    type: string
+                                    description: Type of media attachment.
+                                    enum:
+                                    - sticker
+                                    - image
+                                    - video
+                                    - audio
+                                    - document
+                                    example: sticker
+                                  attachment_url:
+                                    type: string
+                                    format: uri
+                                    description: Public URL of the media attachment.
+                                    example: https://www.tyntec.com/sites/default/files/2020-07/tyntec_rocket_sticker_512px_001_.webp
+                                  caption:
+                                    type: string
+                                    description: Caption text for the media attachment.
+                                    example: ''
+                      context:
+                        type: object
+                        description: Context information for replying to or reacting to a specific message.
+                        properties:
+                          message_id:
+                            type: string
+                            description: WhatsApp message ID to reply to or react to.
+                            example: wamid.HBgLMTY0NjcwNDM1OTUVAgASGBQzQTdCNTg5RjY1MEMyRjlGMjRGNgA=
+            examples:
+              DirectSendMediaHeader:
+                summary: Direct send utility message with Media Header.
+                description: directly send utility message with an auto generated template.
+                value:
+                  message:
+                  - cta_link_track: '1'
+                    recipient_whatsapp: '916267725099'
+                    message_type: interactive
+                    recipient_type: individual
+                    source: ''
+                    x-apiheader: promo_tracking_code
+                    ttl_seconds: '600'
+                    category: utility
+                    type_interactive:
+                    - type: cta_url
+                      header:
+                        type: image
+                        url: https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSV8jDeR8_JWiDCtdwH3Ke39AiBsq1RZL6drQ&s
+                      body: Enjoy 20% off on your first order. Click the button below to shop now!, https://www.youtube.com
+                      action:
+                      - buttons:
+                        - name: cta_url
+                          parameters:
+                            display_text: Shop Now
+                            url: https://www.google.com
+              DirectTextMessage:
+                summary: Direct send utility text message.
+                description: directly send utility text message with an auto generated template.
+                value:
+                  message:
+                  - recipient_whatsapp: '916267725099'
+                    recipient_type: individual
+                    message_type: text
+                    source: source
+                    x-apiheader: custom_data
+                    category: utility
+                    type_text:
+                    - content: Visit our office website - https://netcorecloud.com/industries/business-and-financial-services/
+              TextTemplate:
+                summary: Text Template
+                description: Send a text template with placeholder values.
+                value:
+                  message:
+                  - recipient_whatsapp: '919876543210'
+                    recipient_type: individual
+                    message_type: template
+                    source: 461089f9-1000-4211-b182-c7f0291f3d45
+                    x-apiheader: custom_data
+                    retry_enabled: '1'
+                    type_template:
+                    - name: text_template_sample
+                      attributes:
+                      - Raj
+                      - 'Order #12345'
+                      language:
+                        locale: en
+                        policy: deterministic
+              MediaTemplateURL:
+                summary: Media Template (URL)
+                description: Send a media template using a public media URL.
+                value:
+                  message:
+                  - recipient_whatsapp: '919876543210'
+                    recipient_type: individual
+                    message_type: media_template
+                    source: 461089f9-1000-4211-b182-c7f0291f3d45
+                    x-apiheader: custom_data
+                    retry_enabled: '1'
+                    type_media_template:
+                      type: image
+                      url: https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Sunflower_from_Silesia2.jpg/800px-Sunflower_from_Silesia2.jpg
+                    type_template:
+                    - name: media_template_image
+                      attributes:
+                      - Raj
+                      language:
+                        locale: en
+                        policy: deterministic
+              CPRTemplate:
+                summary: Call Permission Request Template Message
+                description: send a call permission request message to the user.
+                value:
+                  message:
+                  - recipient_type: individual
+                    recipient_whatsapp: '911234567890'
+                    source: source-sample
+                    cta_link_track: '1'
+                    message_type: call_permission_request
+                    x-apiheader: XAPIHEADER
+                    type_template:
+                    - name: sample_cpr_template
+                      attributes:
+                      - something
+                      language:
+                        locale: en
+                        policy: deterministic
+                    type_media_template:
+                      type: image
+                      url: https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Sunflower_from_Silesia2.jpg/800px-Sunflower_from_Silesia2.jpg
+              CPRInteractive:
+                summary: Call Permission Request Interactive Message
+                description: send a call permission request interactive message to the user.
+                value:
+                  message:
+                  - recipient_whatsapp: '916267725099'
+                    message_type: interactive
+                    recipient_type: individual
+                    source: e4aba266d56a3726c36a2053d70c989d
+                    x-apiheader: custom_data
+                    type_interactive:
+                    - type: call_permission_request
+                      body: Please allow us to call you!
+                      action:
+                      - name: call_permission_request
+              MediaTemplateWithVoiceButton:
+                summary: Media Template with Voice Button
+                description: send a media template with a voice button.
+                value:
+                  message:
+                  - recipient_whatsapp: '916267725098'
+                    message_type: media_template
+                    recipient_type: individual
+                    source: ravi
+                    x-apiheader: kiran
+                    type_template:
+                    - name: voice_call_004
+                      language:
+                        locale: en
+                        policy: deterministic
+                    type_media_template:
+                      type: image
+                      url: https://cpaas-media-us.s3.amazonaws.com/whatsapp-media-qa/Screenshot%20from%202024-09-12%2010-54-50.png
+                      body: call us now
+                      button:
+                      - index: '0'
+                        payload: call_now
+                        sub_type: voice_call
+                        ttl_minutes: 1440
+              InteractiveVoiceButton:
+                summary: Interactive Voice Button Message
+                description: send an interactive button message with a voice button.
+                value:
+                  message:
+                  - recipient_whatsapp: '916267725098'
+                    message_type: interactive
+                    recipient_type: individual
+                    source: source
+                    x-apiheader: x-apiheader
+                    type_interactive:
+                    - type: voice_call
+                      header:
+                        type: image
+                        url: https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Sunflower_from_Silesia2.jpg/800px-Sunflower_from_Silesia2.jpg
+                      body: body text here
+                      action:
+                      - buttons:
+                        - name: voice_call
+                          parameters:
+                            display_text: call me now
+                            payload: payload
+                            ttl_minutes: 4738
+              MediaTemplateID:
+                summary: Media Template (Media ID)
+                description: Send a media template using a pre-uploaded media ID.
+                value:
+                  message:
+                  - recipient_whatsapp: '919876543210'
+                    recipient_type: individual
+                    message_type: media_template
+                    source: 461089f9-1000-4211-b182-c7f0291f3d45
+                    x-apiheader: custom_data
+                    type_media_template:
+                      type: image
+                      media_id: '905456789045678'
+                    type_template:
+                    - name: media_template_image
+                      attributes:
+                      - Raj
+                      language:
+                        locale: en
+                        policy: deterministic
+              CouponTemplate:
+                summary: Coupon Code Template
+                description: Send a template with a **copy_code** button for promotions.
+                value:
+                  message:
+                  - recipient_whatsapp: '919664593753'
+                    message_type: media_template
+                    recipient_type: individual
+                    source: 4a617382eddf22b33ec5fad4b8573706
+                    x-apiheader: custom_data
+                    type_media_template:
+                      type: image
+                      url: https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Sunflower_from_Silesia2.jpg/800px-Sunflower_from_Silesia2.jpg
+                      filename: Sunflower image.jpg
+                      button:
+                      - index: '0'
+                        payload: '12345'
+                        sub_type: copy_code
+                    type_template:
+                    - name: kopkod_temp1
+                      attributes:
+                      - Raj
+                      - '3456'
+                      language:
+                        locale: en
+                        policy: deterministic
+              CarouselTemplate:
+                summary: Carousel Template Message
+                description: Send a multi-card catalog message with product sections.
+                value:
+                  message:
+                  - recipient_whatsapp: '917890123456'
+                    recipient_type: individual
+                    message_type: interactive
+                    source: test-source
+                    x-apiheader: custom_data
+                    type_interactive_template:
+                      type: product_list
+                      header:
+                        type: text
+                        text: Choose your favorite product
+                      body:
+                        text: Explore our amazing collection
+                      footer:
+                        text: Powered by Netcore
+                      action:
+                        catalog_id: '123456789'
+                        sections:
+                        - title: Featured Products
+                          product_items:
+                          - product_retailer_id: prod_001
+                          - product_retailer_id: prod_002
+              LimitedTimeOffer:
+                summary: Limited Time Offer Template
+                description: Send a time-bound promo with optional copy_code and URL buttons.
+                value:
+                  message:
+                  - recipient_whatsapp: '911234567890'
+                    recipient_type: individual
+                    message_type: limited_time_offer_template
+                    source: source-sample
+                    cta_link_track: '1'
+                    x-apiheader: XAPIHEADER
+                    type_template:
+                    - name: lto_template_image_qa_2_3
+                      attributes:
+                      - 50% OFF
+                      - 24 hours
+                      - SAVE50
+                      language:
+                        locale: en
+                        policy: deterministic
+                    type_media_template:
+                      type: image
+                      url: https://cpaas-media-us.s3.amazonaws.com/whatsapp-media-qa/Screenshot from 2024-09-12 10-54-50.png
+                      button:
+                      - index: '0'
+                        payload: '12345'
+                        sub_type: copy_code
+                      - index: '1'
+                        payload: View!
+                        sub_type: url
+                      expiration_time_ms: '1756980336345'
+              SPMTemplate:
+                summary: Single Product Message
+                description: Send a single product template with optional copy_code button.
+                value:
+                  message:
+                  - recipient_whatsapp: '911234567809'
+                    message_type: spm_template
+                    recipient_type: individual
+                    source: asdfjasdfjsl
+                    x-apiheader: test12345
+                    cta_link_track: '1'
+                    type_template:
+                    - name: abcd
+                      attributes:
+                      - hello
+                      - http://cpaas-media-us.s3.amazonaws.com/whatsapp-media-qa/Screenshot%20from%202024-09-12%2010-54-50.png
+                    type_spm_template:
+                      product:
+                        product_retailer_id: '33398614556808'
+                        catalog_id: '1139381570069099'
+                      button:
+                      - payload: OFF150
+                        index: 0
+                        sub_type: copy_code
+              ProductCardCarouselTemplate:
+                summary: Product Card Carousel Template
+                description: Send a carousel of product cards with URL buttons.
+                value:
+                  message:
+                  - recipient_whatsapp: '911234567810'
+                    message_type: product_card_carousel_template
+                    recipient_type: individual
+                    source: cpaas
+                    x-apiheader: xapi payload
+                    cta_link_track: true
+                    type_product_card_carousel:
+                      cards:
+                      - card_index: '0'
+                        button:
+                        - sub_type: url
+                          index: '0'
+                          payload: https://www.google.com
+                        product_retailer_id: '67'
+                        catalog_id: '1139381570069099'
+                      - card_index: '1'
+                        button:
+                        - sub_type: url
+                          index: '0'
+                          payload: https://www.google.com
+                        product_retailer_id: '70'
+                        catalog_id: '1139381570069099'
+                    type_template:
+                    - name: text_template_api_08
+                      attributes:
+                      - https://www.google.com
+                      language:
+                        locale: ml
+                        policy: deterministic
+              MultiProductTemplate:
+                summary: Multi-Product Template
+                description: Send a catalog-based multi-product list with sections.
+                value:
+                  message:
+                    recipient_whatsapp: '919876543210'
+                    recipient_type: individual
+                    message_type: interactive
+                    source: catalog-source
+                    x-apiheader: custom_data
+                    type_interactive_template:
+                      type: product_list
+                      header:
+                        type: text
+                        text: Our Product Catalog
+                      body:
+                        text: Browse our latest collection
+                      action:
+                        catalog_id: '987654321'
+                        sections:
+                        - title: Electronics
+                          product_items:
+                          - product_retailer_id: elec_001
+                          - product_retailer_id: elec_002
+                        - title: Fashion
+                          product_items:
+                          - product_retailer_id: fashion_001
+              DeflectorMessage:
+                summary: Deflector API Message
+                description: Send a multi-channel template with automatic failover.
+                value:
+                  recipient_id: '123456789'
+                  message_type: template
+                  source: 461089f9-1000-4211-b182-c7f0291f3d45
+                  x-apiheader: custom_data
+                  deflector_channels:
+                  - channel: WHATSAPP
+                    priority: 0
+                    dwell_time: 120
+                    template_name: welcome_message
+                    template_language: en
+                  - channel: SMS
+                    priority: 1
+                    dwell_time: 60
+                    message: Welcome to our service!
+              DynamicReplyButtonList:
+                summary: Dynamic Reply Button (List Menu)
+                description: Send an interactive list with selectable rows.
+                value:
+                  message:
+                  - recipient_whatsapp: '919049871578'
+                    message_type: interactive
+                    recipient_type: individual
+                    source: e4aba266d56a3726c36a2053d70c989d
+                    x-apiheader: custom_data
+                    type_interactive:
+                    - type: list
+                      header:
+                        type: text
+                        text: header text
+                      footer: ''
+                      body: body text
+                      action:
+                      - button: Menu List
+                        sections:
+                        - title: Menu Items
+                          rows:
+                          - id: text
+                            title: text
+                            description: text1
+                          - id: text 2
+                            title: text 2
+                            description: text 2
+                          - id: text 3
+                            title: text 3
+                            description: text 3
+              ContactMessage:
+                summary: Contact Message
+                description: Send a contact card with full contact details.
+                value:
+                  message:
+                  - recipient_whatsapp: '91003393'
+                    recipient_type: individual
+                    message_type: contacts
+                    source: 329f-998
+                    x-apiheader: custom_data
+                    type_contact:
+                    - addresses:
+                      - city: Pune
+                        country: india
+                        country_code: '91'
+                        state: Maharashtra
+                        street: sample
+                        type: home
+                        zip: '421501'
+                      birthday: '1998-10-23'
+                      emails:
+                      - email: htshmadsf@gmail.com
+                        type: personal
+                      name:
+                        first_name: hitesh
+                        formatted_name: hitesh
+                        last_name: madgulkar
+                      org:
+                        company: netcore
+                        department: engineering
+                        title: developer
+                      phones:
+                      - phone: '9049871578'
+                        type: mobile
+                        wa_id: '919049871578'
+                      urls:
+                      - type: email
+                        url: contact@example.com
+              LocationMessage:
+                summary: Location Message
+                description: Send a location with coordinates, name, and address.
+                value:
+                  message:
+                  - recipient_whatsapp: '919049871578'
+                    recipient_type: individual
+                    message_type: location
+                    source: 329f-998
+                    x-apiheader: custom_data
+                    type_location:
+                    - longitude: -122.425332
+                      latitude: 37.758056
+                      name: Facebook HQ
+                      address: 1 Hacker Way, Menlo Park, CA 94025
+              StickerMessage:
+                summary: Sticker Message
+                description: Send a static or animated sticker via media attachment.
+                value:
+                  message:
+                  - recipient_whatsapp: '919999339598'
+                    recipient_type: individual
+                    message_type: media
+                    source: 461089f9-1000-4211-b182-c7f0291f3d45
+                    type_media:
+                    - attachments:
+                      - attachment_type: sticker
+                        attachment_url: https://www.tyntec.com/sites/default/files/2020-07/tyntec_rocket_sticker_512px_001_.webp
+                        caption: ''
+              TextMessageWithCTA:
+                summary: Text with CTA Button
+                description: Send an interactive **CTA URL** message with link tracking.
+                value:
+                  message:
+                  - cta_link_track: '1'
+                    recipient_whatsapp: '918369795231'
+                    message_type: interactive
+                    recipient_type: individual
+                    source: e4aba266d56a3726c36a2053d70c989d
+                    x-apiheader: promo_tracking_code
+                    type_interactive:
+                    - type: cta_url
+                      header:
+                        type: text
+                        url: https://yourbrand.com/offer
+                      body: Enjoy 20% off on your first order. Click the button below to shop now!
+                      action:
+                      - buttons:
+                        - name: shop_now
+                          parameters:
+                            display_text: Shop Now
+                            url: https://yourbrand.com/offer
+              BatchMessageSending:
+                summary: Batch Interactive Message
+                description: Send multiple messages in one request payload.
+                value:
+                  message:
+                  - cta_link_track: '1'
+                    recipient_whatsapp: '916267725099'
+                    message_type: interactive
+                    recipient_type: individual
+                    source: ''
+                    x-apiheader: promo_tracking_code
+                    type_interactive:
+                    - type: cta_url
+                      header:
+                        type: image
+                        url: https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSV8jDeR8_JWiDCtdwH3Ke39AiBsq1RZL6drQ&s
+                      body: Enjoy 20% off on your first order. Click the button below to shop now!,
+                      action:
+                      - buttons:
+                        - name: cta_url
+                          parameters:
+                            display_text: Shop Now
+                            url: https://www.google.com
+                  - cta_link_track: '1'
+                    recipient_whatsapp: '916267725099'
+                    message_type: interactive
+                    recipient_type: individual
+                    source: ''
+                    x-apiheader: promo_tracking_code
+                    type_interactive:
+                    - type: cta_url
+                      header:
+                        type: image
+                        url: https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSV8jDeR8_JWiDCtdwH3Ke39AiBsq1RZL6drQ&s
+                      body: Enjoy 20% off on your first order. Click the button below to shop now!, https://www.youtube.com
+                      action:
+                      - buttons:
+                        - name: cta_url
+                          parameters:
+                            display_text: Shop Now
+                            url: https://www.netcorecloud.com
+              BatchMediaTemplate:
+                summary: Batch Media Template
+                description: Send multiple media template messages in a single request payload.
+                value:
+                  message:
+                  - recipient_whatsapp: '919664593753'
+                    message_type: media_template
+                    recipient_type: individual
+                    source: akshay
+                    cta_link_track: 1
+                    type_media_template:
+                      type: image
+                      url: https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Sunflower_from_Silesia2.jpg/800px-Sunflower_from_Silesia2.jpg
+                      filename: Sunflower image.jpg
+                      button:
+                      - index: '0'
+                        payload: https://www.netcorecloud.com
+                    type_template:
+                    - name: temp_dynamic_btn
+                      attributes:
+                      - akshay
+                      language:
+                        locale: en
+                        policy: deterministic
+                  - recipient_whatsapp: '919664593753'
+                    message_type: media_template
+                    recipient_type: individual
+                    source: akshay
+                    cta_link_track: 1
+                    type_media_template:
+                      type: image
+                      url: https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Sunflower_from_Silesia2.jpg/800px-Sunflower_from_Silesia2.jpg
+                      filename: Sunflower image.jpg
+                      button:
+                      - index: '0'
+                        payload: https://www.netcorecloud.com
+                    type_template:
+                    - name: temp_dynamic_btn
+                      attributes:
+                      - akshay
+                      language:
+                        locale: en
+                        policy: deterministic
+                  - recipient_whatsapp: '919664593753'
+                    message_type: media_template
+                    recipient_type: individual
+                    source: akshay
+                    cta_link_track: 1
+                    type_media_template:
+                      type: image
+                      url: https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Sunflower_from_Silesia2.jpg/800px-Sunflower_from_Silesia2.jpg
+                      filename: Sunflower image.jpg
+                      button:
+                      - index: '0'
+                        payload: https://www.netcorecloud.com
+                    type_template:
+                    - name: temp_dynamic_btn
+                      attributes:
+                      - akshay
+                      language:
+                        locale: en
+                        policy: deterministic
+                  - recipient_whatsapp: '919664593753'
+                    message_type: media_template
+                    recipient_type: individual
+                    source: akshay
+                    cta_link_track: 1
+                    type_media_template:
+                      type: image
+                      url: https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Sunflower_from_Silesia2.jpg/800px-Sunflower_from_Silesia2.jpg
+                      filename: Sunflower image.jpg
+                      button:
+                      - index: '0'
+                        payload: https://www.netcorecloud.com
+                    type_template:
+                    - name: temp_dynamic_btn
+                      attributes:
+                      - akshay
+                      language:
+                        locale: en
+                        policy: deterministic
+                  - recipient_whatsapp: '919664593753'
+                    message_type: media_template
+                    recipient_type: individual
+                    source: akshay
+                    cta_link_track: 1
+                    type_media_template:
+                      type: image
+                      url: https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Sunflower_from_Silesia2.jpg/800px-Sunflower_from_Silesia2.jpg
+                      filename: Sunflower image.jpg
+                      button:
+                      - index: '0'
+                        payload: https://www.netcorecloud.com
+                    type_template:
+                    - name: temp_dynamic_btn
+                      attributes:
+                      - akshay
+                      language:
+                        locale: en
+                        policy: deterministic
+                  - recipient_whatsapp: '919664593753'
+                    message_type: media_template
+                    recipient_type: individual
+                    source: akshay
+                    cta_link_track: 1
+                    type_media_template:
+                      type: image
+                      url: https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Sunflower_from_Silesia2.jpg/800px-Sunflower_from_Silesia2.jpg
+                      filename: Sunflower image.jpg
+                      button:
+                      - index: '0'
+                        payload: https://www.netcorecloud.com
+                    type_template:
+                    - name: temp_dynamic_btn
+                      attributes:
+                      - akshay
+                      language:
+                        locale: en
+                        policy: deterministic
+                  - recipient_whatsapp: '919664593753'
+                    message_type: media_template
+                    recipient_type: individual
+                    source: akshay
+                    cta_link_track: 1
+                    type_media_template:
+                      type: image
+                      url: https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Sunflower_from_Silesia2.jpg/800px-Sunflower_from_Silesia2.jpg
+                      filename: Sunflower image.jpg
+                      button:
+                      - index: '0'
+                        payload: https://www.netcorecloud.com
+                    type_template:
+                    - name: temp_dynamic_btn
+                      attributes:
+                      - akshay
+                      language:
+                        locale: en
+                        policy: deterministic
+              LocationRequestMessage:
+                summary: Location Request Message
+                description: Request the user to share their current location.
+                value:
+                  message:
+                  - recipient_whatsapp: '919373663838'
+                    message_type: interactive
+                    recipient_type: individual
+                    source: ''
+                    x-apiheader: custom_data
+                    type_interactive:
+                    - type: location_request_message
+                      body: Please share your current location
+                      action:
+                      - name: send_location
+              ListMenuMessage:
+                summary: List Menu Message (Multiple Sections)
+                description: Send a list with multiple sections and rows.
+                value:
+                  message:
+                  - recipient_whatsapp: '919999339598'
+                    message_type: interactive
+                    recipient_type: individual
+                    source: e4aba266d56a3726c36a2053d70c989d
+                    x-apiheader: custom_data
+                    type_interactive:
+                    - type: list
+                      header:
+                        type: text
+                        text: header text
+                      footer: footer text
+                      body: body text
+                      action:
+                      - button: Menu List
+                        sections:
+                        - title: Menu Items1
+                          rows:
+                          - id: text11
+                            title: text
+                            description: text1
+                        - title: Menu Items2
+                          rows:
+                          - id: text21
+                            title: text
+                            description: text1
+                        - title: Menu Items3
+                          rows:
+                          - id: text31
+                            title: text
+                            description: text1
+              OneTapAuthenticationTemplate:
+                summary: One-Tap Authentication Template
+                description: Send an authentication template with an image header.
+                value:
+                  message:
+                  - recipient_whatsapp: '916361467892'
+                    cta_link_track: '1'
+                    recipient_type: individual
+                    message_type: media_template
+                    source: 461089f9-1000-4211-b182-c7f0291f3d45
+                    x-apiheader: ''
+                    type_media_template:
+                      type: image
+                      url: https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Sunflower_from_Silesia2.jpg/800px-Sunflower_from_Silesia2.jpg
+                    type_template:
+                    - name: imagewithvar
+                      attributes:
+                      - '{{ravi}}'
+                      - '[[kiran]]'
+                      language:
+                        locale: en
+                        policy: deterministic
+                    ttl: '0'
+              CopyCodeAuthenticationTemplate:
+                summary: Copy-Code Authentication Template
+                description: Send an authentication template with a **copy_code** button.
+                value:
+                  message:
+                  - recipient_whatsapp: '916361467892'
+                    cta_link_track: '1'
+                    recipient_type: individual
+                    message_type: media_template
+                    source: 461089f9-1000-4211-b182-c7f0291f3d45
+                    x-apiheader: ''
+                    type_media_template:
+                      type: image
+                      url: https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Sunflower_from_Silesia2.jpg/800px-Sunflower_from_Silesia2.jpg
+                      button:
+                      - index: '0'
+                        payload: OFF150
+                        sub_type: copy_code
+                    type_template:
+                    - name: imagewithvar
+                      attributes:
+                      - '{{ravi}}'
+                      - '[[kiran]]'
+                      language:
+                        locale: en
+                        policy: deterministic
+                    ttl: '0'
+              OrderStatusUpdateTemplate:
+                summary: Order Status Update Template
+                description: Send a template with order status and reference details.
+                value:
+                  message:
+                  - recipient_whatsapp: '916361467892'
+                    recipient_type: individual
+                    message_type: order_status_template
+                    source: ''
+                    x-apiheader: custom_data
+                    type_template:
+                    - name: os_withvar_sync_temp
+                      attributes:
+                      - https://www.google.com
+                      - ravi
+                      language:
+                        locale: en
+                        policy: deterministic
+                    type_order_status_template:
+                      reference_id: '889'
+                      order:
+                        status: pending
+                        description: nc description
+              OrderDetailsTemplate:
+                summary: Order Details Template
+                description: Send detailed order information with payment options.
+                value:
+                  message:
+                  - recipient_whatsapp: '916361467892'
+                    recipient_type: individual
+                    message_type: order_details_template
+                    source: ''
+                    x-apiheader: custom_data
+                    type_template:
+                    - name: od_utility_textheader_sync
+                      attributes:
+                      - https://www.youtube.com
+                      language:
+                        locale: en
+                        policy: deterministic
+                      header_attributes:
+                      - ravi
+                    type_order_detail_template:
+                      currency: INR
+                      order:
+                        discount:
+                          offset: '100'
+                          value: '100'
+                        items:
+                        - amount:
+                            offset: '100'
+                            value: '100'
+                          image:
+                            link: https://upload.wikimedia.org/wikipedia/commons/7/70/Example.png
+                          name: netcore product 1
+                          quantity: '1'
+                          country_of_origin: india
+                          importer_name: netcore qa
+                          importer_address:
+                            address_line1: koramangala
+                            city: bangalore
+                            country_code: india
+                            postal_code: '560001'
+                        - amount:
+                            offset: '100'
+                            value: '100'
+                          image:
+                            link: https://download.samplelib.com/png/sample-boat-400x300.png
+                          name: netcore product 2
+                          quantity: '1'
+                          country_of_origin: india
+                          importer_name: netcore qa
+                          importer_address:
+                            address_line1: thane
+                            city: mumbai
+                            country_code: '91'
+                            postal_code: '600001'
+                        - amount:
+                            offset: '100'
+                            value: '100'
+                          image:
+                            link: https://download.samplelib.com/png/sample-boat-400x300.png
+                          name: netcore product 3
+                          quantity: '1'
+                          country_of_origin: india
+                          importer_name: netcore qa
+                          importer_address:
+                            address_line1: thane
+                            city: mumbai
+                            country_code: '91'
+                            postal_code: '600001'
+                        - amount:
+                            offset: '100'
+                            value: '100'
+                          image:
+                            link: https://download.samplelib.com/png/sample-boat-400x300.png
+                          name: netcore product 4
+                          quantity: '1'
+                          country_of_origin: india
+                          importer_name: netcore qa
+                          importer_address:
+                            address_line1: thane
+                            city: mumbai
+                            country_code: '91'
+                            postal_code: '600001'
+                        - amount:
+                            offset: '100'
+                            value: '100'
+                          image:
+                            link: https://download.samplelib.com/png/sample-boat-400x300.png
+                          name: netcore product 5
+                          quantity: '1'
+                          country_of_origin: india
+                          importer_name: netcore qa
+                          importer_address:
+                            address_line1: thane
+                            city: mumbai
+                            country_code: '91'
+                            postal_code: '600001'
+                        - amount:
+                            offset: '100'
+                            value: '100'
+                          image:
+                            link: https://download.samplelib.com/png/sample-boat-400x300.png
+                          name: netcore product 6
+                          quantity: '1'
+                          country_of_origin: india
+                          importer_name: netcore qa
+                          importer_address:
+                            address_line1: thane
+                            city: mumbai
+                            country_code: '91'
+                            postal_code: '600001'
+                        - amount:
+                            offset: '100'
+                            value: '100'
+                          image:
+                            link: https://download.samplelib.com/png/sample-boat-400x300.png
+                          name: netcore product 7
+                          quantity: '1'
+                          country_of_origin: india
+                          importer_name: netcore qa
+                          importer_address:
+                            address_line1: thane
+                            city: mumbai
+                            country_code: '91'
+                            postal_code: '600001'
+                        - amount:
+                            offset: '100'
+                            value: '100'
+                          image:
+                            link: https://download.samplelib.com/png/sample-boat-400x300.png
+                          name: netcore product 8
+                          quantity: '1'
+                          country_of_origin: india
+                          importer_name: netcore qa
+                          importer_address:
+                            address_line1: thane
+                            city: mumbai
+                            country_code: '91'
+                            postal_code: '600001'
+                        - amount:
+                            offset: '100'
+                            value: '100'
+                          image:
+                            link: https://download.samplelib.com/png/sample-boat-400x300.png
+                          name: netcore product 9
+                          quantity: 1
+                          country_of_origin: india
+                          importer_name: netcore qa
+                          importer_address:
+                            address_line1: thane
+                            city: mumbai
+                            country_code: '91'
+                            postal_code: '600001'
+                        - amount:
+                            offset: '100'
+                            value: '100'
+                          image:
+                            link: https://download.samplelib.com/png/sample-boat-400x300.png
+                          name: netcore product 10
+                          quantity: 1
+                          country_of_origin: india
+                          importer_name: netcore qa
+                          importer_address:
+                            address_line1: thane
+                            city: mumbai
+                            country_code: '91'
+                            postal_code: '600001'
+                        shipping:
+                          offset: '100'
+                          value: '0'
+                        status: pending
+                        subtotal:
+                          offset: '100'
+                          value: '1000'
+                        tax:
+                          offset: '100'
+                          value: '100'
+                      payment_settings:
+                      - type: payment_gateway
+                        payment_gateway:
+                          type: razorpay
+                          configuration_name: vishal_test_14_01
+                          razorpay:
+                            receipt: receipt-val
+                            notes:
+                              key1: val1
+                      reference_id: 990119-with10
+                      total_amount:
+                        offset: '100'
+                        value: '1000'
+                      type: physical-goods
+              OrderStatusInteractiveTemplate:
+                summary: Order Status Interactive Template
+                description: Send an interactive message displaying order status with action buttons.
+                value:
+                  message:
+                  - recipient_whatsapp: '916361467892'
+                    message_type: interactive
+                    recipient_type: individual
+                    source: ravi
+                    link_track: '0'
+                    x-apiheader: kiran
+                    type_interactive:
+                    - type: order_status
+                      body: body text here
+                      action:
+                      - name: review_order
+                        parameters:
+                          reference_id: KTRP10045
+                          order:
+                            status: completed
+                            description: This is description
+              OrderDetailsInteractiveTemplate:
+                summary: Order Details Interactive Template
+                description: Send an interactive message showing detailed order information with payment action.
+                value:
+                  message:
+                  - recipient_whatsapp: '916361467892'
+                    message_type: interactive
+                    recipient_type: individual
+                    source: ravi
+                    link_track: '0'
+                    x-apiheader: kiran
+                    type_interactive:
+                    - type: order_details
+                      header:
+                        type: image
+                        url: https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Sunflower_from_Silesia2.jpg/800px-Sunflower_from_Silesia2.jpg
+                      body: body text here
+                      footer: Kevit Technologies
+                      action:
+                      - name: review_and_pay
+                        parameters:
+                          reference_id: KTRP10045
+                          type: physical-goods
+                          payment_settings:
+                          - type: payment_gateway
+                            payment_gateway:
+                              type: razorpay
+                              configuration_name: xxxxxxxxx
+                              razorpay:
+                                receipt: 123131442-KT
+                                notes:
+                                  order_name: ORD-0022222
+                          currency: INR
+                          total_amount:
+                            value: 400
+                            offset: 100
+                          order:
+                            status: pending
+                            items:
+                            - retailer_id: '1010793'
+                              name: Kay Beauty Matte Drama Long Stay Lipstick
+                              amount:
+                                value: 100
+                                offset: 100
+                              quantity: 1
+                              country_of_origin: IN
+                              importer_name: Nykaa
+                              importer_address:
+                                address_line1: B8/733 nand nagri
+                                address_line2: police station
+                                city: East Delhi
+                                zone_code: DL
+                                postal_code: '110093'
+                                country_code: IN
+                            - retailer_id: '10205'
+                              name: NIVEA Body Lotion, Extra Whitening Cell Repair
+                              amount:
+                                value: 100
+                                offset: 100
+                              quantity: 1
+                              country_of_origin: IN
+                              importer_name: Nykaa
+                              importer_address:
+                                address_line1: B8/733 nand nagri
+                                address_line2: police station
+                                city: East Delhi
+                                zone_code: DL
+                                postal_code: '110093'
+                                country_code: IN
+                            subtotal:
+                              value: 200
+                              offset: 100
+                            tax:
+                              value: 100
+                              offset: 100
+                              description: optional_text
+                            shipping:
+                              value: 100
+                              offset: 100
+                              description: optional_text
+              OrderDetailsInteractiveUPITemplate:
+                summary: Order Details Interactive UPI
+                description: Send an interactive order details message with UPI payment configuration.
+                value:
+                  message:
+                  - recipient_whatsapp: '916267725099'
+                    message_type: interactive
+                    recipient_type: individual
+                    source: your_source
+                    link_track: '0'
+                    type_interactive:
+                    - type: order_details
+                      body: Please complete your payment
+                      footer: Powered by UPI
+                      action:
+                      - name: review_and_pay
+                        parameters:
+                          reference_id: REV_Z123A1212121212
+                          type: digital-goods
+                          payment_type: upi
+                          payment_configuration: dhruv_upi
+                          currency: INR
+                          total_amount:
+                            value: 1100
+                            offset: 100
+                          order:
+                            status: pending
+                            items:
+                            - name: Productname,forexamplebread
+                              amount:
+                                value: 1000
+                                offset: 100
+                              quantity: 1
+                              sale_amount:
+                                value: 1000
+                                offset: 100
+                              country_of_origin: india
+                              importer_name: netcore
+                              importer_address:
+                                address_line1: 8th Floor, A Wing, Lodha Supremus II,Road No. 22 Maharashtra - 400604
+                                address_line2: Wagle Industrial Estate
+                                city: Thane West
+                                zone_code: TH
+                                postal_code: '400604'
+                                country_code: IN
+                            subtotal:
+                              value: 1000
+                              offset: 100
+                            tax:
+                              value: 100
+                              offset: 100
+                              description: optional_text
+                            shipping:
+                              value: 100
+                              offset: 100
+                              description: optional_text
+                            discount:
+                              value: 100
+                              offset: 100
+                              description: optional_text
+                              discount_program_name: optional_text
+      responses:
+        '200':
+          description: Success response for single or batch requests.
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                SingleMessageSuccess:
+                  summary: Single message request
+                  value:
+                    status: success
+                    message: Request received successfully.
+                    data:
+                      id: 0f39d31c-6196-46ca-89fc-6325272fa248
+                BatchMessageSuccess:
+                  summary: Batch request request
+                  description: Returned when more than one object is sent in the `message` array.
+                  value:
+                    data:
+                      batch_id: 16d3ef77-069d-4433-9f93-9f41b12bcfd7
+                    message: Request received successfully.
+                    status: success
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer token authentication using JWT. Include the token in the Authorization header as 'Bearer <your_token>'.
+x-stoplight:
+  id: o7al2fnfvhxlr
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

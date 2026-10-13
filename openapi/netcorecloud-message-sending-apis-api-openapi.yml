@@ -1,0 +1,933 @@
+openapi: 3.2.0
+info:
+  title: RCS Message Sending APIs API
+  version: '1.0'
+  description: Comprehensive collection of RCS APIs that allow users to interact with .
+  license:
+    name: Proprietary
+    identifier: proprietary
+servers:
+- url: https://soipapi.netcorecloud.com
+  description: WhatsApp APIs Server
+tags:
+- name: Message Sending APIs
+paths:
+  /soip/rcs/v2/message:
+    parameters: []
+    post:
+      summary: Template Message API
+      tags:
+      - Message Sending APIs
+      operationId: postSoipRcsV2Message
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  messageId:
+                    type: string
+                  requestError:
+                    type: object
+                    properties:
+                      serviceException:
+                        type: object
+                        properties:
+                          messageId:
+                            type: string
+                          text:
+                            type: string
+                          validationErrors:
+                            type: 'null'
+                x-examples:
+                  Example 1:
+                    messageId: 8c5581b49869d0ebfed7e2d98c63f9dc
+                    requestError:
+                      serviceException:
+                        messageId: ''
+                        text: ''
+                        validationErrors: null
+              examples:
+                Example 1:
+                  value:
+                    messageId: string
+                    requestError:
+                      serviceException:
+                        messageId: string
+                        text: string
+                        validationErrors: null
+            application/xml:
+              schema:
+                type: object
+                properties: {}
+        '400':
+          description: "content type not valid header must contain \"Content-Type\" as \"application/json\"\n\n \n{\n    \"requestError\": {\n        \"serviceException\": {\n            \"messageId\": \"\",\n            \"text\": \"ContentType not valid\",\n            \"validationErrors\": null\n        }\n    }\n}\n"
+        '401':
+          description: "Unauthenticated: apikey not found/ unable to get feedid/clientid check if api_key is correct, if yes, contact SRE to for onboarding.\n\n{\n    \"requestError\": {\n        \"serviceException\": {\n            \"messageId\": \"8f1500e4319ee7ab4b0ff04103cce250\",\n            \"text\": \"Unauthenticated: apikey not found/ unable to get feedid/clientid\",\n            \"validationErrors\": [\n                \"apikey not valid\"\n            ]\n        }\n    }\n}\n"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              x-examples:
+                Example 1:
+                  messages:
+                  - to: '918983190458'
+                    content:
+                      type: template
+                      templateCode: employee_campaign
+                      attributes:
+                        FIRSTNAME: Akash
+                    callbackData: '7890986'
+                    ttl: 10s
+                    expireTime: '2023-06-20T15:39:30Z'
+                    tags:
+                    - '12'
+                  fallbackchain:
+                  - channel: RCS
+                  - from: Travel agent
+                    channel: SMS
+                    text: Test Messages [FIRSTNAME] 😘🫣👿😻🤬 Netcore
+                Non Template Text Message:
+                  messages:
+                  - to: '919999339598'
+                    content:
+                      type: text
+                      text: Welcome to Netcore RCS Demo 2.0
+                    callbackData: '7890986'
+                    tags:
+                    - '12'
+                  fallbackchain:
+                  - channel: RCS
+                Non Template Text Message with Suggestions:
+                  messages:
+                  - to: '919999339598'
+                    content:
+                      type: text
+                      text: Chaitra agar Message aaye to screenshot post karo
+                      Suggestions:
+                      - text: Click
+                        postbackData: reply
+                        type: REPLY
+                    callbackData: '7890986'
+                    tags:
+                    - '12'
+                  fallbackstatus: true
+                  fallbackchain:
+                  - from: Travel agency
+                    channel: RCS
+                Rich Card Message:
+                  messages:
+                  - To: '919999999999'
+                    content:
+                      orientation: vertical
+                      alignment: right
+                      content:
+                        title: Amazon Black Friday Sale 2021,
+                        description: Online shopping for Black Friday Sale from a great selection at Electronics Store.
+                        media:
+                          file:
+                            url: https://m.media-amazon.com/images/G/01/AdProductsWebsite/images/AUX/sbv-hero._TTW_.jpg
+                          thumbnail:
+                            url: https://m.media-amazon.com/images/G/01/AdProductsWebsite/images/AUX/sbv-hero._TTW_.jpg
+                          height: MEDIUM
+                      type: CARD
+                    callbackData: Callback data
+                    tags:
+                    - asd
+                    - sdfdf
+                    - dfdf
+                  fallbackstatus: true
+                  fallbackchain:
+                  - channel: RCS
+                Rich Card File Message:
+                  messages:
+                  - To: '9199999999'
+                    content:
+                      content:
+                        file:
+                          file:
+                            url: https://images-eu.ssl-images-amazon.com/images/G/31/img21/Wireless/katariy/Category_page/Nov/D24582943_IN_WL_Category_Page_1500x400.gif
+                          thumbnail:
+                            url: https://images-eu.ssl-images-amazon.com/images/G/31/img21/Wireless/katariy/Category_page/Nov/D24582943_IN_WL_Category_Page_1500x400.gif
+                          height: MEDIUM
+                      type: FILE
+                    callbackData: '7890986'
+                    tags:
+                    - '12'
+                  fallbackstatus: true
+                  fallbackchain:
+                  - channel: RCS
+                Rich Card Carousel Message:
+                  messages:
+                  - To: '919999339598'
+                    content:
+                      orientation: vertical
+                      alignment: right
+                      contents:
+                      - Title: title,
+                        Description: Document
+                        Media:
+                          file:
+                            url: https://v.fastcdn.co/u/014b5490/56308202-0-Personalization-P1-0.png
+                          thumbnail:
+                            url: https://v.fastcdn.co/u/014b5490/56308572-0-Email-arketing-First.png
+                          height: MEDIUM
+                      type: CARD
+                    callbackData: Callback data
+                    tags:
+                    - asd
+                    - sdfdf
+                    - dfdf
+                  fallbackstatus: true
+                  fallbackchain:
+                  - channel: RCS
+                Text Message with Suggestions:
+                  messages:
+                  - to: '919999999999'
+                    content:
+                      type: text
+                      text: 'Hello '
+                      Suggestions:
+                      - text: Click
+                        postbackData: reply
+                        type: REPLY
+                    callbackData: '7890986'
+                    tags:
+                    - '12'
+                  fallbackchain:
+                  - channel: RCS
+                File Message:
+                  messages:
+                  - to: '919999999999'
+                    content:
+                      file:
+                        url: https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/1200px-Image_created_with_a_mobile_phone.png
+                      Suggestions:
+                      - text: Click
+                        postbackData: reply
+                        type: REPLY
+                      thumbnail:
+                        url: https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/220px-Image_created_with_a_mobile_phone.png
+                      type: FILE
+                    callbackData: '7890986'
+                    tags:
+                    - '12'
+                  fallbackchain:
+                  - channel: RCS
+                Card Message:
+                  messages:
+                  - To: '919999999999'
+                    content:
+                      orientation: vertical
+                      alignment: right
+                      content:
+                        title: title,
+                        description: Verification 1
+                        media:
+                          file:
+                            url: https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg
+                          thumbnail:
+                            url: https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg
+                          height: MEDIUM
+                        suggestions:
+                        - text: OpenGoogs
+                          postbackdata: test
+                          type: OPEN_URL
+                          url: https://www.google.com
+                      type: CARD
+                    callbackData: Callback data
+                    tags:
+                    - asd
+                    - sdfdf
+                    - dfdf
+                  fallbackchain:
+                  - channel: RCS
+                Carousel Message:
+                  messages:
+                  - To: '919999999999'
+                    content:
+                      type: CAROUSEL
+                      cardWidth: MEDIUM
+                      contents:
+                      - title: title,
+                        description: description
+                        media:
+                          file:
+                            url: https://v.fastcdn.co/u/014b5490/56308202-0-Personalization-P1-0.png
+                          thumbnail:
+                            url: https://media.istockphoto.com/photos/blurred-abstract-photo-of-light-burst-among-trees-and-glitter-golden-picture-id1061974964?b=1&k=20&m=1061974964&s=170667a&w=0&h=Ch21MBSBEZak9naxA3hHaI7qyPAjr_eEgiQBSNFtDsg=
+                          height: MEDIUM
+                        suggestions:
+                        - text: Click Image
+                          postbackData: imageClick
+                          type: REPLY
+                        - text: Click to Call
+                          postbackData: call
+                          phoneNumber: '385977666618'
+                          type: DIAL_PHONE
+                        - text: Map
+                          postbackData: map
+                          latitude: 45.793418
+                          longitude: 15.946297
+                          label: label
+                          type: SHOW_LOCATION
+                        - text: Share
+                          postbackData: share
+                          type: REQUEST_LOCATION
+                      - title: title,
+                        description: description
+                        media:
+                          file:
+                            url: https://v.fastcdn.co/u/014b5490/56308572-0-Email-arketing-First.png
+                          thumbnail:
+                            url: https://media.istockphoto.com/photos/blurred-abstract-photo-of-light-burst-among-trees-and-glitter-golden-picture-id1061974964?b=1&k=20&m=1061974964&s=170667a&w=0&h=Ch21MBSBEZak9naxA3hHaI7qyPAjr_eEgiQBSNFtDsg=
+                          height: MEDIUM
+                        suggestions:
+                        - text: Click Image
+                          postbackData: imageClick
+                          type: REPLY
+                        - text: Click to Call
+                          postbackData: call
+                          phoneNumber: '385977666618'
+                          type: DIAL_PHONE
+                        - text: Map
+                          postbackData: map
+                          latitude: 45.793418
+                          longitude: 15.946297
+                          label: label
+                          type: SHOW_LOCATION
+                        - text: Share
+                          postbackData: share
+                          type: REQUEST_LOCATION
+                    callbackData: Callback data
+                    tags:
+                    - asd
+                    - sdfdf
+                    - dfdf
+                  fallbackchain:
+                  - channel: RCS
+              properties:
+                messages:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      To:
+                        type: string
+                        description: Recipient phone number in E.164 format (uppercase, for freeform messages)
+                      to:
+                        type: string
+                        description: Recipient phone number in E.164 format (lowercase, for template messages)
+                      content:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                            - template
+                            - text
+                            - CAROUSEL
+                            - CARD
+                            - FILE
+                            - TEXT
+                            description: Type of message content
+                          templateCode:
+                            type: string
+                            description: Template code for template type messages
+                          attributes:
+                            type: object
+                            description: Template attributes for template type messages
+                            properties:
+                              FIRSTNAME:
+                                type: string
+                          text:
+                            type: string
+                            description: Text content for TEXT type messages
+                          file:
+                            type: object
+                            description: File object for FILE type messages
+                            properties:
+                              url:
+                                type: string
+                                format: uri
+                                description: URL of the file
+                          thumbnail:
+                            type: object
+                            description: Thumbnail for FILE type messages
+                            properties:
+                              url:
+                                type: string
+                                format: uri
+                                description: URL of the thumbnail image
+                          Suggestions:
+                            type: array
+                            description: Array of suggestion chips (capital S for TEXT and FILE types)
+                            items:
+                              type: object
+                              properties:
+                                text:
+                                  type: string
+                                  description: Display text of the suggestion
+                                postbackData:
+                                  type: string
+                                  description: Data to be sent back when suggestion is clicked
+                                postbackdata:
+                                  type: string
+                                  description: Data to be sent back when suggestion is clicked (lowercase variant)
+                                type:
+                                  type: string
+                                  enum:
+                                  - REPLY
+                                  - DIAL_PHONE
+                                  - SHOW_LOCATION
+                                  - REQUEST_LOCATION
+                                  - OPEN_URL
+                                  description: Type of suggestion action
+                                phoneNumber:
+                                  type: string
+                                  description: Phone number for DIAL_PHONE type (required for DIAL_PHONE)
+                                latitude:
+                                  type: number
+                                  format: float
+                                  description: Latitude for SHOW_LOCATION type (required for SHOW_LOCATION)
+                                longitude:
+                                  type: number
+                                  format: float
+                                  description: Longitude for SHOW_LOCATION type (required for SHOW_LOCATION)
+                                label:
+                                  type: string
+                                  description: Label for SHOW_LOCATION type
+                                url:
+                                  type: string
+                                  format: uri
+                                  description: URL for OPEN_URL type (required for OPEN_URL)
+                          orientation:
+                            type: string
+                            enum:
+                            - vertical
+                            - horizontal
+                            description: Orientation for CARD type messages
+                          alignment:
+                            type: string
+                            enum:
+                            - left
+                            - right
+                            - center
+                            description: Alignment for CARD type messages
+                          content:
+                            type: object
+                            description: Content object for CARD type messages
+                            properties:
+                              title:
+                                type: string
+                                description: Title of the card
+                              description:
+                                type: string
+                                description: Description of the card
+                              media:
+                                type: object
+                                properties:
+                                  file:
+                                    type: object
+                                    properties:
+                                      url:
+                                        type: string
+                                        format: uri
+                                        description: URL of the media file
+                                  thumbnail:
+                                    type: object
+                                    properties:
+                                      url:
+                                        type: string
+                                        format: uri
+                                        description: URL of the thumbnail image
+                                  height:
+                                    type: string
+                                    enum:
+                                    - SHORT
+                                    - MEDIUM
+                                    - TALL
+                                    description: Height of the media
+                              suggestions:
+                                type: array
+                                description: Array of suggestion chips for CARD type
+                                items:
+                                  type: object
+                                  properties:
+                                    text:
+                                      type: string
+                                      description: Display text of the suggestion
+                                    postbackData:
+                                      type: string
+                                      description: Data to be sent back when suggestion is clicked
+                                    postbackdata:
+                                      type: string
+                                      description: Data to be sent back when suggestion is clicked (lowercase variant)
+                                    type:
+                                      type: string
+                                      enum:
+                                      - REPLY
+                                      - DIAL_PHONE
+                                      - SHOW_LOCATION
+                                      - REQUEST_LOCATION
+                                      - OPEN_URL
+                                      description: Type of suggestion action
+                                    phoneNumber:
+                                      type: string
+                                      description: Phone number for DIAL_PHONE type (required for DIAL_PHONE)
+                                    latitude:
+                                      type: number
+                                      format: float
+                                      description: Latitude for SHOW_LOCATION type (required for SHOW_LOCATION)
+                                    longitude:
+                                      type: number
+                                      format: float
+                                      description: Longitude for SHOW_LOCATION type (required for SHOW_LOCATION)
+                                    label:
+                                      type: string
+                                      description: Label for SHOW_LOCATION type
+                                    url:
+                                      type: string
+                                      format: uri
+                                      description: URL for OPEN_URL type (required for OPEN_URL)
+                          cardWidth:
+                            type: string
+                            enum:
+                            - SMALL
+                            - MEDIUM
+                            - LARGE
+                            description: Width of the card (for CAROUSEL type)
+                          contents:
+                            type: array
+                            description: Array of card contents (for CAROUSEL type)
+                            items:
+                              type: object
+                              properties:
+                                title:
+                                  type: string
+                                  description: Title of the card
+                                description:
+                                  type: string
+                                  description: Description of the card
+                                media:
+                                  type: object
+                                  properties:
+                                    file:
+                                      type: object
+                                      properties:
+                                        url:
+                                          type: string
+                                          format: uri
+                                          description: URL of the media file
+                                    thumbnail:
+                                      type: object
+                                      properties:
+                                        url:
+                                          type: string
+                                          format: uri
+                                          description: URL of the thumbnail image
+                                    height:
+                                      type: string
+                                      enum:
+                                      - SHORT
+                                      - MEDIUM
+                                      - TALL
+                                      description: Height of the media
+                                suggestions:
+                                  type: array
+                                  description: Array of suggestion chips
+                                  items:
+                                    type: object
+                                    properties:
+                                      text:
+                                        type: string
+                                        description: Display text of the suggestion
+                                      postbackData:
+                                        type: string
+                                        description: Data to be sent back when suggestion is clicked
+                                      type:
+                                        type: string
+                                        enum:
+                                        - REPLY
+                                        - DIAL_PHONE
+                                        - SHOW_LOCATION
+                                        - REQUEST_LOCATION
+                                        - OPEN_URL
+                                        description: Type of suggestion action
+                                      phoneNumber:
+                                        type: string
+                                        description: Phone number for DIAL_PHONE type (required for DIAL_PHONE)
+                                      latitude:
+                                        type: number
+                                        format: float
+                                        description: Latitude for SHOW_LOCATION type (required for SHOW_LOCATION)
+                                      longitude:
+                                        type: number
+                                        format: float
+                                        description: Longitude for SHOW_LOCATION type (required for SHOW_LOCATION)
+                                      label:
+                                        type: string
+                                        description: Label for SHOW_LOCATION type
+                                      url:
+                                        type: string
+                                        format: uri
+                                        description: URL for OPEN_URL type (required for OPEN_URL)
+                      callbackData:
+                        type: string
+                        description: Callback data to be returned in webhook
+                      ttl:
+                        type: string
+                        description: Define the timeline before the campaign expires. The duration must be at least 1800 seconds. If both `ttl` and `expireTime` parameters are provided, `expireTime` takes precedence. This field is optional.
+                      expireTime:
+                        type: string
+                        description: Specifies the absolute timestamp after which the message expires. The value must be in UTC. This field is optional.
+                      tags:
+                        type: array
+                        items:
+                          type: string
+                        description: Tags for message categorization
+                fallbackchain:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      channel:
+                        type: string
+                        enum:
+                        - RCS
+                        - SMS
+                        description: Fallback channel type
+                      from:
+                        type: string
+                        description: Sender name/ID for fallback channel
+                      text:
+                        type: string
+                        description: Fallback text message
+            examples:
+              Send RCS Text Message:
+                value:
+                  messages:
+                  - to: '918983190458'
+                    content:
+                      type: template
+                      templateCode: employee_campaign
+                      attributes:
+                        FIRSTNAME: Akash
+                    callbackData: '7890986'
+                    tags:
+                    - '12'
+                  fallbackchain:
+                  - channel: RCS
+                  - from: Travel agent
+                    channel: SMS
+                    text: Test Messages [FIRSTNAME] 😘🫣👿😻🤬 Netcore
+              'Example : Without Timestamp':
+                value:
+                  messages:
+                  - to: string
+                    content:
+                      type: string
+                      templateCode: string
+                      attributes:
+                        Attribute1: string
+                        Attribute2: string
+                    callbackData: string
+                    tags:
+                    - string
+                  fallbackchain:
+                  - channel: string
+                    from: string
+                    text: string
+              Example With Timestamp:
+                value:
+                  messages:
+                  - to: string
+                    content:
+                      type: string
+                      templateCode: string
+                      attributes:
+                        Attribute1: string
+                        Attribute2: string
+                    callbackData: string
+                    ttl: 1800s
+                    expireTime: '2023-06-20T15:39:30Z'
+                    tags:
+                    - string
+                  fallbackchain:
+                  - channel: string
+                    from: string
+                    text: string
+              Non Template Text Message:
+                value:
+                  messages:
+                  - to: '919999339598'
+                    content:
+                      type: text
+                      text: Welcome to Netcore RCS Demo 2.0
+                    callbackData: '7890986'
+                    tags:
+                    - '12'
+                  fallbackchain:
+                  - channel: RCS
+              Non Template Text Message with Suggestions:
+                value:
+                  messages:
+                  - to: '919999339598'
+                    content:
+                      type: text
+                      text: Chaitra agar Message aaye to screenshot post karo
+                      Suggestions:
+                      - text: Click
+                        postbackData: reply
+                        type: REPLY
+                    callbackData: '7890986'
+                    tags:
+                    - '12'
+                  fallbackstatus: true
+                  fallbackchain:
+                  - from: Travel agency
+                    channel: RCS
+              Rich Card Message:
+                value:
+                  messages:
+                  - To: '919999999999'
+                    content:
+                      orientation: vertical
+                      alignment: right
+                      content:
+                        title: Amazon Black Friday Sale 2021,
+                        description: Online shopping for Black Friday Sale from a great selection at Electronics Store.
+                        media:
+                          file:
+                            url: https://m.media-amazon.com/images/G/01/AdProductsWebsite/images/AUX/sbv-hero._TTW_.jpg
+                          thumbnail:
+                            url: https://m.media-amazon.com/images/G/01/AdProductsWebsite/images/AUX/sbv-hero._TTW_.jpg
+                          height: MEDIUM
+                      type: CARD
+                    callbackData: Callback data
+                    tags:
+                    - asd
+                    - sdfdf
+                    - dfdf
+                  fallbackstatus: true
+                  fallbackchain:
+                  - channel: RCS
+              Rich Card File Message:
+                value:
+                  messages:
+                  - To: '9199999999'
+                    content:
+                      content:
+                        file:
+                          file:
+                            url: https://images-eu.ssl-images-amazon.com/images/G/31/img21/Wireless/katariy/Category_page/Nov/D24582943_IN_WL_Category_Page_1500x400.gif
+                          thumbnail:
+                            url: https://images-eu.ssl-images-amazon.com/images/G/31/img21/Wireless/katariy/Category_page/Nov/D24582943_IN_WL_Category_Page_1500x400.gif
+                          height: MEDIUM
+                      type: FILE
+                    callbackData: '7890986'
+                    tags:
+                    - '12'
+                  fallbackstatus: true
+                  fallbackchain:
+                  - channel: RCS
+              Rich Card Carousel Message:
+                value:
+                  messages:
+                  - To: '919999339598'
+                    content:
+                      orientation: vertical
+                      alignment: right
+                      contents:
+                      - Title: title,
+                        Description: Document
+                        Media:
+                          file:
+                            url: https://v.fastcdn.co/u/014b5490/56308202-0-Personalization-P1-0.png
+                          thumbnail:
+                            url: https://v.fastcdn.co/u/014b5490/56308572-0-Email-arketing-First.png
+                          height: MEDIUM
+                      type: CARD
+                    callbackData: Callback data
+                    tags:
+                    - asd
+                    - sdfdf
+                    - dfdf
+                  fallbackstatus: true
+                  fallbackchain:
+                  - channel: RCS
+              Text Message with Suggestions:
+                value:
+                  messages:
+                  - to: '919999999999'
+                    content:
+                      type: text
+                      text: 'Hello '
+                      Suggestions:
+                      - text: Click
+                        postbackData: reply
+                        type: REPLY
+                    callbackData: '7890986'
+                    tags:
+                    - '12'
+                  fallbackchain:
+                  - channel: RCS
+              File Message:
+                value:
+                  messages:
+                  - to: '919999999999'
+                    content:
+                      file:
+                        url: https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/1200px-Image_created_with_a_mobile_phone.png
+                      Suggestions:
+                      - text: Click
+                        postbackData: reply
+                        type: REPLY
+                      thumbnail:
+                        url: https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/220px-Image_created_with_a_mobile_phone.png
+                      type: FILE
+                    callbackData: '7890986'
+                    tags:
+                    - '12'
+                  fallbackchain:
+                  - channel: RCS
+              Card Message:
+                value:
+                  messages:
+                  - To: '919999999999'
+                    content:
+                      orientation: vertical
+                      alignment: right
+                      content:
+                        title: title,
+                        description: Verification 1
+                        media:
+                          file:
+                            url: https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg
+                          thumbnail:
+                            url: https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg
+                          height: MEDIUM
+                        suggestions:
+                        - text: OpenGoogs
+                          postbackdata: test
+                          type: OPEN_URL
+                          url: https://www.google.com
+                      type: CARD
+                    callbackData: Callback data
+                    tags:
+                    - asd
+                    - sdfdf
+                    - dfdf
+                  fallbackchain:
+                  - channel: RCS
+              Carousel Message:
+                value:
+                  messages:
+                  - To: '919999999999'
+                    content:
+                      type: CAROUSEL
+                      cardWidth: MEDIUM
+                      contents:
+                      - title: title,
+                        description: description
+                        media:
+                          file:
+                            url: https://v.fastcdn.co/u/014b5490/56308202-0-Personalization-P1-0.png
+                          thumbnail:
+                            url: https://media.istockphoto.com/photos/blurred-abstract-photo-of-light-burst-among-trees-and-glitter-golden-picture-id1061974964?b=1&k=20&m=1061974964&s=170667a&w=0&h=Ch21MBSBEZak9naxA3hHaI7qyPAjr_eEgiQBSNFtDsg=
+                          height: MEDIUM
+                        suggestions:
+                        - text: Click Image
+                          postbackData: imageClick
+                          type: REPLY
+                        - text: Click to Call
+                          postbackData: call
+                          phoneNumber: '385977666618'
+                          type: DIAL_PHONE
+                        - text: Map
+                          postbackData: map
+                          latitude: 45.793418
+                          longitude: 15.946297
+                          label: label
+                          type: SHOW_LOCATION
+                        - text: Share
+                          postbackData: share
+                          type: REQUEST_LOCATION
+                      - title: title,
+                        description: description
+                        media:
+                          file:
+                            url: https://v.fastcdn.co/u/014b5490/56308572-0-Email-arketing-First.png
+                          thumbnail:
+                            url: https://media.istockphoto.com/photos/blurred-abstract-photo-of-light-burst-among-trees-and-glitter-golden-picture-id1061974964?b=1&k=20&m=1061974964&s=170667a&w=0&h=Ch21MBSBEZak9naxA3hHaI7qyPAjr_eEgiQBSNFtDsg=
+                          height: MEDIUM
+                        suggestions:
+                        - text: Click Image
+                          postbackData: imageClick
+                          type: REPLY
+                        - text: Click to Call
+                          postbackData: call
+                          phoneNumber: '385977666618'
+                          type: DIAL_PHONE
+                        - text: Map
+                          postbackData: map
+                          latitude: 45.793418
+                          longitude: 15.946297
+                          label: label
+                          type: SHOW_LOCATION
+                        - text: Share
+                          postbackData: share
+                          type: REQUEST_LOCATION
+                    callbackData: Callback data
+                    tags:
+                    - asd
+                    - sdfdf
+                    - dfdf
+                  fallbackchain:
+                  - channel: RCS
+        description: ''
+      description: 'Send a RCS Text Message to any RCS Enabled Mobile Number.
+
+        This API allows you to dispatch messages using a predefined template—simply specify the template ID and content parameters.'
+      x-internal: false
+      parameters:
+      - schema:
+          type: string
+          example: a3f1d5e792bc4e8aa6785c9d12f30b44
+        in: header
+        name: api_key
+        required: true
+        description: Unique API key Login->Netcore->RCS Dashboard -> Settings
+      - schema:
+          type: string
+          example: application/json
+        in: header
+        name: Content-Type
+        description: application/json
+        required: true
+      - schema:
+          type: string
+          example: abc123
+        in: header
+        description: nc_bot_id refers to the unique identifier assigned to a bot within the Netcore platform. This field is optional—if not provided, the action will be executed using the default bot configured for the panel. You can locate the nc_bot_id in the General Settings on the CPaaS >> Bot ID.
+        name: nc_bot_id
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer token authentication using JWT. Include the token in the Authorization header as 'Bearer <your_token>'.
+x-stoplight:
+  id: o7al2fnfvhxlr
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

@@ -1,0 +1,108 @@
+generated: '2026-10-13'
+method: derived
+generator: derive-problem-types.py
+source:
+- openapi/netcorecloud-attributes-api-openapi.yml
+- openapi/netcorecloud-campaigns-api-openapi.yml
+- openapi/netcorecloud-contacts-api-openapi.yml
+- openapi/netcorecloud-email-api-v5-openapi.yml
+- openapi/netcorecloud-email-api-v6-openapi.yml
+- openapi/netcorecloud-exports-api-openapi.yml
+- openapi/netcorecloud-orbit-router-openapi.yml
+- openapi/netcorecloud-rcs-api-openapi.yml
+- openapi/netcorecloud-sms-api-openapi.yml
+- openapi/netcorecloud-templates-api-openapi.yml
+- openapi/netcorecloud-trigger-api-openapi.yml
+- openapi/netcorecloud-whatsapp-api-openapi.yml
+format: custom
+envelope:
+  media_type: application/json
+  schema: schema
+coverage:
+  operations: 202
+  statuses_declared: 12
+problems:
+- status: 400
+  title: Bad Request
+  description: Validation error
+  operations: 130
+  media_types:
+  - application/json
+  schema: schema
+- status: 401
+  title: Unauthorized
+  description: Authentication required
+  operations: 66
+  media_types:
+  - application/json
+  schema: schema
+- status: 403
+  title: Forbidden
+  description: Access forbidden or ownership validation failed
+  operations: 22
+  media_types:
+  - application/json
+  schema: schema
+- status: 404
+  title: Not Found
+  description: User not found.
+  operations: 20
+  media_types:
+  - application/json
+  schema: BackendErrorResponse
+- status: 405
+  title: Method Not Allowed
+  description: null
+  operations: 1
+  media_types:
+  - application/json
+  schema: ServerErrorsResponse
+- status: 413
+  title: Content Too Large
+  description: Payload exceeds `max_request_body_size_mb`.
+  operations: 2
+  media_types:
+  - application/json
+  schema: EngineErrorResponse
+- status: 429
+  title: Too Many Requests
+  description: Rate limited.
+  operations: 1
+  media_types:
+  - application/json
+  schema: BackendErrorResponse
+- status: 4XX
+  title: null
+  description: Meta Flow Creation Error
+  operations: 10
+  media_types:
+  - application/json
+  schema: schema
+- status: 500
+  title: Internal Server Error
+  description: Internal Server Error
+  operations: 46
+  media_types:
+  - application/json
+  schema: schema
+- status: 502
+  title: Bad Gateway
+  description: Upstream provider returned an error.
+  operations: 2
+  media_types:
+  - application/json
+  schema: EngineErrorResponse
+- status: 503
+  title: Service Unavailable
+  description: Service Unavailable
+  operations: 1
+  media_types:
+  - application/json
+  schema: schema
+- status: 504
+  title: Gateway Timeout
+  description: Upstream provider did not respond in time.
+  operations: 2
+  media_types:
+  - application/json
+  schema: EngineErrorResponse

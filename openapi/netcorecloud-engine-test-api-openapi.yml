@@ -1,0 +1,155 @@
+openapi: 3.2.0
+info:
+  title: Orbit Router Engine — Test API
+  version: 1.0.0
+  description: Complete API specification for the Orbit Router email routing platform.
+  contact:
+    name: Orbit Engineering
+  license:
+    name: Proprietary
+servers:
+- url: https://orbitus.netcorecloud.com
+  description: Production — Orbit Engine (HTTP Relay)
+- url: https://orbitus.netcorecloud.com/apiorbit
+  description: Production — Orbit Backend (Config & Management)
+security: []
+tags:
+- name: Engine — Test
+paths:
+  /v1s/test/send:
+    post:
+      operationId: testSendEmail
+      tags:
+      - Engine — Test
+      summary: Test mail (direct to provider)
+      description: 'Send a test email directly to a provider, **bypassing rules and routing**.
+
+        For diagnostic use only. No API key authentication required.
+
+
+        Provider detection is based on the `host` URL:
+
+        - `pepipost.com` → Netcore format
+
+        - `sendgrid.com` → SendGrid format
+
+        - Other → `400 Bad Request`'
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestSendRequest'
+      responses:
+        '200':
+          description: Test email sent; includes raw provider response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestSendResponse'
+        '400':
+          description: Unsupported provider host or missing fields.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EngineErrorResponse'
+components:
+  schemas:
+    TestSendResponse:
+      type: object
+      properties:
+        provider:
+          type: string
+          example: netcore
+        status_code:
+          type: string
+          example: '202'
+        response:
+          type: string
+          description: Raw provider response body.
+    EngineErrorResponse:
+      type: object
+      properties:
+        success:
+          type: string
+          example: error
+        error:
+          type: string
+        error_code:
+          type: string
+          enum:
+          - empty_body
+          - payload_too_large
+          - invalid_json
+          - invalid_payload
+          - transform_failed
+          - marshal_failed
+          - auth_failed
+          - auth_error
+          - ip_not_allowed
+          - domain_not_allowed
+          - rule_eval_failed
+          - route_not_found
+          - internal_error
+          - provider_error
+          - provider_timeout
+        req_id:
+          type: string
+    TestSendRequest:
+      type: object
+      required:
+      - from
+      - to
+      - api_key
+      - host
+      properties:
+        from:
+          type: string
+          format: email
+        to:
+          type: string
+          format: email
+        api_key:
+          type: string
+          description: Provider API key (sent directly to provider).
+        host:
+          type: string
+          format: uri
+          description: 'Provider endpoint URL. Provider detection:
+
+            `pepipost.com` → Netcore, `sendgrid.com` → SendGrid, other → 400.
+
+            '
+  securitySchemes:
+    BackendJWT:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'JWT token obtained from `POST /auth/login`. Access token lifetime: 15 minutes.
+
+        Claims: `user_id`, `client_id`, `role`, `jti`, `exp`, `iat`.
+
+        '
+    EngineApiKeyBearer:
+      type: http
+      scheme: bearer
+      description: 'Engine API key via `Authorization: Bearer <api_key>` (priority 1).'
+    EngineApiKeyHeader:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: Engine API key via `X-API-Key` header (priority 2).
+    EngineApiKeyFallback:
+      type: apiKey
+      in: header
+      name: api_key
+      description: Engine API key via `api_key` header (priority 3, fallback).
+x-readme:
+  explorer-enabled: true
+  proxy-enabled: true
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

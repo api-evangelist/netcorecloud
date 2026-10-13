@@ -1,23 +1,2511 @@
 aid: netcorecloud
 name: Netcore Cloud
-description: 'Netcore Cloud is a company surfaced via the API Evangelist harvest backlog (source: market-gap)
-  and added to the network as a stub for full-pipeline profiling.'
+image: https://netcore.ai/wp-content/uploads/2024/03/NC_WebsitePreview_01.webp
+description: Netcore Cloud (Netcore) is a customer engagement and CPaaS platform offering transactional and marketing email delivery (formerly Pepipost), SMS, WhatsApp and RCS messaging, email routing (Orbit
+  Router), and a customer engagement suite with contacts, attributes, campaigns, templates, exports and event trigger APIs, documented publicly on ReadMe-hosted developer portals.
 url: https://raw.githubusercontent.com/api-evangelist/netcorecloud/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:market-gap
-x-tier: stub
-x-tier-reason: harvest
+x-tier: profiled
+x-tier-reason: enrichment pass 2026-10-13 (local-v5; was harvest)
 specificationVersion: '0.20'
 created: '2026-10-13'
 modified: '2026-10-13'
 tags:
 - Company
-apis: []
+- Email
+- SMS
+- WhatsApp
+- RCS
+- CPaaS
+- Customer Engagement
+- Marketing Automation
+- Messaging
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: AgenticAccess
+  url: agentic-access/netcorecloud-agentic-access.yml
+- type: Spectral
+  url: rules/netcorecloud-rules.yml
+- type: JSONLD
+  url: json-ld/netcorecloud-context.jsonld
+- type: Vocabulary
+  url: vocabulary/netcorecloud-vocabulary.yml
+- type: DataModel
+  url: data-model/netcorecloud-data-model.yml
+- type: Compliance
+  url: https://netcore.ai/security/
+- type: ErrorCatalog
+  url: errors/netcorecloud-problem-types.yml
+- type: LLMsTxt
+  url: llms/netcorecloud-llms.txt
+- type: WellKnown
+  url: well-known/netcorecloud-well-known.yml
+- type: Hosts
+  url: hosts/netcorecloud-hosts.yml
+- type: IntegrationEdges
+  url: integrations/netcorecloud-integration-edges.yml
+- type: Vendors
+  url: vendors/netcorecloud-vendors.yml
+- type: TermsOfService
+  url: https://netcore.ai/terms-of-service/
+- type: Security
+  url: https://netcore.ai/security/
+- type: PrivacyPolicy
+  url: https://netcore.ai/privacy-policy/
+- type: Newsroom
+  url: https://netcore.ai/newsroom/
+- type: Login
+  url: https://netcore.ai/login/
+- type: Leadership
+  url: https://netcore.ai/leadership/
+- type: Authentication
+  url: authentication/netcorecloud-authentication.yml
+- type: TrustCenter
+  url: security/netcorecloud-trust-center.yml
+- type: VulnerabilityDisclosure
+  url: security/netcorecloud-vulnerability-disclosure.yml
+- type: DomainSecurity
+  url: security/netcorecloud-domain-security.yml
 - type: Website
   url: https://netcorecloud.com
+- type: DeveloperPortal
+  url: https://developer.netcorecloud.com/
+- type: Documentation
+  url: https://emaildocs.netcorecloud.com/
+- type: APIReference
+  url: https://emaildocs.netcorecloud.com/reference
+- type: Documentation
+  url: https://cedocs.netcorecloud.com/
+- type: Blog
+  url: https://netcore.ai/blog/
+apis:
+- name: Netcore Cloud Contacts API
+  description: Contacts API from Netcore Cloud.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Customer Engagement
+  - Messaging
+  - CPaaS
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-contacts-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  aid: netcorecloud:netcore-cloud-contacts-api
+- name: Netcore Cloud Attributes API
+  description: Attributes API from Netcore Cloud.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Customer Engagement
+  - Messaging
+  - CPaaS
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-attributes-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  aid: netcorecloud:netcore-cloud-attributes-api
+- name: Netcore Cloud Trigger API
+  description: Trigger API from Netcore Cloud.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Customer Engagement
+  - Messaging
+  - CPaaS
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-trigger-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  aid: netcorecloud:netcore-cloud-trigger-api
+- aid: netcorecloud:netcorecloud-api-management-api
+  name: Netcore Cloud API Management API
+  description: The API Management API from Netcore Cloud — 2 operation(s) for api management.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - API Management
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-api-management-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-apn-template-api
+  name: Netcore Cloud APN Template API
+  description: The APN Template API from Netcore Cloud — 3 operation(s) for apn template.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - APN Template
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-apn-template-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-auth-api
+  name: Netcore Cloud Auth API
+  description: The Auth API from Netcore Cloud — 12 operation(s) for auth.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Auth
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-auth-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-campaign-api
+  name: Netcore Cloud Campaign API
+  description: The Campaign API from Netcore Cloud — 7 operation(s) for campaign.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Campaign
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-campaign-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-clients-api
+  name: Netcore Cloud Clients API
+  description: The Clients API from Netcore Cloud — 3 operation(s) for clients.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Clients
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-clients-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-configuration-api
+  name: Netcore Cloud Configuration API
+  description: The Configuration API from Netcore Cloud — 6 operation(s) for configuration.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Configuration
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-configuration-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-consent-management-api
+  name: Netcore Cloud Consent Management API
+  description: The Consent Management API from Netcore Cloud — 2 operation(s) for consent management.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Consent Management
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-consent-management-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-conversion-tracking-api
+  name: Netcore Cloud Conversion Tracking API
+  description: The Conversion Tracking API from Netcore Cloud — 1 operation(s) for conversion tracking.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Conversion Tracking
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-conversion-tracking-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-dashboard-audit-api
+  name: Netcore Cloud Dashboard & Audit API
+  description: The Dashboard & Audit API from Netcore Cloud — 3 operation(s) for dashboard & audit.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Dashboard & Audit
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-dashboard-audit-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-domain-apis-api
+  name: Netcore Cloud Domain APIs API
+  description: The Domain APIs API from Netcore Cloud — 4 operation(s) for domain apis.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Domain APIs
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-domain-apis-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-engine-cache-api
+  name: Netcore Cloud Engine — Cache API
+  description: Cache refresh endpoints for immediate config propagation.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Engine — Cache
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-engine-cache-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-engine-health-api
+  name: Netcore Cloud Engine — Health API
+  description: The Engine — Health API from Netcore Cloud — 3 operation(s) for engine — health.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Engine — Health
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-engine-health-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-engine-send-api
+  name: Netcore Cloud Engine — Send API
+  description: The Engine — Send API from Netcore Cloud — 2 operation(s) for engine — send.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Engine — Send
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-engine-send-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-engine-test-api
+  name: Netcore Cloud Engine — Test API
+  description: The Engine — Test API from Netcore Cloud — 1 operation(s) for engine — test.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Engine — Test
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-engine-test-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-events-api-api
+  name: Netcore Cloud Events API
+  description: The Events API API from Netcore Cloud — 5 operation(s) for events api.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Events API
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-events-api-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-export-report-api
+  name: Netcore Cloud Export Report API
+  description: The Export Report API from Netcore Cloud — 1 operation(s) for export report.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Export Report
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-export-report-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-export-templates-api
+  name: Netcore Cloud Export Templates API
+  description: The Export Templates API from Netcore Cloud — 4 operation(s) for export templates.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Export Templates
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-export-templates-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-ip-management-api-api
+  name: Netcore Cloud IP Management API
+  description: The IP Management API API from Netcore Cloud — 15 operation(s) for ip management api.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - IP Management API
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-ip-management-api-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-json-message-api
+  name: Netcore Cloud JSON Message API
+  description: The JSON Message API from Netcore Cloud — 1 operation(s) for json message.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - JSON Message
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-json-message-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-message-samples-api
+  name: Netcore Cloud Message Samples API
+  description: The Message Samples API from Netcore Cloud — 1 operation(s) for message samples.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Message Samples
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-message-samples-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-message-sending-api
+  name: Netcore Cloud Message Sending API
+  description: The Message Sending API from Netcore Cloud — 1 operation(s) for message sending.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Message Sending
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-message-sending-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-message-sending-apis-api
+  name: Netcore Cloud Message Sending APIs API
+  description: >-
+    The Message Sending APIs API from Netcore Cloud — 1 operation(s) for message sending apis.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Message Sending APIs
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-message-sending-apis-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-profile-api-api
+  name: Netcore Cloud Profile API
+  description: The Profile API API from Netcore Cloud — 1 operation(s) for profile api.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Profile API
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-profile-api-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-providers-api
+  name: Netcore Cloud Providers API
+  description: The Providers API from Netcore Cloud — 2 operation(s) for providers.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Providers
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-providers-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-report-api
+  name: Netcore Cloud Report API
+  description: DLR consolidated report
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Report
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-report-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-routes-api
+  name: Netcore Cloud Routes API
+  description: The Routes API from Netcore Cloud — 2 operation(s) for routes.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Routes
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-routes-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-rules-api
+  name: Netcore Cloud Rules API
+  description: The Rules API from Netcore Cloud — 3 operation(s) for rules.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Rules
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-rules-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-scope-api-api
+  name: Netcore Cloud Scope API
+  description: The Scope API API from Netcore Cloud — 1 operation(s) for scope api.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Scope API
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-scope-api-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-send-mail-api-api
+  name: Netcore Cloud Send Mail API
+  description: The Send Mail API API from Netcore Cloud — 1 operation(s) for send mail api.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Send Mail API
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-send-mail-api-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-stats-api-api
+  name: Netcore Cloud Stats API
+  description: The Stats API API from Netcore Cloud — 1 operation(s) for stats api.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Stats API
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-stats-api-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-subaccount-api-api
+  name: Netcore Cloud Subaccount API
+  description: Subaccount management
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Subaccount API
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-subaccount-api-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-subaccount-apis-api
+  name: Netcore Cloud Subaccount APIs API
+  description: The Subaccount APIs API from Netcore Cloud — 5 operation(s) for subaccount apis.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Subaccount APIs
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-subaccount-apis-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-suppression-apis-api
+  name: Netcore Cloud Suppression APIs API
+  description: The Suppression APIs API from Netcore Cloud — 4 operation(s) for suppression apis.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Suppression APIs
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-suppression-apis-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-tags-api-api
+  name: Netcore Cloud Tags API
+  description: The Tags API API from Netcore Cloud — 3 operation(s) for tags api.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Tags API
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-tags-api-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-template-api-api
+  name: Netcore Cloud Template API
+  description: The Template API API from Netcore Cloud — 2 operation(s) for template api.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Template API
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-template-api-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-template-apis-api
+  name: Netcore Cloud Template APIs API
+  description: The Template APIs API from Netcore Cloud — 7 operation(s) for template apis.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Template APIs
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-template-apis-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-users-api
+  name: Netcore Cloud Users API
+  description: The Users API from Netcore Cloud — 3 operation(s) for users.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Users
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-users-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-webhook-apis-api
+  name: Netcore Cloud Webhook APIs API
+  description: The Webhook APIs API from Netcore Cloud — 2 operation(s) for webhook apis.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Webhook APIs
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-webhook-apis-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-webhook-management-api
+  name: Netcore Cloud Webhook Management API
+  description: The Webhook Management API from Netcore Cloud — 3 operation(s) for webhook management.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - Webhook Management
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-webhook-management-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-whatsapp-analytics-api
+  name: Netcore Cloud WhatsApp Analytics API
+  description: The WhatsApp Analytics API from Netcore Cloud — 1 operation(s) for whatsapp analytics.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - WhatsApp Analytics
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-whatsapp-analytics-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-whatsapp-flows-api
+  name: Netcore Cloud WhatsApp Flows API
+  description: The WhatsApp Flows API from Netcore Cloud — 8 operation(s) for whatsapp flows.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - WhatsApp Flows
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-whatsapp-flows-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-whatsapp-payments-api
+  name: Netcore Cloud WhatsApp Payments API
+  description: The WhatsApp Payments API from Netcore Cloud — 4 operation(s) for whatsapp payments.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - WhatsApp Payments
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-whatsapp-payments-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-whatsapp-reach-estimate-api
+  name: Netcore Cloud WhatsApp Reach Estimate API
+  description: >-
+    The WhatsApp Reach Estimate API from Netcore Cloud — 1 operation(s) for whatsapp reach estimate.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - WhatsApp Reach Estimate
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-whatsapp-reach-estimate-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+- aid: netcorecloud:netcorecloud-whatsapp-templates-api
+  name: Netcore Cloud WhatsApp Templates API
+  description: The WhatsApp Templates API from Netcore Cloud — 11 operation(s) for whatsapp templates.
+  humanURL: https://developer.netcorecloud.com/reference
+  baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  tags:
+  - WhatsApp Templates
+  properties:
+  - type: OpenAPI
+    url: openapi/netcorecloud-whatsapp-templates-api-openapi.yml
+  - type: Documentation
+    url: https://developer.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-campaign-specific-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-audience-details-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-filter-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-output-block-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-conversion-tracking-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-google-analytics-schema.json
+  - type: Documentation
+    url: https://emaildocs.netcorecloud.com/reference
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-route-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-rule-create-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-incoming-auth-upsert-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-netcore-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-payment-status-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-template-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-consent-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-refund-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-flow-list-success-response-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-json-single-api-v2-request-schema.json
+  - type: JSONSchema
+    url: json-schema/netcorecloud-dlrreport-response-schema.json
+x-enrichment:
+  date: '2026-10-13'
+  status: enriched
+  artifacts_added: 30
+  pass: local-v5

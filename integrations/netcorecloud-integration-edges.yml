@@ -1,0 +1,85 @@
+generated: '2026-10-13'
+method: searched
+source:
+- https://zapier.com/apps/netcore-cloud/integrations
+checked:
+- https://composio.dev/toolkits/netcorecloud
+- https://monid.ai/tools/netcorecloud
+- https://n8n.io/integrations/netcorecloud/
+- https://zapier.com/apps/netcore-cloud/integrations
+- https://zapier.com/apps/netcorecloud/integrations
+summary: null
+marketplace_apps:
+- marketplace: zapier
+  channel: ipaas-listing
+  app: netcore-cloud
+  url: https://zapier.com/apps/netcore-cloud/integrations
+  external_url: https://netcorecloud.com/
+  partner_tier: BRONZE
+  triggers:
+  - key: form_submission
+    label: Response Submission
+  actions: []
+  searches: []
+edges:
+- partner_name: HubSpot
+  partner: hubspot
+  partner_match: domain
+  partner_candidate: null
+  type: marketplace
+  marketplace: zapier
+  channel: ipaas-usage
+  evidence: https://zapier.com/apps/netcore-cloud/integrations/hubspot
+  direction: third-party
+  category: Marketing Automation
+  partner_url: http://www.hubspot.com/
+- partner_name: Zoho CRM
+  partner: zoho-crm
+  partner_match: name-exact
+  partner_candidate: null
+  type: marketplace
+  marketplace: zapier
+  channel: ipaas-usage
+  evidence: https://zapier.com/apps/netcore-cloud/integrations/zoho-crm
+  direction: third-party
+  category: CRM (Customer Relationship Management)
+  partner_url: https://go.zoho.com/wOk
+- partner_name: Facebook Lead Ads
+  partner: facebook-lead-ads
+  partner_match: name-exact
+  partner_candidate: null
+  type: marketplace
+  marketplace: zapier
+  channel: ipaas-usage
+  evidence: https://zapier.com/apps/netcore-cloud/integrations/facebook-lead-ads
+  direction: third-party
+  category: Ads & Conversion
+  partner_url: https://www.facebook.com/business/ads/lead-ads
+- partner_name: Microsoft Excel
+  partner: null
+  partner_match: null
+  partner_candidate: zapier
+  type: marketplace
+  marketplace: zapier
+  channel: ipaas-usage
+  evidence: https://zapier.com/apps/netcore-cloud/integrations/excel
+  direction: third-party
+  category: Microsoft
+  partner_url: https://zapier.com/office.com
+templates:
+- title: Add Netcore Cloud submissions to Google Sheets as new rows
+  url: https://zapier.com/apps/google-sheets/integrations/netcore-cloud/1235390/add-netcore-cloud-submissions-to-google-sheets-as-new-rows
+  apps:
+  - netcore-cloud
+  - google-sheets
+- title: Create Google Sheets rows for new Netcore Cloud response submissions
+  url: https://zapier.com/apps/google-sheets/integrations/netcore-cloud/1393620/create-google-sheets-rows-for-new-netcore-cloud-response-submissions
+  apps:
+  - netcore-cloud
+  - google-sheets
+- title: Create or update HubSpot contacts from new Netcore Cloud response submissions
+  url: https://zapier.com/apps/hubspot/integrations/netcore-cloud/1627905/create-or-update-hubspot-contacts-from-new-netcore-cloud-response-submissions
+  apps:
+  - netcore-cloud
+  - hubspot
+template_total: 3

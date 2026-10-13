@@ -1,0 +1,160 @@
+openapi: 3.2.0
+info:
+  title: WhatsApp Reach Estimate API
+  version: '1.0'
+  description: Comprehensive collection of WhatsApp APIs that allow users to interact with WhatsApp Flows, Templates, Message Sending, Conversations, Consent Management, Webhooks, Payments, and Media associated with a specific WABA (WhatsApp Business Account).
+  license:
+    name: Proprietary
+    identifier: proprietary
+servers:
+- url: https://cpaaswa.netcorecloud.net/api
+  description: WhatsApp APIs Server
+- url: https://cpaaswa.netcorecloud.net
+  description: WhatsApp Root Server
+security:
+- bearerAuth: []
+tags:
+- name: WhatsApp Reach Estimate
+paths:
+  /v3/metainfo/reach_estimate:
+    get:
+      summary: Get Reach Estimate API
+      tags:
+      - WhatsApp Reach Estimate
+      operationId: getReachEstimate
+      description: 'Retrieve expected delivery and cost ranges for marketing messages sent from
+
+        the specified WABA to users in the given country. Estimates are derived from
+
+        historical performance over the selected lookback period.'
+      parameters:
+      - name: Content-Type
+        in: header
+        required: true
+        description: Must be set to `application/json`.
+        schema:
+          type: string
+          example: application/json
+      - in: query
+        name: waba_id
+        schema:
+          type: string
+        example: '430693066790974'
+        description: 'WhatsApp Business Account ID for which to fetch reach estimates.
+
+          '
+      - in: query
+        name: country
+        schema:
+          type: string
+        example: IN
+        description: 'ISO 3166-1 alpha-2 country code for the target audience, e.g. `IN` for India.
+
+          '
+      - in: query
+        name: date_interval
+        required: true
+        schema:
+          type: string
+          enum:
+          - L1D
+          - L7D
+          - L14D
+          - L28D
+        example: L28D
+        description: 'Historical lookback window used to compute estimates.
+
+          Supported values: `L1D` (last 1 day), `L7D` (last 7 days),
+
+          `L14D` (last 14 days), `L28D` (last 28 days).
+
+          '
+      responses:
+        '200':
+          description: Reach estimate fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                    description: Unique identifier for this API request. Use when contacting support.
+                    example: 1783066501446107307-8c8ddf44c2db52d2
+                  status:
+                    type: string
+                    description: Indicates whether the request succeeded or failed.
+                    example: success
+                  message:
+                    type: string
+                    description: Human-readable summary of the API result.
+                    example: Reach estimate fetched successfully
+                  data:
+                    type: object
+                    description: Reach and cost estimates for the specified WABA and country.
+                    properties:
+                      waba_currency:
+                        type: string
+                        description: Currency code for cost bounds, in ISO 4217 format.
+                        example: INR
+                      estimates:
+                        type: array
+                        description: 'Delivery and cost ranges at different bid amounts, based on historical data.
+
+                          Estimates are informational only and not guarantees.
+
+                          '
+                        items:
+                          type: object
+                          properties:
+                            bid_amount:
+                              type: integer
+                              description: Bid amount in the WABA currency's smallest unit.
+                              example: 21577
+                            users:
+                              type: integer
+                              description: Target audience size used for the estimate.
+                              example: 1000
+                            deliveries_lower_bound:
+                              type: integer
+                              description: Lower bound of expected message deliveries.
+                              example: 0
+                            deliveries_upper_bound:
+                              type: integer
+                              description: Upper bound of expected message deliveries.
+                              example: 0
+                            cost_lower_bound:
+                              type: number
+                              description: Lower bound of expected cost in the WABA currency.
+                              example: 0
+                            cost_upper_bound:
+                              type: number
+                              description: Upper bound of expected cost in the WABA currency.
+                              example: 0
+              example:
+                request_id: 1783066501446107307-8c8ddf44c2db52d2
+                status: success
+                message: Reach estimate fetched successfully
+                data:
+                  waba_currency: INR
+                  estimates:
+                  - bid_amount: 21577
+                    users: 1000
+                    deliveries_lower_bound: 0
+                    deliveries_upper_bound: 0
+                    cost_lower_bound: 0
+                    cost_upper_bound: 0
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer token authentication using JWT. Include the token in the Authorization header as 'Bearer <your_token>'.
+x-stoplight:
+  id: o7al2fnfvhxlr
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

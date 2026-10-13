@@ -1,0 +1,876 @@
+openapi: 3.2.0
+info:
+  title: WhatsApp Flows API
+  version: '1.0'
+  description: Comprehensive collection of WhatsApp APIs that allow users to interact with WhatsApp Flows, Templates, Message Sending, Conversations, Consent Management, Webhooks, Payments, and Media associated with a specific WABA (WhatsApp Business Account).
+  license:
+    name: Proprietary
+    identifier: proprietary
+servers:
+- url: https://cpaaswa.netcorecloud.net/api
+  description: WhatsApp APIs Server
+- url: https://cpaaswa.netcorecloud.net
+  description: WhatsApp Root Server
+security:
+- bearerAuth: []
+tags:
+- name: WhatsApp Flows
+paths:
+  /v3/metainfo/flow/list:
+    parameters: []
+    get:
+      summary: Fetch Flow List API
+      tags:
+      - WhatsApp Flows
+      operationId: fetchFlowList
+      description: 'Retrieves a list of WhatsApp Flows associated with a specific WABA (WhatsApp Business Account).
+
+
+        ### Sample cURL Request
+
+
+        ```bash
+
+        curl --location --request GET ''https://cpaaswa.netcorecloud.net/api/v3/metainfo/flow/list'' \
+
+        --header ''Authorization: Bearer ''
+
+        ```
+
+
+        ### Paginated Example
+
+
+        ```bash
+
+        curl --location ''https://cpaaswa.netcorecloud.net/api/v3/metainfo/flow/list?pagination_token=QVFIUkR6WHRkcTV0MG...'' \
+
+        --header ''Authorization: Bearer ''
+
+        ```'
+      x-stoplight:
+        id: wdg9xjisziypl
+      parameters:
+      - name: pagination_token
+        in: query
+        required: false
+        description: Token for fetching the next page of results. Can be retrieved from the paging.cursors.after field of the response.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successfully retrieved flow list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FlowListSuccessResponse'
+              example:
+                status: success
+                message: Flow list fetched successfully!
+                data:
+                - categories:
+                  - SHOPPING
+                  id: '1097149801870954'
+                  name: multi_product_native_shopping_flow_am
+                  status: PUBLISHED
+                  validation_errors: []
+                - categories:
+                  - LEAD_GENERATION
+                  id: '726142859633434'
+                  name: Udayan_8
+                  status: PUBLISHED
+                  validation_errors: []
+                paging:
+                  cursors:
+                    after: QVFIUkR6WHRkcTV0MGtVSGwwLU5SN0...
+                    before: QVFIUnRsZAE95OXVkaFk1YURfYm9m...
+        '400':
+          description: Bad Request - Invalid JWT Token
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - status
+                - message
+                properties:
+                  status:
+                    type: string
+                    example: failure
+                  message:
+                    type: string
+              example:
+                status: failure
+                message: invalid jwt token
+        '500':
+          description: Internal Server Error - Missing WABA ID or Redis Connection Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1v3~1metainfo~1flow~1list/get/responses/400/content/application~1json/schema'
+              examples:
+                missing_waba_id:
+                  summary: Missing WABA ID
+                  value:
+                    status: failure
+                    message: waba_id is required
+                redis_error:
+                  summary: Redis Connection Error
+                  value:
+                    status: failure
+                    message: INTERNAL SERVER ERROR
+  /v3/metainfo/flow/create:
+    parameters: []
+    post:
+      summary: Create Flow API
+      tags:
+      - WhatsApp Flows
+      operationId: createFlow
+      description: 'The **Create Flow API** allows you to create interactive WhatsApp flows using Meta''s flow builder JSON structure.
+
+        This API accepts flow configuration details such as flow name, categories, and a valid flow JSON string.
+
+        Optionally, flows can be published immediately upon creation. It is used to build dynamic, guided experiences
+
+        for WhatsApp users, such as onboarding journeys, service requests, or feedback forms.'
+      parameters:
+      - name: Content-Type
+        in: header
+        required: true
+        description: Must be set to 'application/json' to indicate JSON-formatted request body.
+        schema:
+          type: string
+          example: application/json
+      requestBody:
+        required: true
+        description: All necessary parameters should be passed in the request body in JSON format.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - name
+              - categories
+              - flow_json
+              properties:
+                name:
+                  type: string
+                  description: Name of the flow.
+                categories:
+                  type: array
+                  description: Categories to which the flow belongs.
+                  items:
+                    type: string
+                flow_json:
+                  type: string
+                  description: JSON string representing the WhatsApp flow structure.
+                publish:
+                  type: boolean
+                  description: Whether to publish the flow immediately. Values can be 'true' or 'false'. Default value is 'false'.
+            example:
+              name: My first flow
+              categories:
+              - OTHER
+              flow_json: '{"version":"5.0","screens":[{"id":"WELCOME_SCREEN","layout":{"type":"SingleColumnLayout","children":[{"type":"TextHeading","text":"Hello World"},{"type":"Footer","label":"Complete","on-click-action":{"name":"complete","payload":{}}}]},"title":"Welcome","terminal":true,"success":true,"data":{}}]}'
+              publish: true
+      responses:
+        '200':
+          description: Successfully created flow
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateFlowSuccessResponse'
+              example:
+                status: Successfull
+                message: Flow Created Successfully
+                data:
+                  id: '1292530015172565'
+                  success: true
+        '400':
+          description: Bad Request - Missing Data or Invalid JWT Token
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1v3~1metainfo~1flow~1list/get/responses/400/content/application~1json/schema'
+              examples:
+                missing_data:
+                  summary: Missing or Invalid Data
+                  value:
+                    status: Failure
+                    message: Please Provide Data to Create Flow
+                invalid_jwt:
+                  summary: Invalid JWT Token
+                  value:
+                    status: failure
+                    message: invalid jwt token
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1v3~1metainfo~1flow~1list/get/responses/400/content/application~1json/schema'
+              example:
+                status: failure
+                message: Internal Server Error
+        4XX:
+          description: Meta Flow Creation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1v3~1metainfo~1flow~1edit/post/responses/4XX/content/application~1json/schema'
+              example:
+                status: failure
+                message: Failed to Create Flow
+                Data: {}
+  /v3/metainfo/flow/edit:
+    parameters: []
+    post:
+      summary: Edit Flow with JSON File API
+      tags:
+      - WhatsApp Flows
+      operationId: editFlowWithJSON
+      description: Updates an existing WhatsApp flow by uploading a new flow definition as a JSON file via multipart/form-data.
+      parameters:
+      - name: Content-Type
+        in: header
+        required: true
+        description: Must be set to multipart/form-data for file upload.
+        schema:
+          type: string
+          example: multipart/form-data
+      - name: flowid
+        in: query
+        required: true
+        description: The unique ID of the flow.
+        schema:
+          type: string
+      requestBody:
+        required: true
+        description: 'JSON file containing the updated flow definition. Must be valid Meta Flow JSON.
+
+
+          ### Sample cURL Request
+
+
+          ```bash
+
+          curl --location ''https://cpaaswa.netcorecloud.net/api/v3/metainfo/flow/edit?flowid=674833981710003'' \
+
+          --header ''Authorization: Bearer <your_bearer_token>'' \
+
+          --form ''file=@"/path/to/file.json"''
+
+          ```
+
+
+          Note: Ensure that the file is properly formatted and uses Meta''s WhatsApp Flow JSON schema.
+
+          '
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+              - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: JSON file containing the updated flow definition. Must be valid Meta Flow JSON.
+      responses:
+        '200':
+          description: Successfully edited flow with JSON file
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EditFlowSuccessResponse'
+              example:
+                status: Success
+                message: Successfully edited Flow
+                data:
+                  success: true
+        '400':
+          description: Bad Request - Missing or Invalid Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1v3~1metainfo~1flow~1list/get/responses/400/content/application~1json/schema'
+              example:
+                status: failure
+                message: flow_id is required
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1v3~1metainfo~1flow~1list/get/responses/400/content/application~1json/schema'
+              example:
+                status: failure
+                message: Internal Server Error
+        4XX:
+          description: Meta Flow Update Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - status
+                - message
+                properties:
+                  status:
+                    type: string
+                    example: failure
+                  message:
+                    type: string
+                    example: Failed to Publish Flow
+                  Data:
+                    type: object
+                    description: Meta-specific error details
+                    additionalProperties: true
+              example:
+                status: failure
+                message: Meta API responded with error
+                Data: {}
+  /v3/metainfo/flow/delete:
+    parameters: []
+    delete:
+      summary: Delete Flow API
+      tags:
+      - WhatsApp Flows
+      operationId: deleteFlow
+      description: 'Deletes an unpublished WhatsApp flow using its flow ID, permanently removing its metadata from the system.
+
+
+        ### Sample cURL Request
+
+
+        ```bash
+
+        curl --location --request DELETE ''https://cpaaswa.netcorecloud.net/api/v3/metainfo/flow/delete?flowid=1378913093293946'' \
+
+        --header ''Authorization: Bearer ''
+
+        ```'
+      parameters:
+      - $ref: '#/paths/~1v3~1metainfo~1flow~1edit/post/parameters/1'
+      responses:
+        '200':
+          description: Successfully deleted flow
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteFlowSuccessResponse'
+              example:
+                status: Success
+                message: Successfully Deleted Flow
+                data:
+                  success: true
+        '400':
+          description: Bad Request - Missing or Invalid Flow ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1v3~1metainfo~1flow~1list/get/responses/400/content/application~1json/schema'
+              example:
+                status: failure
+                message: flow_id is required
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1v3~1metainfo~1flow~1list/get/responses/400/content/application~1json/schema'
+              example:
+                status: failure
+                message: Internal Server Error
+        4XX:
+          description: Meta Deletion Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1v3~1metainfo~1flow~1edit/post/responses/4XX/content/application~1json/schema'
+              example:
+                status: failure
+                message: Failed to Delete Flow
+                Data: {}
+  /v3/metainfo/flow/deprecate:
+    parameters: []
+    post:
+      summary: Deprecate Flow API
+      tags:
+      - WhatsApp Flows
+      operationId: deprecateFlow
+      description: 'Deprecates a published WhatsApp flow, marking it inactive and unavailable for further use.
+
+
+        ### Sample cURL Request
+
+
+        ```bash
+
+        curl --location --request POST ''https://cpaaswa.netcorecloud.net/api/v3/metainfo/flow/deprecate?flowid=1378913093293946'' \
+
+        --header ''Authorization: Bearer ''
+
+        ```'
+      parameters:
+      - $ref: '#/paths/~1v3~1metainfo~1flow~1edit/post/parameters/1'
+      responses:
+        '200':
+          description: Successfully deprecated flow
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeprecateFlowSuccessResponse'
+              example:
+                status: Success
+                message: Flow Deprecated Successfully
+                data:
+                  success: true
+        '400':
+          description: Bad Request - Missing or Invalid Flow ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1v3~1metainfo~1flow~1list/get/responses/400/content/application~1json/schema'
+              example:
+                status: failure
+                message: flow_id is required
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1v3~1metainfo~1flow~1list/get/responses/400/content/application~1json/schema'
+              example:
+                status: failure
+                message: Internal Server Error
+        4XX:
+          description: Meta Deprecation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1v3~1metainfo~1flow~1edit/post/responses/4XX/content/application~1json/schema'
+              example:
+                status: failure
+                message: Failed to Deprecate Flow
+                Data: {}
+  /v3/metainfo/flow/edit/metadata:
+    parameters: []
+    post:
+      summary: Edit Flow Metadata API
+      tags:
+      - WhatsApp Flows
+      operationId: editFlowMetadata
+      description: Updates metadata fields (like name or categories) of an existing WhatsApp flow using its flow ID.
+      parameters:
+      - $ref: '#/paths/~1v3~1metainfo~1flow~1create/post/parameters/0'
+      - $ref: '#/paths/~1v3~1metainfo~1flow~1edit/post/parameters/1'
+      requestBody:
+        required: true
+        description: Fields to update for the flow metadata.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: New name for the flow.
+                categories:
+                  type: string
+                  description: Updated categories for the flow.
+            example:
+              name: EditedName2121
+              categories: LEAD_GENERATION
+      responses:
+        '200':
+          description: Successfully edited flow metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EditFlowSuccessResponse'
+              example:
+                status: Success
+                message: Successfully edited Flow
+                data:
+                  success: true
+        '400':
+          description: Bad Request - Missing or Invalid Flow ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1v3~1metainfo~1flow~1list/get/responses/400/content/application~1json/schema'
+              example:
+                status: failure
+                message: flow_id is required
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1v3~1metainfo~1flow~1list/get/responses/400/content/application~1json/schema'
+              example:
+                status: failure
+                message: Internal Server Error
+        4XX:
+          description: Meta Update Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1v3~1metainfo~1flow~1edit/post/responses/4XX/content/application~1json/schema'
+              example:
+                status: failure
+                message: Failed to Edit Flow
+                Data: {}
+  /v3/metainfo/flow/preview:
+    parameters: []
+    get:
+      summary: Generate Flow Preview URL API
+      tags:
+      - WhatsApp Flows
+      operationId: generateFlowPreviewURL
+      description: 'To retrieve a preview URL for a specific WhatsApp Flow using Meta''s Flows API, you can make an HTTP GET request
+
+        to the designated endpoint. This allows you to visualize and interact with the flow before deploying it to end users,
+
+        facilitating testing and validation of the flow''s functionality and user experience.
+
+
+        For detailed instructions on generating a web preview URL, refer to Meta''s official documentation:
+
+        https://developers.facebook.com/docs/whatsapp/flows/reference/flowsapi'
+      parameters:
+      - name: flow_id
+        in: query
+        required: true
+        description: Unique identifier assigned to each WhatsApp Flow.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successfully generated flow preview URL
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FlowPreviewSuccessResponse'
+              example:
+                status: success
+                message: Flow preview fetched successfully!
+                data:
+                  preview_url: https://business.facebook.com/wa/manage/flows/1097149801870954/preview/?token=2919d2eb-7d0f-4cf7-8b22-3b9f79fe3679
+                  expires_at: 2025-04-19T11:27:54+0000
+                  flow_id: '1097149801870954'
+        '400':
+          description: Bad Request - Missing Flow ID or Invalid JWT Token
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1v3~1metainfo~1flow~1list/get/responses/400/content/application~1json/schema'
+              examples:
+                missing_flow_id:
+                  summary: Missing Flow ID
+                  value:
+                    status: failure
+                    message: flow_id is required
+                invalid_jwt:
+                  summary: Invalid JWT Token
+                  value:
+                    status: failure
+                    message: invalid jwt token
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1v3~1metainfo~1flow~1list/get/responses/400/content/application~1json/schema'
+              example:
+                status: failure
+                message: INTERNAL SERVER ERROR
+        '503':
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1v3~1metainfo~1flow~1list/get/responses/400/content/application~1json/schema'
+              example:
+                status: failure
+                message: Service temporarily unavailable. Please try again later.
+  /v3/metainfo/flow/publish:
+    parameters: []
+    get:
+      summary: Publish Flow
+      tags:
+      - WhatsApp Flows
+      operationId: publishFlow
+      description: 'Publishes an existing WhatsApp flow using its flow ID, making it live for use or preview.
+
+
+        ### Sample cURL Request
+
+
+        ```bash
+
+        curl ''https://cpaaswa.netcorecloud.net/api/v3/metainfo/flow/publish?flowid=1292530015172565'' \
+
+        --header ''Authorization: Bearer ''
+
+        ```'
+      parameters:
+      - $ref: '#/paths/~1v3~1metainfo~1flow~1edit/post/parameters/1'
+      responses:
+        '200':
+          description: Successfully published flow
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublishFlowSuccessResponse'
+              example:
+                status: Success
+                message: Successfully Published Flow
+                data:
+                  success: true
+        '400':
+          description: Bad Request - Missing Flow ID or Invalid JWT Token
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1v3~1metainfo~1flow~1list/get/responses/400/content/application~1json/schema'
+              examples:
+                missing_flow_id:
+                  summary: Missing Flow ID
+                  value:
+                    status: failure
+                    message: flow_id is required
+                invalid_jwt:
+                  summary: Invalid JWT Token
+                  value:
+                    status: failure
+                    message: invalid jwt token
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1v3~1metainfo~1flow~1list/get/responses/400/content/application~1json/schema'
+              example:
+                status: failure
+                message: Internal Server Error
+        4XX:
+          description: Meta Flow Publish Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1v3~1metainfo~1flow~1edit/post/responses/4XX/content/application~1json/schema'
+              example:
+                status: failure
+                message: Failed to Publish Flow
+                Data: {}
+components:
+  schemas:
+    PublishFlowSuccessResponse:
+      type: object
+      required:
+      - status
+      - message
+      - data
+      properties:
+        status:
+          type: string
+          example: Success
+        message:
+          type: string
+          example: Successfully Published Flow
+        data:
+          type: object
+          required:
+          - success
+          properties:
+            success:
+              type: boolean
+              example: true
+    FlowPreviewSuccessResponse:
+      type: object
+      required:
+      - status
+      - message
+      - data
+      properties:
+        status:
+          type: string
+          example: success
+        message:
+          type: string
+          example: Flow preview fetched successfully!
+        data:
+          type: object
+          required:
+          - preview_url
+          - expires_at
+          - flow_id
+          properties:
+            preview_url:
+              type: string
+              example: https://business.facebook.com/wa/manage/flows/1097149801870954/preview/?token=2919d2eb-7d0f-4cf7-8b22-3b9f79fe3679
+            expires_at:
+              type: string
+              example: 2025-04-19T11:27:54+0000
+            flow_id:
+              type: string
+              example: '1097149801870954'
+    FlowListSuccessResponse:
+      type: object
+      required:
+      - status
+      - message
+      - data
+      properties:
+        status:
+          type: string
+          example: success
+        message:
+          type: string
+          example: Flow list fetched successfully!
+        data:
+          type: array
+          items:
+            type: object
+            required:
+            - categories
+            - id
+            - name
+            - status
+            - validation_errors
+            properties:
+              categories:
+                type: array
+                items:
+                  type: string
+                example:
+                - SHOPPING
+              id:
+                type: string
+                example: '1097149801870954'
+              name:
+                type: string
+                example: multi_product_native_shopping_flow_am
+              status:
+                type: string
+                example: PUBLISHED
+              validation_errors:
+                type: array
+                items:
+                  type: string
+        paging:
+          type: object
+          properties:
+            cursors:
+              type: object
+              properties:
+                after:
+                  type: string
+                  example: QVFIUkR6WHRkcTV0MGtVSGwwLU5SN0...
+                before:
+                  type: string
+                  example: QVFIUnRsZAE95OXVkaFk1YURfYm9m...
+    EditFlowSuccessResponse:
+      type: object
+      required:
+      - status
+      - message
+      - data
+      properties:
+        status:
+          type: string
+          example: Success
+        message:
+          type: string
+          example: Successfully edited Flow
+        data:
+          type: object
+          required:
+          - success
+          properties:
+            success:
+              type: boolean
+              example: true
+    CreateFlowSuccessResponse:
+      type: object
+      required:
+      - status
+      - message
+      - data
+      properties:
+        status:
+          type: string
+          example: Successfull
+        message:
+          type: string
+          example: Flow Created Successfully
+        data:
+          type: object
+          required:
+          - id
+          - success
+          properties:
+            id:
+              type: string
+              example: '1292530015172565'
+            success:
+              type: boolean
+              example: true
+    DeprecateFlowSuccessResponse:
+      type: object
+      required:
+      - status
+      - message
+      - data
+      properties:
+        status:
+          type: string
+          example: Success
+        message:
+          type: string
+          example: Flow Deprecated Successfully
+        data:
+          type: object
+          required:
+          - success
+          properties:
+            success:
+              type: boolean
+              example: true
+    DeleteFlowSuccessResponse:
+      type: object
+      required:
+      - status
+      - message
+      - data
+      properties:
+        status:
+          type: string
+          example: Success
+        message:
+          type: string
+          example: Successfully Deleted Flow
+        data:
+          type: object
+          required:
+          - success
+          properties:
+            success:
+              type: boolean
+              example: true
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer token authentication using JWT. Include the token in the Authorization header as 'Bearer <your_token>'.
+x-stoplight:
+  id: o7al2fnfvhxlr
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/netcorecloud/main/json-schema/netcorecloud-audience-details-schema.json",
+  "title": "AudienceDetails",
+  "description": "Details of the audience for the campaign. Section to specify Audience Details to be included or excluded for the campaign via Contact Master, List IDs, Segment IDs or UDT ID. Note - This is not a mandatory block as long as the campaign is in \"draft\" state.",
+  "x-generated": "2026-10-13",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/netcorecloud-campaigns-api-openapi.yml#/components/schemas/AudienceDetails",
+  "type": "object",
+  "properties": {
+    "include_audience": {
+      "type": "object",
+      "properties": {
+        "contact_master": {
+          "type": "boolean"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                },
+                "description": "Unique identifier for the audience."
+              },
+              "name": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Name of the audience."
+              },
+              "audience_type": {
+                "type": "string",
+                "description": "Type of the audience. Allowed values: list, segment, udt"
+              }
+            }
+          },
+          "description": "You can include by Either ID or name. You can also combine them. "
+        }
+      },
+      "required": [
+        "contact_master"
+      ],
+      "description": "List of audiences to include. We can use either Contact Master OR List/Segment OR UDT ID while creating the campaign."
+    },
+    "exclude_audience": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                },
+                "description": "Unique identifier for the audience."
+              },
+              "name": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Name of the audience."
+              },
+              "audience_type": {
+                "type": "string",
+                "description": "Type of the audience. UDT is not allowed. Alowed values: list, segment"
+              }
+            }
+          },
+          "description": "You can exclude by Either ID or name. You can also combine them. "
+        }
+      },
+      "description": "List of audiences to exclude.",
+      "required": [
+        "data"
+      ]
+    }
+  },
+  "required": [
+    "include_audience",
+    "exclude_audience"
+  ]
+}

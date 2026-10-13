@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/netcorecloud/main/json-schema/netcorecloud-netcore-payload-schema.json",
+  "title": "NetcorePayload",
+  "x-generated": "2026-10-13",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/NetcorePayload",
+  "type": "object",
+  "required": [
+    "personalizations",
+    "from"
+  ],
+  "properties": {
+    "personalizations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/SendGridPersonalization"
+      },
+      "minItems": 1
+    },
+    "from": {
+      "$ref": "#/$defs/EmailAddress"
+    },
+    "subject": {
+      "type": "string"
+    },
+    "content": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/NetcoreContent"
+      }
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Equivalent to SendGrid `categories`."
+    },
+    "settings": {
+      "type": "object",
+      "properties": {
+        "open_track": {
+          "type": "boolean"
+        },
+        "click_track": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "EmailAddress": {
+      "type": "object",
+      "required": [
+        "email"
+      ],
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "NetcoreContent": {
+      "type": "object",
+      "required": [
+        "type",
+        "value"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "html",
+            "plain"
+          ],
+          "description": "`html` maps to `text/html`, `plain` maps to `text/plain`."
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "SendGridPersonalization": {
+      "type": "object",
+      "required": [
+        "to"
+      ],
+      "properties": {
+        "to": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EmailAddress"
+          },
+          "minItems": 1
+        },
+        "cc": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EmailAddress"
+          }
+        },
+        "bcc": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EmailAddress"
+          }
+        },
+        "subject": {
+          "type": "string",
+          "description": "Overrides top-level subject for this personalization."
+        }
+      }
+    }
+  }
+}

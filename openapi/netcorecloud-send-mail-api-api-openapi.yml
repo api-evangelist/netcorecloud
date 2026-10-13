@@ -1,0 +1,499 @@
+openapi: 3.2.0
+info:
+  title: Email API V6 Send Mail API
+  description: ''
+  version: 1.0.0
+servers:
+- url: https://emailapi.netcorecloud.net/v6
+  description: For Non EU region
+- url: https://apieu.netcorecloud.net/v6
+  description: For EU region
+security: []
+tags:
+- name: Send Mail API
+paths:
+  /mail/send:
+    post:
+      summary: Send Mail
+      deprecated: false
+      description: 'The **Send Email API** enables you to send emails using your verified sending domain to one or multiple recipients in a single API call. You can control key elements like recipients (to, cc, bcc), subject, and content through the `personalizations` object, while the `settings` object allows advanced configurations such as scheduling, tracking, and global bcc.
+
+        Optional features include tagging emails for performance analysis (`tags`), setting delivery priority via `priorityflag`, and compressing the payload with gzip to optimize data usage. Personalization lets you tailor shared content uniquely per recipient group, enhancing engagement from a single API request.
+
+
+        To view sample request payloads for these use cases, open the Examples panel on the right.
+
+
+        **email-send-example**: Full send request with attachments, CC/BCC, tags, and tracking options.
+
+
+        **email-example-unsubscribe**: Adds List-Unsubscribe headers for one-click unsubscribe support.
+
+
+        **multiple_email_id_in_to**: Sends to multiple recipients using separate personalization blocks.
+
+
+        **dynamic-attribute-example**: Uses dynamic attributes to replace placeholders with recipient-specific values.'
+      operationId: sendMail
+      tags:
+      - Send Mail API
+      parameters:
+      - name: X-Encryption
+        in: header
+        description: (Optional) Set to 1 to enable encryption for the API request. When enabled, both the payload and its key components must follow AES encryption standards.
+        required: false
+        schema:
+          type: integer
+          enum:
+          - 1
+      - name: X-Encryption-Version
+        in: header
+        description: (Optional) Specifies the version of the encryption method being used. Required only if encryption is enabled.
+        required: false
+        schema:
+          type: integer
+      - name: X-AES-Key
+        in: header
+        description: (Optional) AES encryption key (Base64-encoded) used to encrypt the request payload. This key must be shared securely with Netcore.
+        required: false
+        schema:
+          type: string
+      - name: X-AES-IV
+        in: header
+        description: (Optional) AES initialization vector (IV) in Base64 format. Used for decrypting the payload when encryption is enabled.
+        required: false
+        schema:
+          type: string
+      - name: Content-Encoding
+        in: header
+        description: (Optional) Set to gzip if the request body is compressed using GZIP. This helps reduce payload size and optimize bandwidth usage.
+        required: false
+        schema:
+          type: string
+          enum:
+          - gzip
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                personalizations:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      to:
+                        type: array
+                        items:
+                          $ref: '#/paths/~1mail~1send/post/requestBody/content/application~1json/schema/properties/bcc/items'
+                      cc:
+                        type: array
+                        items:
+                          $ref: '#/paths/~1mail~1send/post/requestBody/content/application~1json/schema/properties/bcc/items'
+                      bcc:
+                        type: array
+                        items:
+                          $ref: '#/paths/~1mail~1send/post/requestBody/content/application~1json/schema/properties/bcc/items'
+                      tags:
+                        type: array
+                        items:
+                          type: string
+                      headers:
+                        type: object
+                        description: ' '
+                        additionalProperties: true
+                      attributes:
+                        type: object
+                        description: The attributes object is a collection of key-value pairs to facilitate personalization. The attributes object contains keywords & their respective substitution data, which will indicate how Pepipost should modify the body content and the subject of your email while processing the request.
+                        additionalProperties: true
+                      dynamic_template_attributes:
+                        type: object
+                        description: Key/value pairs used for dynamic templates.
+                        additionalProperties: true
+                      token_to:
+                        type: string
+                      token_cc:
+                        type: string
+                      token_bcc:
+                        type: string
+                      attachments:
+                        type: array
+                        items:
+                          $ref: '#/paths/~1mail~1send/post/requestBody/content/application~1json/schema/properties/attachments/items'
+                    required:
+                    - to
+                from:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      description: 'Email address of the sender. For example : info@example.com
+
+                        Make sure to use the domain with the ''active'' status in your Email API account. Domains which are not added & activated with your Email API account are not authorized to send emails.'
+                      format: email
+                      examples:
+                      - admin@netcorecloud.com
+                    name:
+                      type: string
+                      description: Name of the sender.
+                      examples:
+                      - Netcore Cloud
+                  required:
+                  - email
+                reply_to:
+                  type: array
+                  items:
+                    $ref: '#/paths/~1mail~1send/post/requestBody/content/application~1json/schema/properties/bcc/items'
+                subject:
+                  type: string
+                  description: Subject line of the email
+                  example: Test subject line
+                priorityflag:
+                  type: integer
+                  description: 'Assigns delivery priority (1=OTP/Transactional, 2=Triggered, 3=Promotional).
+
+                    Defaults to account/subaccount setting if omitted.
+
+                    '
+                  example: 2
+                content:
+                  type: array
+                  description: 'Email content blocks. Supports dynamic placeholders like [%NAME%] with corresponding `attributes`.
+
+                    '
+                  items:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        description: 'Indicate if the content type is ''html'' or ''amp''.
+
+                          If you are using content type ''amp'', then make sure to also pass equivalent content with type ''html'' to maintain fallback for devices or email applications that do not support AMP.'
+                        minLength: 1
+                        examples:
+                        - html
+                      value:
+                        type: string
+                        description: 'Pass the HTML content in JSON escape format. Please ensure it is synonymous with the format indicated in the ''type'' parameter.
+
+                          '
+                        minLength: 1
+                        examples:
+                        - '[%LEAD%] & [%BAND%] will be singing a tribute song for our Hero.'
+                    required:
+                    - type
+                    - value
+                template_id:
+                  type: integer
+                  description: 'ID of the email template (Settings → Templates).
+
+                    If used, ensure HTML content is provided in `content`.
+
+                    '
+                  example: 4536
+                tags:
+                  type: array
+                  description: 'Labels to segment and track emails (e.g., ["signup-confirmation", "holiday-offers"]).
+
+                    '
+                  items:
+                    type: string
+                send_at:
+                  type: integer
+                  description: Scheduled send time in UNIX epoch format.
+                  example: 1700743800
+                attachments:
+                  type: array
+                  items:
+                    type: object
+                    title: attachments
+                    properties:
+                      content:
+                        type: string
+                        description: 'base64 encoded value of the attached file.
+
+                          e.g if you want to attach a ''invoice.pdf'' file, then convert the file content first in base64 and pass the value in this parameter.'
+                        minLength: 1
+                      filename:
+                        type: string
+                        description: 'Name of the attachment.
+
+                          e.g. invoice.pdf or statement.xls'
+                bcc:
+                  type: array
+                  items:
+                    type: object
+                    title: to_cc_bcc_email_obj
+                    properties:
+                      email:
+                        type: string
+                        description: The intended recipient's email address.
+                        format: email
+                      name:
+                        type: string
+                        description: The intended recipient's name.
+                    required:
+                    - email
+                tracking_settings:
+                  type: object
+                  title: tracking_settings
+                  properties:
+                    click_tracking:
+                      type: object
+                      title: click_tracking
+                      description: You can enable or disable click tracking for your emails.
+                      properties:
+                        enable:
+                          type: boolean
+                          description: Indicates if this setting is enabled.
+                    open_tracking:
+                      type: object
+                      title: open_tracking
+                      description: You can enable or disable open tracking for your emails.
+                      properties:
+                        enable:
+                          type: boolean
+                          description: Indicates if this setting is enabled.
+                    subscription_tracking:
+                      type: object
+                      title: subscription_tracking
+                      description: You can enable or disable tracking of unsubscribe requests for your emails.
+                      properties:
+                        enable:
+                          type: boolean
+                          default: true
+                mail_settings:
+                  type: object
+                  title: mail_settings
+                  properties:
+                    hepf:
+                      type: object
+                      title: hepf
+                      properties:
+                        enable:
+                          type: boolean
+                    sto:
+                      type: object
+                      title: sto
+                      description: 'We have provided advance STO options. '
+                      properties:
+                        enable:
+                          type: boolean
+                          description: Please ensure STO is enabled on your account before using it. For more you can contact support team at help@netcorecloud.com
+                        end_time:
+                          type: integer
+                          description: Please pass the value in EPOCH date-time format.
+                          examples:
+                          - 1697650200
+                        action:
+                          type: string
+                          description: "Following are options for this parameter\n1. custom_time  \n2. end_time\n3. dropped"
+                        custom_time:
+                          type: integer
+                          description: Please pass the value in EPOCH date-time format.
+                          examples:
+                          - 1697650200
+                    amplets:
+                      type: object
+                      properties:
+                        amplets:
+                          type: boolean
+                          description: Indicates if this setting is enabled.
+                      description: 'for adding amplets '
+                template_version:
+                  type: number
+              required:
+              - personalizations
+              - from
+              - subject
+              - content
+            examples:
+              email-send-example:
+                summary: Standard Send Email Request
+                value:
+                  personalizations:
+                  - to:
+                    - email: user@example.com
+                      name: John Doe
+                    cc:
+                    - email: cc@example.com
+                      name: CC User
+                    bcc:
+                    - email: bcc@example.com
+                      name: BCC User
+                    tags:
+                    - Order Confirmation
+                    - Mumbai
+                    headers:
+                      X-Custom-Header: Promo
+                    attributes:
+                      NAME: John
+                      CITY: Mumbai
+                    dynamic_template_data: {}
+                  from:
+                    email: sender@domain.com
+                    name: Your Brand
+                  reply_to:
+                  - email: reply@domain.com
+                    name: Support
+                  subject: Your Order is Confirmed
+                  priorityflag: 1
+                  content:
+                  - type: html
+                    value: <h1>Thank you, [%NAME%]!</h1>
+                  template_id: 1024
+                  tags:
+                  - Order
+                  send_at: 1700743800
+                  attachments:
+                  - content: SGVsbG8gd29ybGQ=
+                    filename: invoice.pdf
+                  bcc:
+                  - email: hidden@domain.com
+                    name: Hidden Recipient
+                  tracking_settings:
+                    click_tracking:
+                      enable: true
+                    open_tracking:
+                      enable: true
+                    subscription_tracking:
+                      enable: false
+                  mail_settings:
+                    footer:
+                      enable: true
+                    sandbox_mode:
+                      enable: false
+                  template_version: 1
+              email-example-unsubscribe:
+                summary: Send Email with Unsubscribe Headers
+                value:
+                  personalizations:
+                  - to:
+                    - email: pepiposts@gmail.com
+                      name: Anirudh
+                    headers:
+                      List-Unsubscribe: <https:yourlink.com>
+                      List-Unsubscribe-Post: List-Unsubscribe=One-Click
+                  from:
+                    email: easybuy@indiamart.com
+                    name: IndiaMart
+                  subject: Subject Line here
+                  tags:
+                  - Email
+                  content:
+                  - type: html
+                    value: 'This is a test email '
+                  token_to: '1233'
+                  tracking_settings:
+                    open_tracking:
+                      enable: true
+                    click_tracking:
+                      enable: true
+                    subscription_tracking:
+                      enable: true
+                  mail_settings: {}
+              Multiple_email_id_in_to:
+                summary: Send to Multiple Recipients
+                value:
+                  from:
+                    email: info@yourdomain.com
+                    name: Pepipost
+                  subject: Multiple to
+                  content:
+                  - type: html
+                    value: Welcome to Pepipost
+                  personalizations:
+                  - to:
+                    - email: pepiposts@gmail.com
+                      name: Pepipost
+                    - email: pepiposts@gmail.com
+                      name: Pepipost
+                    - email: pepiposts@gmail.com
+                      name: Pepipost
+                    token_to: Email 1
+                  - to:
+                    - email: anirudhnetcore@gmail.com
+                      name: Anirudh
+                    token_to: Email 2
+                  settings:
+                    open_track: true
+                    click_track: true
+                    unsubscribe_track: true
+              dynamic-attribute-example:
+                summary: Send with Dynamic Attributes
+                value:
+                  from:
+                    email: no-reply@examplemail.com
+                    name: Example Company
+                  subject: Test Email From Example Company
+                  content:
+                  - type: html
+                    value: Hello [%firstname or 'FirstName'%], [%lastname or 'LastName'%]
+                  personalizations:
+                  - to:
+                    - email: user.one.demo@example.com
+                      name: User One
+                    dynamic_template_attributes:
+                      firstname: Alex
+                      lastname: Johnson
+                  - to:
+                    - email: user.two.demo@example.com
+                      name: User Two
+                    dynamic_template_attributes:
+                      firstname: Sam
+                      lastname: Bryan
+      responses:
+        '202':
+          description: Email accepted for delivery
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      message_id:
+                        type: string
+                  message:
+                    type: string
+                  status:
+                    type: string
+              example:
+                data:
+                  message_id: b6e2960c56543d3e53e18ea038097bde
+                message: OK
+                status: success
+        '400':
+          description: Bad Request – invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/paths/~1webhooks/get/responses/400/content/application~1json/schema'
+                required:
+                - error
+              example:
+                error:
+                - message: invalid from domain
+                  field: from[email]
+      security:
+      - bearer: []
+components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

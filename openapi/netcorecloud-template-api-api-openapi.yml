@@ -1,0 +1,309 @@
+openapi: 3.2.0
+info:
+  title: Email API V5 Template API
+  description: 'Current API version: v5.1
+
+
+    Our API provides functionalities for email sending, templating emails, managing sender domain, credit usage check and reports.
+
+
+    API endpoint URL for non-EU customers: https://emailapi.netcorecloud.net/
+
+
+    API endpoint for EU customers: https://apieu.netcorecloud.net/'
+  version: '5.1'
+servers:
+- url: https://emailapi.netcorecloud.net/v5.1
+  description: Non-EU customers
+- url: https://apieu.netcorecloud.net/v5.1
+  description: EU customers
+security:
+- ApiKeyAuth: []
+tags:
+- name: Template API
+paths:
+  /template:
+    get:
+      tags:
+      - Template API
+      summary: View a template
+      description: 'Retrieve and preview a stored template from the Netcore CPaaS dashboard.
+
+
+        Use this endpoint to fetch template content by template_id.'
+      operationId: get-template
+      parameters:
+      - name: template_id
+        in: query
+        required: true
+        description: Add the template ID you want to preview.
+        schema:
+          type: string
+          example: '102345'
+      - name: api_key
+        in: header
+        required: true
+        description: Add your Netcore CPaaS dashboard Email API key.
+        schema:
+          type: string
+          example: x-api-key-123456789
+      responses:
+        '200':
+          description: Template details returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      template_name:
+                        type: string
+                        example: order_confirmation_v1
+                      content:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                              example: html
+                            value:
+                              type: string
+                              example: <html>...</html>
+                  message:
+                    type: string
+                    example: Success
+                  status:
+                    type: string
+                    example: success
+        '401':
+          description: Unauthorized
+    patch:
+      tags:
+      - Template API
+      summary: Update a template
+      description: 'Update template name and/or template content stored in the Netcore CPaaS dashboard.
+
+
+        Pass the template_id and only the fields you want to change.'
+      operationId: patch-template
+      parameters:
+      - name: api_key
+        in: header
+        required: true
+        description: Add your Netcore CPaaS dashboard Email API key.
+        schema:
+          type: string
+          example: x-api-key-123456789
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                template_id:
+                  type: integer
+                  description: Add the template ID you want to update.
+                  example: 102345
+                template_name:
+                  type: string
+                  description: Add a new template name if you want to rename the template.
+                  example: order_confirmation_v2
+                content:
+                  type: array
+                  description: Add updated content blocks to replace the existing template content.
+                  items:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        description: Choose content format — html or amp.
+                        example: html
+                      value:
+                        type: string
+                        description: Add the updated template body content.
+                        example: <html><body>Hello [% NAME %], your order has shipped.</body></html>
+              required:
+              - template_id
+      responses:
+        '200':
+          description: Template updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      template_id:
+                        type: integer
+                        example: 102345
+                      template_name:
+                        type: string
+                        example: order_confirmation_v2
+                  message:
+                    type: string
+                    example: Template updated
+                  status:
+                    type: string
+                    example: success
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+    post:
+      tags:
+      - Template API
+      summary: Add a template
+      description: 'Create and store a new email template on the Netcore CPaaS dashboard.
+
+
+        A template is a reusable server-side email layout referenced by template_id when sending emails.
+
+        You can include substitution placeholders like [% NAME %] that are replaced at send time.
+
+
+        Templates created in a master account are not accessible in subaccounts.
+
+
+        Base URLs:
+
+        Non-EU: https://emailapi.netcorecloud.net/
+
+        EU: https://apieu.netcorecloud.net/'
+      operationId: post-template
+      parameters:
+      - name: api_key
+        in: header
+        required: true
+        description: Add your Netcore CPaaS dashboard Email API key to authorize this request.
+        schema:
+          type: string
+          example: x-api-key-123456789
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                template_name:
+                  type: string
+                  description: Add a unique template name using letters, numbers, or underscore only (max 255 characters).
+                  pattern: ^[a-z0-9A-Z_]{1,255}$
+                  maxLength: 255
+                  example: order_confirmation_v1
+                content:
+                  type: array
+                  description: Add one or more template content blocks (HTML and/or AMP).
+                  items:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        description: Choose content format — use html for standard email or amp for AMP email. If using amp, also add an html fallback block.
+                        example: html
+                      value:
+                        type: string
+                        description: Add the URL-encoded template body content. You can include placeholders like [% NAME %].
+                        example: <html><body>Hello [% NAME %], your order is confirmed.</body></html>
+              required:
+              - template_name
+              - content
+      responses:
+        '201':
+          description: Template added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      template_id:
+                        type: integer
+                        example: 102345
+                      template_name:
+                        type: string
+                        example: order_confirmation_v1
+                  message:
+                    type: string
+                    example: Template created
+                  status:
+                    type: string
+                    example: success
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+  /templates:
+    get:
+      tags:
+      - Template API
+      summary: List templates
+      description: 'Retrieve all templates stored in your Netcore CPaaS dashboard account.
+
+
+        Use this endpoint to get template IDs and names before sending emails using templates.'
+      operationId: get-templates
+      parameters:
+      - name: api_key
+        in: header
+        required: true
+        description: Add your Netcore CPaaS dashboard Email API key.
+        schema:
+          type: string
+          example: x-api-key-123456789
+      responses:
+        '200':
+          description: Template list returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        template_id:
+                          type: integer
+                          example: 102345
+                        template_name:
+                          type: string
+                          example: order_confirmation_v1
+                        added:
+                          type: string
+                          example: '2026-01-10 12:21:00'
+                        last_modified:
+                          type: string
+                          example: '2026-01-15 09:11:00'
+                  message:
+                    type: string
+                    example: Success
+                  status:
+                    type: string
+                    example: success
+        '401':
+          description: Unauthorized
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: api_key
+      in: header
+      description: Your Email API Key. You can find this in your Email API account at Settings->Integrations.
+x-readme:
+  explorer-enabled: true
+  proxy-enabled: true
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

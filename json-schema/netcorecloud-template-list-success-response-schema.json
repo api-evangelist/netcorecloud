@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/netcorecloud/main/json-schema/netcorecloud-template-list-success-response-schema.json",
+  "title": "TemplateListSuccessResponse",
+  "x-generated": "2026-10-13",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/netcorecloud-whatsapp-api-openapi.yml#/components/schemas/TemplateListSuccessResponse",
+  "type": "object",
+  "required": [
+    "status",
+    "message",
+    "data"
+  ],
+  "properties": {
+    "status": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "templates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique template identifier"
+              },
+              "name": {
+                "type": "string",
+                "description": "Template name"
+              },
+              "category": {
+                "type": "string",
+                "description": "Template category",
+                "enum": [
+                  "MARKETING",
+                  "UTILITY",
+                  "AUTHENTICATION"
+                ]
+              },
+              "language": {
+                "type": "string",
+                "description": "Template language code"
+              },
+              "status": {
+                "type": "string",
+                "description": "Template approval status",
+                "enum": [
+                  "PENDING",
+                  "APPROVED",
+                  "REJECTED"
+                ]
+              },
+              "components": {
+                "type": "array",
+                "description": "Template components (header, body, footer, buttons)",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "HEADER",
+                        "BODY",
+                        "FOOTER",
+                        "BUTTONS"
+                      ]
+                    },
+                    "format": {
+                      "type": "string",
+                      "enum": [
+                        "TEXT",
+                        "IMAGE",
+                        "VIDEO",
+                        "DOCUMENT"
+                      ]
+                    },
+                    "text": {
+                      "type": "string",
+                      "description": "Component text content"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "pagination": {
+          "type": "object",
+          "properties": {
+            "offset": {
+              "type": "integer"
+            },
+            "limit": {
+              "type": "integer"
+            },
+            "total": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    }
+  }
+}

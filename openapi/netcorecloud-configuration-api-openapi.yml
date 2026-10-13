@@ -1,0 +1,349 @@
+openapi: 3.2.0
+info:
+  title: Orbit Router Configuration API
+  version: 1.0.0
+  description: Complete API specification for the Orbit Router email routing platform.
+  contact:
+    name: Orbit Engineering
+  license:
+    name: Proprietary
+servers:
+- url: https://orbitus.netcorecloud.com
+  description: Production — Orbit Engine (HTTP Relay)
+- url: https://orbitus.netcorecloud.com/apiorbit
+  description: Production — Orbit Backend (Config & Management)
+security: []
+tags:
+- name: Configuration
+paths:
+  /config/api-keys:
+    post:
+      operationId: createApiKey
+      tags:
+      - Configuration
+      summary: Create an API key
+      description: 'Returns the full plaintext API key **once**. The backend stores only the SHA-256 hash.
+
+        Store your key securely immediately.'
+      security:
+      - BackendJWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - name
+              - type
+              properties:
+                name:
+                  type: string
+                type:
+                  type: string
+                  enum:
+                  - http
+                  - smtp
+      responses:
+        '201':
+          description: API key created (includes full plaintext key).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiKeyCreated'
+    get:
+      operationId: listApiKeys
+      tags:
+      - Configuration
+      summary: List API keys
+      description: Returns masked key previews only.
+      security:
+      - BackendJWT: []
+      responses:
+        '200':
+          description: List of API keys (masked).
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiKeySummary'
+  /config/api-keys/{id}:
+    parameters:
+    - $ref: '#/components/parameters/ResourceId'
+    delete:
+      operationId: deleteApiKey
+      tags:
+      - Configuration
+      summary: Delete an API key
+      security:
+      - BackendJWT: []
+      responses:
+        '204':
+          description: API key deleted.
+        '404':
+          description: API key not found.
+  /config/ip-whitelist:
+    get:
+      operationId: getIpWhitelist
+      tags:
+      - Configuration
+      summary: Get IP whitelist
+      security:
+      - BackendJWT: []
+      responses:
+        '200':
+          description: IP whitelist configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IpWhitelist'
+    put:
+      operationId: updateIpWhitelist
+      tags:
+      - Configuration
+      summary: Update IP whitelist
+      security:
+      - BackendJWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IpWhitelist'
+      responses:
+        '200':
+          description: IP whitelist updated.
+  /config/smtp:
+    get:
+      operationId: getSmtpConfig
+      tags:
+      - Configuration
+      summary: Get SMTP configuration
+      security:
+      - BackendJWT: []
+      responses:
+        '200':
+          description: SMTP configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SmtpConfig'
+    put:
+      operationId: updateSmtpConfig
+      tags:
+      - Configuration
+      summary: Update SMTP configuration
+      security:
+      - BackendJWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SmtpConfig'
+      responses:
+        '200':
+          description: SMTP configuration updated.
+  /config/incoming-auth:
+    get:
+      operationId: listIncomingAuth
+      tags:
+      - Configuration
+      summary: List incoming auth entries
+      description: Lists incoming auth entries for the current client.
+      security:
+      - BackendJWT: []
+      responses:
+        '200':
+          description: Incoming auth entries.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IncomingAuth'
+    put:
+      operationId: upsertIncomingAuth
+      tags:
+      - Configuration
+      summary: Create or update incoming auth
+      security:
+      - BackendJWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IncomingAuthUpsert'
+      responses:
+        '200':
+          description: Incoming auth created or updated.
+  /config/api-keys/{id}/reset:
+    parameters:
+    - $ref: '#/components/parameters/ResourceId'
+    post:
+      operationId: resetApiKey
+      tags:
+      - Configuration
+      summary: Regenerate an API key
+      description: Generates a new key value; same ID and name. Returns the full plaintext key once.
+      security:
+      - BackendJWT: []
+      responses:
+        '200':
+          description: Key regenerated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiKeyCreated'
+components:
+  schemas:
+    IncomingAuth:
+      type: object
+      properties:
+        id:
+          type: integer
+        client_id:
+          type: integer
+        protocol_type:
+          type: string
+          enum:
+          - smtp
+          - https
+        username:
+          type: string
+        allowed_ips:
+          type: string
+          description: Comma-separated IPs or `*` for wildcard.
+        allowed_domains:
+          type: string
+          description: Comma-separated domains or `*` for wildcard.
+    ApiKeyCreated:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        key:
+          type: string
+          description: Full plaintext API key (shown once).
+        type:
+          type: string
+          enum:
+          - http
+          - smtp
+        created_at:
+          type: string
+          format: date-time
+    IpWhitelist:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        ips:
+          type: string
+          description: Comma-separated IP addresses.
+    IncomingAuthUpsert:
+      type: object
+      required:
+      - protocol_type
+      properties:
+        protocol_type:
+          type: string
+          enum:
+          - smtp
+          - https
+        username:
+          type: string
+          description: SMTP username.
+        password:
+          type: string
+          format: password
+          description: SHA-256 hashed before storage.
+        api_key:
+          type: string
+          description: For HTTP; hashed before storage.
+        api_key_id:
+          type: integer
+          description: Reference to `api_keys.id`.
+        allowed_ips:
+          type: string
+          description: Comma-separated IPs or `*`.
+        allowed_domains:
+          type: string
+          description: Comma-separated domains or `*`.
+    ApiKeySummary:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        preview:
+          type: string
+          description: Masked key preview.
+        type:
+          type: string
+          enum:
+          - http
+          - smtp
+        created_at:
+          type: string
+          format: date-time
+    SmtpConfig:
+      type: object
+      properties:
+        default_from_email:
+          type: string
+          format: email
+        default_from_name:
+          type: string
+        bounce_email:
+          type: string
+          format: email
+        max_retries:
+          type: string
+        retry_interval_seconds:
+          type: string
+  parameters:
+    ResourceId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+      description: Resource ID.
+  securitySchemes:
+    BackendJWT:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'JWT token obtained from `POST /auth/login`. Access token lifetime: 15 minutes.
+
+        Claims: `user_id`, `client_id`, `role`, `jti`, `exp`, `iat`.
+
+        '
+    EngineApiKeyBearer:
+      type: http
+      scheme: bearer
+      description: 'Engine API key via `Authorization: Bearer <api_key>` (priority 1).'
+    EngineApiKeyHeader:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: Engine API key via `X-API-Key` header (priority 2).
+    EngineApiKeyFallback:
+      type: apiKey
+      in: header
+      name: api_key
+      description: Engine API key via `api_key` header (priority 3, fallback).
+x-readme:
+  explorer-enabled: true
+  proxy-enabled: true
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

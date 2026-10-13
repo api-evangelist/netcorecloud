@@ -1,0 +1,2187 @@
+openapi: 3.2.0
+info:
+  title: Contacts API
+  description: ''
+  version: 1.0.0
+servers:
+- url: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  description: US
+- url: ' https://netcoreapi-main-prod-ind.netcorein.com/v5/'
+  description: IND
+- url: ' https://netcoreapi-main-prod-eu.netcorein.com/v5/'
+  description: EU
+security:
+- ApiKeyAuth: []
+tags:
+- name: Contacts
+paths:
+  /contact/create:
+    post:
+      summary: Create Contacts
+      deprecated: false
+      description: The Create Contact (Async) API allows you to create contacts in the system without waiting for each contact to be processed immediately.
+      tags:
+      - Contacts
+      parameters:
+      - name: api-key
+        in: header
+        description: API key for authentication. You must have unique & valid api-key
+        required: true
+        example: 6a8f3c1b9d2e4f7a123b456c7890abcd
+        schema:
+          type: string
+      - name: Content-Type
+        in: header
+        description: Specifies the request content type. Must be application/json.
+        required: true
+        example: application/json
+        schema:
+          type: string
+      requestBody:
+        description: All necessary parameters should be passed in the request body in JSON format. Click '+' icon to enter a value for each parameter
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  description: Define the main payload for creating contacts. Contains the contact type, contacts to be created, and optional audience information.
+                  type: object
+                  properties:
+                    contact_type:
+                      type: string
+                      description: 'Specifies whether the contacts being created are identified or anonymous. Allowed values: **identified**: Used when the contact has a primary identity available in Netcore CE. **anonymous**: Used when the contact''s primary identity is not available in Netcore CE.'
+                      example: identified
+                      enum:
+                      - identified
+                      - anonymous
+                    contacts:
+                      description: Contains the contacts you want to create. You can add one or more contacts in a single request, with a maximum of **1,000 contacts per request**. **Each item in the array represents one contact.**
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          identity:
+                            type: string
+                            description: The primary identity of an identified contact. This value is used to identify the contact in Netcore CE. **For an identified contact, identity is required.**
+                            maxLength: 255
+                          email:
+                            type: string
+                            format: email
+                            description: 'The email address associated with the contact. This is a required field if ''contact_type'' is ''anonymous'' and ''mobile'' is missing. It starts with a lowercase letter, number, or underscore, Allow +/_/. Domain must contain valid characters and at least one dot. TLD length: 2 to 25 characters. Fully lowercase expected(uppercase technically won''t match)'
+                            pattern: ^([a-z0-9_Xx])([a-z0-9+-Xx]+)(.[a-z0-9+-Xx]+)@([a-z0-9-]+.)+[a-z]{2,25}$
+                            maxLength: 255
+                            minLength: 5
+                          mobile:
+                            type: string
+                            description: The mobile number associated with the contact. Only digits are allowed. No spaces, no symbols, and no country code prefix. This field is mandatory if 'contact_type' is 'anonymous' and 'email' is missing.
+                            maxLength: 17
+                            pattern: ^[0-9]{5,17}$
+                            minLength: 5
+                          attributes:
+                            type: object
+                            description: Contains additional information about the contact as key-value pairs. You can use system-defined or custom attribute names to add or update information such as first name, state, age, or other customer details.
+                            additionalProperties:
+                              type: string
+                              description: 'Attribute value. The key can be any attribute name Key:FIRSTNAME, Value:John; Key: CITY, Value:Maharashtra'
+                            example:
+                              FIRST_NAME: John
+                              AGE: '30'
+                          audience_details:
+                            description: Assign contacts to specific audience lists or groups. You can add multiple objects to assign a contact to more than one audience. Each object must specify either audience_id or audience_name, and must include audience_type.
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                audience_id:
+                                  type: array
+                                  items:
+                                    type: integer
+                                    minimum: 1
+                                    maximum: 2147483647
+                                    description: 'Minimum length: 1
+
+                                      Maximum length: 2147483647'
+                                  description: 'Unique numeric identifiers for audiences(lists or groups) where the contact should be assigned. Mandatory if audience_name is not provided. If both ''audience_id'' and ''audience_name'' are provided, only ''audience_id'' is considered and ''audience_name'' is ignored.
+
+                                    Minimum length: 1
+
+                                    Maximum length: 2147483647'
+                                audience_name:
+                                  type: array
+                                  items:
+                                    type: string
+                                    description: 'minimum length: 1
+
+                                      maximum length: 255
+
+                                      regex: ^[a-zA-Z0-9 _&-]+$'
+                                  description: 'Name of audience(lists and groups) to which the contact should be assigned. Mandatory if ''audience_id'' is not provided. If both ''audience_id'' and ''audience_name'' are present, only ''audience_id'' is considered.
+
+                                    Minimum length: 1
+
+                                    Maximum length: 255
+
+                                    regex: ^[a-zA-Z0-9 _&-]+$'
+                                audience_type:
+                                  type: string
+                                  description: Specifies the type of audience to which the contact is being added. This field is mandatory and helps the system procee contact assignments correctly. Only "list" and "ccg" for now.
+                                  enum:
+                                  - list
+                                  - ccg
+                    audience_details:
+                      description: Assign contacts to specific audience lists or groups.
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          audience_id:
+                            type: array
+                            items:
+                              type: integer
+                              minimum: 1
+                              maximum: 2147483647
+                              description: 'minimum length: 1
+
+                                maximum length: 2147483647'
+                            description: 'Unique numeric identifiers for audiences(lists or groups) where the contact should be assigned.Mandatory if audience_name is not provided. If both ''audience_id'' and ''audience_name'' are provided, only ''audience_id'' is considered and ''audience_name'' is ignored.
+
+                              Minimum length: 1
+
+                              Maximum length: 2147483647'
+                          audience_name:
+                            type: array
+                            items:
+                              type: string
+                              description: 'minimum length: 1
+
+                                maximum length: 255
+
+                                regex: ^[a-zA-Z0-9 _&-]+$'
+                            description: 'Name of audience(lists and groups) to which the contact should be assigned. Mandatory if ''audience_id'' is not provided. If both ''audience_id'' and ''audience_name'' are present, only ''audience_id'' is considered.
+
+                              Minimum length: 1
+
+                              Maximum length: 255
+
+                              regex: ^[a-zA-Z0-9 _&-]+$'
+                          audience_type:
+                            type: string
+                            description: Specifies the type of audience to which the contact is being added. This field is mandatory and helps the system procee contact assignments correctly. Only "list" and "ccg" for now.
+                            enum:
+                            - list
+                            - ccg
+                  required:
+                  - contact_type
+                  - contacts
+              required:
+              - data
+            example:
+              data:
+                contact_type: identified
+                contacts:
+                - identity: john.doe
+                  email: johndoe@example.com
+                  mobile: '9999999999'
+                  attributes:
+                    STATE: Maharastra
+                    EMAIL: johndoe@example.com
+                    MOBILE: '921918246'
+                    FIRST_NAME: FName
+                  audience_details:
+                  - audience_id:
+                    - 1
+                    - 3
+                    - 5
+                    audience_type: list
+                  - audience_id:
+                    - 8
+                    audience_type: ccg
+                - identity: mary.jane
+                  email: maryjane@example.com
+                  mobile: '8888888888'
+                  attributes:
+                    STATE: Goa
+                    EMAIL: maryjane@example.com
+                    MOBILE: '921234546'
+                    FIRST_NAME: FullName
+                  audience_details:
+                  - audience_id:
+                    - 2
+                    - 4
+                    - 6
+                    audience_type: list
+                audience_details:
+                - audience_name:
+                  - email_pod_list
+                  audience_type: ccg
+      responses:
+        '200':
+          description: 'Success Response: The request was successfully submited, and processing will happen asynchronously.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                    description: Unique request id of request.
+                  code:
+                    type: integer
+                    description: Response status Code.
+                    enum:
+                    - 200
+                    - 400
+                    - 401
+                    - 500
+                  status:
+                    type: string
+                    description: Status of API request.
+                    enum:
+                    - success
+                    - failed
+                  description:
+                    type: string
+                    description: API response description.
+                required:
+                - request_id
+                - code
+                - status
+                - description
+              example:
+                request_id: a7add3e4-2206-49f6-927e-3dfd917b906a
+                code: 200
+                status: success
+                description: Your request was accepted successfully. It is being processed asynchronously.
+          headers: {}
+        '400':
+          description: 'Bad Request: The request contains invalid data, possibly due to missing required fields, non-existent audience_id or audience_name, or attributes hat do not match the allowed patterns.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                    description: Unique request id of request.
+                  code:
+                    type: integer
+                    description: Response status Code.
+                    enum:
+                    - 200
+                    - 400
+                    - 401
+                    - 500
+                  status:
+                    type: string
+                    description: Status of api request.
+                    enum:
+                    - success
+                    - failed
+                  description:
+                    type: string
+                    description: Api response description.
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        field:
+                          type: string
+                          description: Field name for which error (validation) raised.
+                        message:
+                          type: string
+                          description: Error message/validation message
+                    description: Array of error objects. Consist of all validation errors.
+                required:
+                - request_id
+                - code
+                - status
+                - description
+              example:
+                request_id: 01956ecc-44e7-709e-b65d-e72c6830bbf8
+                description: Validation Failure.
+                code: 400
+                status: failed
+                errors:
+                - field: data.contact[0].audience_details[1]
+                  message: Data not found.
+          headers: {}
+        '401':
+          description: 'Unauthorized: The API key is invalid, missing, or incorrect. Ensure you provide a valid API key in the request header.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                    description: Unique request id of request.
+                  code:
+                    type: integer
+                    description: Response status Code.
+                    enum:
+                    - 200
+                    - 400
+                    - 401
+                    - 500
+                    default: 400
+                  status:
+                    type: string
+                    description: Status of api request.
+                    enum:
+                    - success
+                    - failed
+                  description:
+                    type: string
+                    description: Api response description.
+                required:
+                - request_id
+                - code
+                - status
+                - description
+              example:
+                request_id: 01956ecd-ba5d-7019-9f1c-ddf054dd759b
+                description: Unauthorized access.
+                code: 401
+                status: failed
+          headers: {}
+        '500':
+          description: 'Internal Server Error: An unexpected issue occured on the server. Possibly, Internal service failure or unexpected request payload structure.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                    description: Unique request id of request.
+                  code:
+                    type: integer
+                    description: Response status Code.
+                    enum:
+                    - 200
+                    - 400
+                    - 401
+                    - 500
+                    default: 500
+                  status:
+                    type: string
+                    description: Status of api request.
+                    enum:
+                    - success
+                    - failed
+                  description:
+                    type: string
+                    description: Api response description.
+                required:
+                - request_id
+                - code
+                - status
+                - description
+              example:
+                request_id: 01956ed4-6089-759a-a6c5-0a43b5cc20b4
+                description: Internal Server Error.
+                code: 500
+                status: failed
+          headers: {}
+      security:
+      - ApiKeyAuth: []
+      operationId: postContactCreate
+      x-operation-id-source: derived
+  /contact/audience/search:
+    post:
+      summary: Audience Contact Search
+      deprecated: false
+      description: The Audience Contact Search API allows you to search for contacts within a specified audience(list, ccg or UDT) based on multiple filter conditions.
+      tags:
+      - Contacts
+      parameters:
+      - name: api-key
+        in: header
+        description: API key for authentication. You must have a unique and valid API key.
+        required: true
+        example: 6a8f3c1b9d2e4f7a123b456c7890abcd
+        schema:
+          type: string
+      - name: Content-Type
+        in: header
+        description: Specify the request content type. It must be application/json
+        required: true
+        example: application/json
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                audience_type:
+                  type: string
+                  description: "Specifies the type of audience in which you want to search. \nAllowed values: List | UDT | Segment | CCG "
+                  example:
+                  - list
+                  - udt
+                  - ccg
+                filtering_criteria_operator:
+                  type: string
+                  description: Specifies how to combine multiple filtering criteria blocks. (Allowed value "and" & "or"). Mandatory if more than one 'filtering_criteria' block is provided. Blank value accepted if exactly one 'filtering_criteria' block is provided.
+                  pattern: and | or
+                  example:
+                  - and
+                  - or
+                filtering_criteria:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      condition_operator:
+                        type: string
+                        description: Operator to apply between multiple 'condition_details' (Allowed value "and" & "or"). Should be opposite of 'filtering_criteria_operator'.
+                        pattern: and | or
+                        example:
+                        - and
+                        - or
+                      condition_details:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            field:
+                              type: string
+                              description: The contact field or attribute to filter.
+                              example:
+                              - contact_type
+                              - identity
+                            field_category:
+                              type: string
+                              description: 'Specify field category to be added in filter condition.
+
+
+                                Fields allowed: ''config'' , ''attribute'', ''audience'''
+                              example:
+                              - config
+                              - attribute
+                              - audience
+                            operation:
+                              type: string
+                              description: Supported operators like 'equals', 'startswith', 'in'.
+                              example:
+                              - equals
+                              - startswith
+                              - in
+                            value:
+                              type: array
+                              items:
+                                type: string
+                              description: Values used for filtering.
+                          required:
+                          - field
+                          - field_category
+                          - operation
+                          - value
+                        description: Array of field-based conditions used to filter contacts.
+                    description: Define condition operator. (supported "and" & "or"). Mandory when more than one conditions provided. Blank value accepted if exactly one codition provided.
+                    required:
+                    - condition_operator
+                    - condition_details
+                  description: "Defines the conditions used to filter contacts within the specified audience.\n Each item in filtering_criteria represents a **condition block**."
+                output:
+                  type: object
+                  properties:
+                    sorting:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          field:
+                            type: string
+                            description: specify field to apply sorting
+                          direction:
+                            type: string
+                            description: The direction of the sort, either 'asc' for ascending or 'desc' for descending.
+                        required:
+                        - field
+                        - direction
+                      description: Lists of objects to define sorting order of the results. This will be ignored in case 'get_count' is set 'true'.
+                    pagination:
+                      type: object
+                      properties:
+                        page:
+                          type: integer
+                          description: Specify page number to retrive. Default and minimum value is 1
+                          minimum: 1
+                        limit:
+                          type: integer
+                          description: Specify number of records to return per page. Default and minimum value is 10.
+                          minimum: 10
+                      required:
+                      - page
+                      - limit
+                      description: if get_count is false pagination is compulsory.
+                    fields:
+                      type: array
+                      items:
+                        type: string
+                      description: 'List of contact or audience field to include in the response. If ''get_Count'' is false then it is mandatory.
+
+                        Example:audience_id | audience_name'
+                  required:
+                  - pagination
+                  - fields
+                  description: Defines how the results should be returned. Required unless 'get_Count' is set to 'true'.
+                get_Count:
+                  type: string
+                  description: "Specifies whether you want the API to return only the total number of matching records instead of the matching contact data.\n- If 'get_Count' is set to 'true', the response will include only the count.\n- If set to 'false', the output object must be defined.\n**Important Notes**\n- When 'get_Count' is 'true', fields like 'pagination','fields, and 'sorting' under the 'output' object are ignored.\n When using this mode, the API returns the total number of matched records as an integer."
+              required:
+              - audience_type
+              - filtering_criteria
+              - output
+            example:
+              audience_type: segment
+              filtering_criteria_operator: or
+              filtering_criteria:
+              - condition_operator: and
+                condition_details:
+                - field: contact_type
+                  field_category: config
+                  operation: equals
+                  value:
+                  - identified
+                - field: identity
+                  field_category: attribute
+                  operation: equals
+                  value:
+                  - john.joe@youremail.com
+              output:
+                get_count: true
+                sorting:
+                - field: segid
+                  direction: desc
+                pagination:
+                  page: 1
+                  limit: 10
+                fields:
+                - id
+                - name
+      responses:
+        '200':
+          description: 'Success Response: The request was successfully processed and matching audience contact data or count was returned.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                    description: This is unique ID refer to each request.
+                  status:
+                    type: string
+                    description: 'It signifies the status of API. For example: success , failed.'
+                  description:
+                    type: string
+                    description: This display the expected description of the API.
+                  code:
+                    type: integer
+                    description: This returns the customized code.
+                  count:
+                    type: integer
+                    description: The total number of items that match the request's query or filter criteria.
+                required:
+                - request_id
+                - status
+                - description
+                - code
+              examples:
+                Get Count Only:
+                  summary: Count of Matching Records
+                  value:
+                    request_id: 506611fa-1519-4624-94d2-5b59623de608
+                    status: success
+                    description: Data found successfully.
+                    code: 200
+                    count: 10000
+                Get Audience Data:
+                  summary: List of Matching Audiences
+                  value:
+                    request_id: 506611fa-1519-4624-94d2-5b59623de608
+                    status: success
+                    description: Data found successfully.
+                    code: 200
+                    data:
+                    - audience_id: 1
+                      audience_name: List 1
+                    - audience_id: 2
+                      audience_name: List 2
+          headers: {}
+        '401':
+          description: 'Unauthorized: The API key is missing, invalid, or the request lacks proper authentication.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  requestId:
+                    type: string
+                    description: This is unique ID refer to each request.
+                  description:
+                    type: string
+                    description: This display the expected description of the API.
+                  status:
+                    type: string
+                    description: 'It signifies the status of API. For example: success , failed.'
+                  code:
+                    type: integer
+                    description: This returns the customized code.
+                required:
+                - code
+                - status
+                - description
+                - requestId
+              example:
+                code: 401
+                description: Unauthorized
+                error: Unable to authenticate
+                requestId: 01939aeb-62bc-7185-bc2b-d7bc36c8c89a
+          headers: {}
+        '500':
+          description: 'Internal Server Error: An unexpected issue occurred while processing the request.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                    description: This is unique ID refer to each request.
+                  status:
+                    type: string
+                    description: It signifies the status of API. ex:- success , failed.
+                  description:
+                    type: string
+                    description: This display the expected description of the API.
+                  code:
+                    type: integer
+                    description: This returns the customized code.
+                required:
+                - request_id
+                - status
+                - description
+                - code
+              example:
+                request_id: 0193af37-583e-705b-85ec-2b99787bbeb4
+                status: error
+                description: Unsupported operation
+                code: 500
+          headers: {}
+        x-200-2:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                    description: this is unique id refer to each request.
+                  status:
+                    type: string
+                    description: it signifies the status of api. ex:- success , failed.
+                  description:
+                    type: string
+                    description: this display the expected description of the api.
+                  code:
+                    type: integer
+                    description: this returns the customized code.
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        audience_id:
+                          type: integer
+                        audience_name:
+                          type: string
+                      required:
+                      - audience_id
+                      - audience_name
+                    description: this will show the resultset.
+                required:
+                - request_id
+                - status
+                - description
+                - code
+              example:
+                request_id: 506611fa-1519-4624-94d2-5b59623de608
+                status: success
+                description: Data found successfully.
+                code: 200
+                data:
+                - audience_id: 1
+                  audience_name: List 1
+                - audience_id: 2
+                  audience_name: List 2
+          headers: {}
+      security:
+      - ApiKeyAuth: []
+      operationId: postContactAudienceSearch
+      x-operation-id-source: derived
+  /contact/delete:
+    post:
+      summary: Delete Contacts
+      deprecated: false
+      description: Use the Delete Contacts API to remove one or more contacts from Netcore.
+      tags:
+      - Contacts
+      parameters:
+      - name: api-key
+        in: header
+        description: API key for authentication. You must have a unique and valid API key.
+        required: true
+        example: 6a8f3c1b9d2e4f7a123b456c7890abcd
+        schema:
+          type: string
+      - name: Content-Type
+        in: header
+        description: Specify request content type [application/json]
+        required: true
+        example: application/json
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filtering_criteria_operator:
+                  type: string
+                  description: "Specifies how multiple filtering criteria are combined.\n(Supported \"and\" & \"or\").\n- Use **and** when all criteria must match.\n- Use **or** when any criterion can match. \n- This parameter is relevant only when you use filtering_criteria."
+                  example:
+                  - and
+                  - or
+                  pattern: ^(and|or)$
+                  maxLength: 1
+                filtering_criteria:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      condition_operator:
+                        type: string
+                        description: 'Specifies how multiple conditions within this filtering criteria block should be combined.
+
+                          - (Supported "and" & "or").'
+                        pattern: ^(and|or)$
+                        example:
+                        - or
+                        - and
+                        maxLength: 1
+                      condition_details:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            field:
+                              type: string
+                              description: Specifies the field to filter contacts on.
+                              example:
+                              - contact_type
+                              - list_id
+                              - list_name
+                              - ccg_id
+                              - ccg_name
+                              - attribute_name
+                              - email
+                              - mobile
+                              - guid
+                              - identity
+                            field_category:
+                              type: string
+                              description: 'Specify field category to be added in filter condition.
+
+
+                                fields allowed:
+
+                                -config
+
+                                - attribute
+
+                                - audience'
+                            operation:
+                              type: string
+                              description: "Specify the category of the field. \nSupported: **equals**, **startswith**, **not_equals**, **greater_than_or_equal_to**, **greater_than**, **not_in**, **less_than**, **ends_with**, **is_not_null**, **is_null**\n"
+                            value:
+                              type: array
+                              items:
+                                type: string
+                                pattern: ^(?:\d+|[a-zA-Z]+|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}|[0-9]{10}|[A-Za-z0-9]{4}(-[A-Za-z0-9]{4}){3})$
+                              description: Values to match for the given field and operation. The datatype of value must match with datatype of field selected.  regex is :- ^(?:\d+|[a-zA-Z]+|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}|[0-9]{10}|[A-Za-z0-9]{4}(-[A-Za-z0-9]{4}){3})$
+                        description: "Defines specific conditions used to filter contacts.\n Each condition can specify:\n- field\n- field_category\n- operation\n- value"
+                  description: Used to dynamically select contacts to be deleted based on conditions like attribute values, audience IDs, or other fields.
+                data:
+                  type: object
+                  properties:
+                    contact_type:
+                      type: string
+                      description: "Type of contact to be deleted. \n- Mandatory when 'data' is used.\n- Allowed values: 'identified', 'anonymous'\n"
+                      example:
+                      - identified
+                      - anonymous
+                      pattern: ^(identified|anonymous)$
+                    delete_type:
+                      type: string
+                      description: 'Specifies how deletion should happen. Accepts: soft | audience
+
+                        soft : Deletes comntact from system and audience.
+
+                        audience : Deletes contact only from specified audiences.
+
+                        Mandatory if data object is present.'
+                      pattern: ^(soft|audience)$
+                      example:
+                      - soft
+                    contacts:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          identity:
+                            type: string
+                            description: identity of individual contact as per client pannel settings. Applicable only if contact_type is identified.
+                            example:
+                            - netcore@gmail.com
+                            pattern: ^(?:\d{10}|[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,})$
+                          contact_id:
+                            type: integer
+                            description: contact_id of individual contact. contact_id will be accepted for both identified & anon cases.
+                            example:
+                            - 101
+                            minimum: 1
+                          email:
+                            type: string
+                            description: email of contact in case of anon
+                            example:
+                            - netcore@gmail.com
+                            pattern: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
+                            minLength: 6
+                            maxLength: 254
+                          mobile:
+                            type: string
+                            description: mobile of contact in case of anon
+                            pattern: ^[0-9]$
+                            maxLength: 10
+                            minLength: 10
+                          audience_details:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                audience_id:
+                                  type: array
+                                  items:
+                                    type: integer
+                                    example:
+                                    - 1
+                                    description: 'regex:- \[\s*([1-9]\d*\s*,\s*)*[1-9]\d*\s*\]
+
+                                      '
+                                  description: 'Specify audience by audience_id regex:- \[\s*([1-9]\d*\s*,\s*)*[1-9]\d*\s*\]
+
+                                    '
+                                  minItems: 0
+                                audience_name:
+                                  type: array
+                                  items:
+                                    type: string
+                                    pattern: ^[A-Za-z]+$
+                                    example:
+                                    - audience_name
+                                    description: 'regex:- \[\s*("[A-Za-z]+"(\s*,\s*"[A-Za-z]+")*)?\s*\]
+
+                                      '
+                                  description: 'Specify audience by audience_name  regex:- \[\s*("[A-Za-z]+"(\s*,\s*"[A-Za-z]+")*)?\s*\]
+
+                                    '
+                                  minItems: 0
+                                audience_type:
+                                  type: string
+                                  description: Specify audience_type. "list" | "ccg"
+                                  minLength: 1
+                                  maxLength: 3
+                                  pattern: ^(list|ccg)$
+                                  example:
+                                  - list
+                              required:
+                              - audience_type
+                            description: 'Specify audience to delete contact from. Will be ignored in case of delete_type is other than audience or contact type is anonymous.
+
+                              Audience can be specified either by audience_id or audience name, if both presents it will cause validation error.'
+                      description: 'An array of contacts: Either contacts or file_url should be specified, but not both together, as it will lead to a validation error.'
+                    file_url:
+                      type: string
+                      description: Url of file located at S3 or GC storage or equivalent. Bulk delete by file is not applicable to anonymous contact_type
+                      pattern: ^https:\/\/mail\.google\.com\/[a-zA-Z0-9@:%_+.~#?&/=]*$
+                      example:
+                      - https://contactdelete.s3.us-east-1.amazonaws.com/contactdelete.csv
+                      maxLength: 500
+                    audience_details:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          audience_id:
+                            type: array
+                            items:
+                              type: integer
+                              example:
+                              - 10
+                            description: 'Specify audience by audience_id regex:- \[\s*([1-9]\d*\s*,\s*)*[1-9]\d*\s*\]
+
+                              '
+                            minItems: 0
+                          audience_name:
+                            type: array
+                            items:
+                              type: string
+                              example:
+                              - test
+                            description: 'Specify audience by audience_name regex:- \[\s*("[A-Za-z]+"(\s*,\s*"[A-Za-z]+")*)?\s*\]
+
+                              '
+                            minItems: 0
+                          audience_type:
+                            type: string
+                            description: Specify audience_type. "list" | "ccg"
+                            minLength: 1
+                            maxLength: 3
+                            pattern: ^(list|ccg)$
+                            example:
+                            - list
+                        required:
+                        - audience_type
+                      description: 'Specify audience to delete contact from. This will apply to all specified contacts. Will be ignored in case of delete_type is other than audience.
+
+                        Audience can be specified either by audience_id or audience name, if both presents it will cause validation error.
+
+
+                        if audience_details present for both individual contact & all contacts then both audiences will be tagged accordingly'
+                  description: Used for directly deleting specific contacts or deleting via file. When this block is present, filtering criteria is ignored.
+                  required:
+                  - contact_type
+                  - delete_type
+            example:
+              filtering_criteria_operator: and
+              filtering_criteria:
+              - operator: or
+                condition_details:
+                - field: user_type
+                  field_category: config
+                  operation: equals
+                  value:
+                  - identified
+                - field: identity
+                  operation: equals
+                  value:
+                  - vijayrqanetcore+800022@gmail.com
+      responses:
+        '200':
+          description: The request was accepted successfully and is being processed asynchronously.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                    description: Unique request id of request.
+                  code:
+                    type: integer
+                    description: Indicates the response status code. For a successful request, this is 200.
+                  status:
+                    type: string
+                    description: Indicates whether the API request was accepted successfully or failed.
+                  description:
+                    type: string
+                    description: Api response description
+                required:
+                - request_id
+                - code
+                - status
+                - description
+              example:
+                request_id: a7add3e4-2206-49f6-927e-3dfd917b906a
+                code: 200
+                status: success
+                description: Your request was accepted successfully. It is being processed asynchronously.
+          headers: {}
+        '500':
+          description: A 500 response indicates a server-side error. The request may not have been processed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorsResponse'
+          headers: {}
+      security:
+      - ApiKeyAuth: []
+      operationId: postContactDelete
+      x-operation-id-source: derived
+  /contact/search:
+    post:
+      summary: Search Contacts
+      deprecated: false
+      description: The Search Contacts (Sync) API retrieves contact details based on advanced filtering conditions.
+      tags:
+      - Contacts
+      parameters:
+      - name: api-key
+        in: header
+        description: Api key for authentication. You must have unique & valid api-key
+        required: true
+        example: 6a8f3c1b9d2e4f7a123b456c7890abcd
+        schema:
+          type: string
+      - name: Content-Type
+        in: header
+        description: Specifies the request content type. Must be application/json.
+        required: true
+        example: application/json
+        schema:
+          type: string
+      requestBody:
+        description: All necessary parameters should be passed in the request body in JSON format. Click '+' icon to enter a value for each parameter
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filtering_criteria:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      condition_operator:
+                        type: string
+                        description: It defines the logical operator used to combine multiple conditions inside a condition_details array. (supported "and" & "or"). It is required when more than one condition is provided. All condition_operator values within the filtering_criteria array must be the same and must differ from filtering_criteria_operator.
+                        pattern: and | or
+                      condition_details:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            field_category:
+                              type: string
+                              description: Specify field category to be added in filter condition.
+                              example:
+                              - config
+                              - attribute
+                              - audience
+                            field:
+                              type: string
+                              description: 'Defines filtering conditons based on contact fields or attribute. The values in this field must belong to the field category. '
+                              example:
+                              - contact_type
+                              - segment_id
+                              - segment_name
+                              - list_id
+                              - list_name
+                              - udt
+                              - udt_name
+                              - ccg
+                              - any attribute_name
+                              - email
+                              - mobile
+                              - guid
+                              - identity
+                            operation:
+                              type: string
+                              description: Specifies the comparison operator.
+                              example:
+                              - equals
+                              - starts_with
+                              - not_equals
+                              - greater_than_or_equal_to
+                              - greater_than
+                              - not_in
+                              - less_than
+                              - ends_with
+                              - is_not_null
+                              - is_null
+                            value:
+                              type: array
+                              items:
+                                oneOf:
+                                - type: integer
+                                  minimum: 1
+                                  maximum: 9999999999
+                                - type: string
+                                  pattern: ^[A-Za-z0-9]+[A-Za-z0-9&\_\-\s]+$
+                                  minLength: 1
+                                  maxLength: 100
+                              description: An array of values used for filtering against the specified field.
+                          required:
+                          - field
+                          - field_category
+                          - operation
+                          - value
+                        description: It is an array containing the individual conditions used to filter contacts.
+                    required:
+                    - condition_details
+                  description: It defines the conditions that determine which contacts should be returned by the Search API. **For example**, search for contacts whose first name is **John**, contacts belonging to a **particular list**, or contacts whose email matches a **particular value**.
+                filtering_criteria_operator:
+                  type: string
+                  description: Specify the logical operator to combine multiple filtering criteria.
+                  pattern: and | or
+                output:
+                  type: object
+                  properties:
+                    get_count:
+                      type: boolean
+                      description: 'Use this field to get total count of records.
+
+
+                        If true, API returns only the count of matching result.
+
+                        If false, API return objects of filtered records.
+
+                        If null, value will be set to false by default.'
+                      default: false
+                    sorting:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          field:
+                            type: string
+                            description: This field will be used for Sorting.
+                            example:
+                            - contact_id
+                            - created_at
+                            - updated_at
+                          direction:
+                            type: string
+                            description: The direction of the sort, either asc for ascending or desc for descending.
+                            example:
+                            - asc
+                            - desc
+                        required:
+                        - field
+                        - direction
+                      description: Specify sorting parameters. An array of sorting rules applied in the order they are declared. These will be ignored if get_count is set to true.
+                    pagination:
+                      type: object
+                      properties:
+                        page:
+                          type: integer
+                          description: specify page number, Default value is 1
+                          minimum: 1
+                        limit:
+                          type: integer
+                          description: specify page limit. Default value is 10
+                          minimum: 10
+                      description: Specify pagination parameters (page and limit). Default is page 1 and limit 10. Ignored if get_count is set to true.
+                      required:
+                      - page
+                      - limit
+                    fields:
+                      type: array
+                      items:
+                        type: string
+                      example:
+                      - email
+                      - city
+                      - guid
+                      - mobile
+                      - contact_id
+                      - FIRST_NAME
+                      description: 'These contact fields will be included in the response. COntact attributes and/ or audience details can be requested.
+
+
+                        Example : contact_id  Email, Mobile, City'
+                  description: Select whether to return only the count or the full contact details. When requesting contact details, specify sorting, pagination, and which fields to include in the response.
+                  required:
+                  - fields
+              required:
+              - filtering_criteria
+              - output
+            example:
+              filtering_criteria_operator: or
+              filtering_criteria:
+              - condition_operator: and
+                condition_details:
+                - field: contact_type
+                  field_category: config
+                  operation: equals
+                  value:
+                  - identified
+                - field: list_id
+                  field_category: audience
+                  operation: equals
+                  value:
+                  - 15
+              output:
+                get_count: false
+                sorting:
+                - field: created_at
+                  direction: desc
+                pagination:
+                  page: 1
+                  limit: 10
+                fields:
+                - EMAIL
+                - MOBILE
+                - CITY
+      responses:
+        '200':
+          description: Success. The request was processed successfully and the matching contact data was returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                    description: Unique request id of request.
+                  status:
+                    type: string
+                    description: status of api request (success|failed).
+                  description:
+                    type: string
+                    description: Api response description.
+                  code:
+                    type: integer
+                    description: Status code of the API.
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        contact_id:
+                          type: integer
+                        EMAIL:
+                          type: string
+                        MOBILE:
+                          type: string
+                        CITY:
+                          type: string
+                    description: This consist array of search list Contact Details.
+                required:
+                - request_id
+                - status
+                - description
+                - code
+              example:
+                request_id: 506611fa-1519-4624-94d2-5b59623de608
+                status: success
+                description: Data found successfully.
+                code: 200
+                data:
+                - contact_id: 2
+                  EMAIL: test2@gmail.com
+                  MOBILE: '9876543210'
+                  CITY: Mumbai
+                - contact_id: 1
+                  EMAIL: test1@gmail.com
+                  MOBILE: '9876543211'
+                  CITY: Thane
+          headers: {}
+        '400':
+          description: '**Bad Request**: The request could not be processed because it contains invalid or missing parameters, filtering criteria, field values, or other request data.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                    description: Unique request id of request.
+                  description:
+                    type: string
+                    description: Api response description.
+                  code:
+                    type: integer
+                    description: Response status Code. (200 for success / 500 for error etc).
+                  status:
+                    type: string
+                    description: status of api request (success|failed).
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        field:
+                          type: string
+                          description: Field name for which error (validation) raised.
+                        message:
+                          type: string
+                          description: Error message/validation message
+                      required:
+                      - field
+                      - message
+                    description: Array of error objects. Consist of all validation errors.
+                required:
+                - request_id
+                - description
+                - code
+                - status
+              example:
+                request_id: 019472d2-3298-7c8e-af6d-502b3a4b8b8f
+                description: Validation Failure.
+                code: 400
+                status: failed
+                errors:
+                - field: filtering_criteria[0].condition_details[0].field
+                  message: Field is required.
+          headers: {}
+        '401':
+          description: '**Unautorized**: Authentication failed because the API key is missing or invalid. Provide a valid API key and try again.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                    description: Unique request id of request.
+                  description:
+                    type: string
+                    description: Api response description.
+                  code:
+                    type: integer
+                    description: Response status Code. (200 for success / 500 for error etc).
+                  status:
+                    type: string
+                    description: status of api request (success|failed).
+                required:
+                - request_id
+                - description
+                - code
+                - status
+              example:
+                request_id: 01950024-5d1f-7e50-886c-f294183f2fb5
+                description: Unauthorized Access.
+                code: 401
+                status: failed
+          headers: {}
+        x-200-2:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                    description: Unique request id of request.
+                  status:
+                    type: string
+                    description: status of api request (success|failed).
+                  description:
+                    type: string
+                    description: Api response description.
+                  code:
+                    type: integer
+                    description: Status code of the API.
+                  count:
+                    type: integer
+                    description: The total number of items that match the request's query or filter criteria.
+                required:
+                - request_id
+                - status
+                - description
+                - code
+              example:
+                request_id: 506611fa-1519-4624-94d2-5b59623de608
+                status: success
+                description: Data found successfully.
+                code: 200
+                count: 500
+          headers: {}
+      security:
+      - ApiKeyAuth: []
+      operationId: postContactSearch
+      x-operation-id-source: derived
+  /contact/update:
+    post:
+      summary: Update Contacts
+      deprecated: false
+      description: The Update Contacts API lets you update existing identified or anonymous contacts asynchronously.
+      tags:
+      - Contacts
+      parameters:
+      - name: api-key
+        in: header
+        description: API key for authentication. You must have a unique and valid API key.
+        required: true
+        example: 6a8f3c1b9d2e4f7a123b456c7890abcd
+        schema:
+          type: string
+      - name: Content-Type
+        in: header
+        description: Specifies the request content type. Must be application/json.
+        required: true
+        example: application/json
+        schema:
+          type: string
+      requestBody:
+        description: All necessary parameters should be passed in the request body in JSON format. Click '+' icon to enter a value for each parameter
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - data
+              properties:
+                data:
+                  type: object
+                  description: Contains the contact type and the contacts you want to update. Each contact must include enough information for the API to identify the existing contact and can include the attributes, subscription preferences, and audience details you want to update.
+                  required:
+                  - contact_type
+                  - contacts
+                  properties:
+                    contact_type:
+                      type: string
+                      description: Type of contact to be updated. Allowed values are `identified` and `anonymous`. **NOTE**:The fields required to identify a contact differ based on contact_type and the primary key configured for your client.
+                      example: identified
+                      enum:
+                      - identified
+                      - anonymous
+                      pattern: ^(identified|anonymous)$
+                    contacts:
+                      type: array
+                      description: Contains the contacts to update. Each object in the array represents one existing contact. Provide at least one valid identifier for each contact, along with the details you want to update.
+                      items:
+                        type: object
+                        properties:
+                          identity:
+                            type: string
+                            description: "Identifies the contact using the primary key configured for your client. Depending on your configuration, the primary key can be an email address, mobile number, or custom identity value.- **Required** when `contact_type = \"identified\"` (identity serves as the primary key and can be `email`, `mobile`, or a custom parameter).  \n- **Not required** when `contact_type = \"anonymous\"`.  \n\n**Validation:**  \nIdentity must match the format of the selected primary key:\n\n#### If identity = email  \n- **Minimum length:** 1 character  \n- **Maximum length:** 255 characters  \n- **Pattern:** `^([a-z0-9_Xx])([a-z0-9+-Xx]+)(.[a-z0-9+-Xx]+)@([a-z0-9-]+.)+[a-z]{2,25}$`\n\n#### If identity = mobile  \n- **Minimum length:** 7 characters  \n- **Maximum length:** 15 characters  \n- **Pattern:** `^[0-9]{7,15}$`"
+                            maxLength: 255
+                          contact_id:
+                            type: integer
+                            description: "The Netcore contact ID used to identify the contact to update. \n -If contact_id is provided, it takes highest priority when identifying the contact. This applies to both identified and anonymous contacts."
+                            minimum: 1
+                            maximum: 2147483647
+                            example: 12345
+                          guid:
+                            type: string
+                            description: Globally unique identifier of the contact. Used primarily for anonymous contact types. At least one identifier (`contact_id`, `guid`, `email`, or `mobile`) must be provided for anonymous contacts.
+                            pattern: ^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$
+                            example: 550e8400-e29b-41d4-a716-446655440000
+                          attributes:
+                            type: object
+                            description: Define the key-value pairs of contact attributes to be updated. The keys represent attribute names (system-defined or custom), and the values represent the updated data for those attributes.
+                            additionalProperties:
+                              type: string
+                              description: Attribute value. The key can be any attribute name (e.g., FIRST_NAME, AGE).
+                            example:
+                              FIRST_NAME: John
+                              AGE: '30'
+                          email:
+                            type: string
+                            description: '- Required when `contact_type = "identified"` and primary key is `email`.
+
+                              - Optional when `contact_type = "identified"` and primary key is `mobile` or custom parameter.
+
+                              - Not applicable when `contact_type = "anonymous"` and primary key is `email`.
+
+                              - Required when `contact_type = "anonymous"` and primary key is `mobile` or custom parameter.'
+                            maxLength: 255
+                            minLength: 5
+                            pattern: ^([a-z0-9_])([a-z0-9\+_\-]+)*(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,25}$
+                            example: john.doe@example.com
+                          mobile:
+                            type: string
+                            description: '- Required when `contact_type = "identified"` and primary key is `mobile`.
+
+                              - Optional when `contact_type = "identified"` and primary key is `email` or custom parameter.
+
+                              - Required when `contact_type = "anonymous"` and primary key is `email` or custom parameter.
+
+                              - Not applicable when `contact_type = "anonymous"` and primary key is `mobile`.'
+                            minLength: 5
+                            maxLength: 17
+                            pattern: ^[0-9]{5,17}$
+                            example: '919876543210'
+                          sms_subscription:
+                            type: boolean
+                            description: 'SMS subscription status of the contact.
+
+                              - `true` → whitelisted (can receive SMS)
+
+                              - `false` → blacklisted (will not receive SMS)'
+                            example: false
+                          email_subscription:
+                            type: boolean
+                            description: 'Email subscription status of the contact.
+
+                              - `true` → whitelisted (can receive email)
+
+                              - `false` → blacklisted (will not receive email)'
+                            example: false
+                          sms_subscription_reason:
+                            type:
+                            - string
+                            - 'null'
+                            description: 'Reason for SMS subscription status change.
+
+                              - **Required when** `sms_subscription = false` (contact is blacklisted)
+
+                              - **Optional when** `sms_subscription = true` (contact is whitelisted)'
+                            example: Customer opted out via SMS
+                          email_subscription_reason:
+                            type:
+                            - string
+                            - 'null'
+                            description: 'Reason for email subscription status change.
+
+                              - **Required when** `email_subscription = false` (contact is blacklisted)
+
+                              - **Optional when** `email_subscription = true` (contact is whitelisted)'
+                            example: Customer unsubscribed via email link
+                          audience_details:
+                            type: array
+                            description: Used to assign audience groups to a specific contact. Each contact can have its own audience mapping.
+                            items:
+                              type: object
+                              required:
+                              - audience_type
+                              properties:
+                                audience_id:
+                                  type: array
+                                  description: 'Unique numeric identifiers for audiences. Required when `audience_name` is not provided. If both `audience_id` and `audience_name` are provided, only `audience_id` is used.
+
+                                    - **Minimum value:** 1
+
+                                    - **Maximum value:** 2,147,483,647'
+                                  items:
+                                    type: integer
+                                    minimum: 1
+                                    maximum: 2147483647
+                                  example:
+                                  - 101
+                                  - 202
+                                audience_name:
+                                  type: array
+                                  description: 'Names of audiences. Required when `audience_id` is not provided. If both are provided, only `audience_id` is used.
+
+                                    - **Minimum length:** 1
+
+                                    - **Maximum length:** 255
+
+                                    - **Pattern:** `^[a-zA-Z0-9 _&-]+$`'
+                                  items:
+                                    type: string
+                                    pattern: ^[A-Za-z0-9 _&-]+$
+                                    minLength: 1
+                                    maxLength: 255
+                                  example:
+                                  - Newsletter
+                                  - VIP_Group
+                                audience_type:
+                                  type: string
+                                  description: 'Type of audience. Allowed values: `list`, `ccg`.
+
+                                    - For `contact_type = "anonymous"`, only `list` is allowed.'
+                                  enum:
+                                  - list
+                                  - ccg
+                                  example: list
+                          subscription_details:
+                            type: array
+                            description: Subscription preferences for different communication channels. Each entry represents the subscription status for a specific channel (e.g., `rcs`, `whatsapp`).
+                            items:
+                              type: object
+                              required:
+                              - subscription_channel
+                              - subscription
+                              properties:
+                                subscription_channel:
+                                  type: string
+                                  description: Communication channel for which the subscription status applies.
+                                  enum:
+                                  - rcs
+                                  - whatsapp
+                                  example: rcs
+                                subscription:
+                                  type: boolean
+                                  description: 'Whether the user is allowed to receive messages on the specified channel.
+
+                                    - `true` → whitelisted (can receive messages)
+
+                                    - `false` → blacklisted (will not receive messages)'
+                                  example: false
+                                subscription_reason:
+                                  type: string
+                                  description: 'Reason for subscription status change.
+
+                                    - **Required when** `subscription = false` (user is blacklisted)
+
+                                    - **Optional when** `subscription = true` (user is whitelisted)'
+                                  example: Customer opted out via WhatsApp
+            example:
+              data:
+                contact_type: identified
+                contacts:
+                - identity: test_{{currentDatetime}}1@gmail.com
+                  attributes:
+                    STATE: Goa
+                    FIRST_NAME: JOHN
+                  email: test_{{currentDatetime}}1@gmail.com
+                  mobile: '921918246'
+                  sms_subscription: false
+                  email_subscription: false
+                  sms_subscription_reason: sms blacklist reason
+                  email_subscription_reason: email blacklist reason
+                  subscription_details:
+                  - subscription_channel: rcs
+                    subscription: false
+                    subscription_reason: blocklisting rcs
+                  - subscription_channel: whatsapp
+                    subscription: false
+                    subscription_reason: blocklisting whatsapp
+      responses:
+        '200':
+          description: 'Success Response: The request was successfully submitted and will be processed asynchronously.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - request_id
+                - code
+                - status
+                properties:
+                  request_id:
+                    type: string
+                    description: Unique identifier for the submitted request.
+                    example: a7add3e4-2206-49f6-927e-3dfd917b906a
+                  code:
+                    type: integer
+                    description: HTTP status code of the API response.
+                    example: 200
+                  status:
+                    type: string
+                    description: Status of the API request.
+                    enum:
+                    - success
+                    - failed
+                    example: success
+                  message:
+                    type: string
+                    description: Human-readable response message.
+                    example: Your request was accepted successfully. It may take a few minutes to process your request.
+              examples:
+                success_identified:
+                  summary: Update Single Identified Contact by identity
+                  value:
+                    request_id: a7add3e4-2206-49f6-927e-3dfd917b906a
+                    code: 200
+                    status: success
+                    message: Your request was accepted successfully. It may take a few minutes to process your request.
+                success_whitelist:
+                  summary: Single Contact Whitelist
+                  value:
+                    request_id: b8add3e4-2206-49f6-927e-3dfd917b906b
+                    code: 200
+                    status: success
+                    message: Your request was accepted successfully. It may take a few minutes to process your request.
+        '400':
+          description: 'Validation Failure: The request contains invalid data — such as missing required fields, incorrect attribute names, or conflicting audience identifiers.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - request_id
+                - description
+                - code
+                - status
+                properties:
+                  request_id:
+                    type: string
+                    description: Unique identifier for the submitted request.
+                    example: 01956537-8853-7b94-9ccf-7804ca7a087f
+                  description:
+                    type: string
+                    description: Error description.
+                    example: Validation Failure.
+                  code:
+                    type: integer
+                    description: HTTP status code.
+                    example: 400
+                  status:
+                    type: string
+                    description: Status of the API request.
+                    enum:
+                    - success
+                    - failed
+                    example: failed
+                  errors:
+                    type: array
+                    description: List of validation errors.
+                    items:
+                      type: object
+                      properties:
+                        field:
+                          type: string
+                          description: Field that failed validation.
+                          example: audience_details[0].audience_id
+                        message:
+                          type: string
+                          description: Validation error message.
+                          example: Data not found.
+              example:
+                request_id: 01956537-8853-7b94-9ccf-7804ca7a087f
+                description: Validation Failure.
+                code: 400
+                status: failed
+                errors:
+                - field: audience_details[0].audience_id
+                  message: Data not found.
+        '401':
+          description: 'Unauthorized Access: The API key is missing, invalid, or not authorized.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - request_id
+                - description
+                - code
+                - status
+                properties:
+                  request_id:
+                    type: string
+                    description: Unique identifier for the submitted request.
+                    example: 01956ecd-ba5d-7019-9f1c-ddf054dd759b
+                  description:
+                    type: string
+                    description: Error description.
+                    example: Unauthorized access.
+                  code:
+                    type: integer
+                    description: HTTP status code.
+                    example: 401
+                  status:
+                    type: string
+                    description: Status of the API request.
+                    enum:
+                    - success
+                    - failed
+                    example: failed
+              example:
+                request_id: 01956ecd-ba5d-7019-9f1c-ddf054dd759b
+                description: Unauthorized access.
+                code: 401
+                status: failed
+        '500':
+          description: 'Internal Server Error: An unexpected error occurred while processing the request.'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - request_id
+                - description
+                - code
+                - status
+                properties:
+                  request_id:
+                    type: string
+                    description: Unique identifier for the submitted request.
+                    example: 01956ed4-6089-759a-a6c5-0a43b5cc20b4
+                  description:
+                    type: string
+                    description: Error description.
+                    example: Internal Server Error.
+                  code:
+                    type: integer
+                    description: HTTP status code.
+                    example: 500
+                  status:
+                    type: string
+                    description: Status of the API request.
+                    enum:
+                    - success
+                    - failed
+                    example: failed
+              example:
+                request_id: 01956ed4-6089-759a-a6c5-0a43b5cc20b4
+                description: Internal Server Error.
+                code: 500
+                status: failed
+      security:
+      - ApiKeyAuth: []
+      operationId: postContactUpdate
+      x-operation-id-source: derived
+  /contact/upsert:
+    post:
+      summary: Upsert Contacts [Async]
+      deprecated: false
+      description: 'The **Upsert Contact API** enables clients to create or update (“upsert”) one or more contacts within a single request. This endpoint supports both **identified** and **anonymous** contact types, providing flexibility for various data ingestion scenarios.
+
+
+        Each contact can include core identifiers — **`email`**, **`mobile`**, and **`identity`** — along with system or custom **attributes** and optional **audience assignments**. The API performs strict validation, ensures attribute integrity, and automatically determines whether to insert a new record or update an existing one based on the provided identifiers.'
+      tags:
+      - Contacts
+      parameters:
+      - name: api-key
+        in: header
+        description: API key for authentication. You must have unique & valid api-key
+        required: true
+        example: 6a8f3c1b9d2e4f7a123b456c7890abcd
+        schema:
+          type: string
+      - name: Content-Type
+        in: header
+        description: Specifies the request content type. Must be application/json.
+        required: true
+        example: application/json
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    contact_type:
+                      type: string
+                      description: Specify the type of contact to be created. Choose between `"identified"` or `"anonymous"`.
+                      example: identified
+                    contacts:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          identity:
+                            type: string
+                            description: "- **Required** when `contact_type = \"identified\"` (identity serves as the primary key and can be `email`, `mobile`, or `custom parameter`).  \n- **Not required** when `contact_type = \"anonymous\"`.  \n\n**Validation:**  \nIdentity must match the format of the selected primary key:\n\n#### If identity = email  \n- **Minimum length:** 1 character  \n- **Maximum length:** 255 characters  \n- **Pattern:** `^([a-z0-9_Xx])([a-z0-9+-Xx]+)(.[a-z0-9+-Xx]+)@([a-z0-9-]+.)+[a-z]{2,25}$`\n\n#### If identity = mobile  \n- **Minimum length:** 7 character  \n- **Maximum length:** 15 characters  \n- **Pattern:** `^[0-9]{7,15}$`"
+                          email:
+                            type: string
+                            description: "- **Required** when `contact_type = \"identified\"` **and the primary key is `email`**.  \n - **Optional** when `contact_type = \"identified\"` **and the primary key is `mobile` or `custom parameter`**.\n- **Not required** when `contact_type = \"anonymous\"` **and the primary key is `email`** (anonymous contacts cannot use `email` as an identifier; only mobile is allowed).  "
+                            minLength: 1
+                            maxLength: 255
+                            pattern: ^([a-z0-9_Xx])([a-z0-9+-Xx]+)(.[a-z0-9+-Xx]+)@([a-z0-9-]+.)+[a-z]{2,25}$
+                          mobile:
+                            type: string
+                            description: "- **Required** when `contact_type = \"identified\"` **and the primary key is `mobile`**.  \n- **Optional** when `contact_type = \"identified\"` **and the primary key is `email` or `custom parameter`**.  \n- **Not required** when `contact_type = \"anonymous\"` **and the primary key is `mobile`** (anonymous contacts must use mobile as the identifier).  "
+                            minLength: 7
+                            maxLength: 15
+                            pattern: ^[0-9]{5,17}$
+                          attributes:
+                            type: object
+                            properties:
+                              '{{Atribute_Name}}':
+                                type: string
+                                pattern: '[^a-zA-Z0-9_]'
+                            description: "- Specify attributes to be tagged to the contact as key–value pairs.  \n- Keys represent attribute names, values represent attribute values (e.g., `\"AGE\": 30`).  \n- All **system attributes** and **custom attributes** are allowed.  \n- The request will be **rejected** if:  \n  - the attribute does not exist in the system, or  \n  - the attribute is a **derived attribute**."
+                          audience_details:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                audience_id:
+                                  type: array
+                                  items:
+                                    type: integer
+                                  description: "- **audience_id** – required when `audience_name` is not provided.  \n  - **Minimum length:** 1  \n  - **Maximum length:** 2,147,483,647"
+                                audience_name:
+                                  type: array
+                                  items:
+                                    type: string
+                                  description: "- **audience_name** – required when `audience_id` is not provided.  \n  - **Minimum length:** 1  \n  - **Maximum length:** 255  \n  - **Pattern:** `^[a-zA-Z0-9 _&-]+$`"
+                                audience_type:
+                                  type: string
+                                  description: "- **audience_type** (`string`) – allowed values: `list`, `ccg`.  \n  - For `contact_type = \"anonymous\"`, only `list` is allowed."
+                            description: Used to assign audience groups to a specific contact. Each contact can have its own audience mapping.
+                    audience_details:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          audience_id:
+                            type: array
+                            items:
+                              type: integer
+                              minimum: 65
+                              maximum: 677
+                              description: 'minimum length: 1
+
+                                maximum length: 2147483647'
+                            description: "- **audience_id** – required when `audience_name` is not provided.  \n  - **Minimum length:** 1  \n  - **Maximum length:** 2,147,483,647"
+                          audience_name:
+                            type: array
+                            items:
+                              type: string
+                              description: 'minimum length: 1
+
+                                maximum length: 255
+
+                                regex: ^[a-zA-Z0-9 _&-]+$'
+                            description: "- **audience_name** – required when `audience_id` is not provided.  \n  - **Minimum length:** 1  \n  - **Maximum length:** 255  \n  - **Pattern:** `^[a-zA-Z0-9 _&-]+$`"
+                          audience_type:
+                            type: string
+                            description: "- **audience_type** (`string`) – allowed values: `list`, `ccg`.  \n  - For `contact_type = \"anonymous\"`, only `list` is allowed."
+                      description: Used to assign audience groups to all contacts in the request. Audience mappings defined here apply globally to every contact.
+                  required:
+                  - contact_type
+                  - contacts
+              required:
+              - data
+            example:
+              data:
+                contact_type: identified
+                contacts:
+                - identity: john.doe
+                  email: johndoe@example.com
+                  mobile: '9999999999'
+                  attributes:
+                    STATE: Maharastra
+                    EMAIL: johndoe@example.com
+                    MOBILE: '921918246'
+                    FIRST_NAME: FName
+                  audience_details:
+                  - audience_id:
+                    - 1
+                    - 3
+                    - 5
+                    audience_type: list
+                  - audience_id:
+                    - 8
+                    audience_type: ccg
+                - identity: mary.jane
+                  email: maryjane@example.com
+                  mobile: '8888888888'
+                  attributes:
+                    STATE: Goa
+                    EMAIL: maryjane@example.com
+                    MOBILE: '921234546'
+                    FIRST_NAME: FullName
+                  audience_details:
+                  - audience_id:
+                    - 2
+                    - 4
+                    - 6
+                    audience_type: list
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                    description: Unique request id of request.
+                  code:
+                    type: integer
+                    description: Response status Code.
+                    enum:
+                    - 200
+                    - 400
+                    - 401
+                    - 500
+                  status:
+                    type: string
+                    description: Status of api request.
+                    enum:
+                    - success
+                    - failed
+                  description:
+                    type: string
+                    description: Api response description.
+                required:
+                - request_id
+                - code
+                - status
+                - description
+              examples:
+                '1':
+                  summary: Success
+                  value:
+                    request_id: a7add3e4-2206-49f6-927e-3dfd917b906a
+                    code: 200
+                    status: success
+                    description: Your request was accepted successfully. It is being processed asynchronously.
+                '2':
+                  summary: Failed
+                  value:
+                    request_id: 01956ecc-44e7-709e-b65d-e72c6830bbf8
+                    description: Validation Failure.
+                    code: 400
+                    status: failed
+                    errors:
+                    - field: data.contact[0].audience_details[1]
+                      message: Data not found.
+                '3':
+                  summary: Failed
+                  value:
+                    request_id: 01956ed4-6089-759a-a6c5-0a43b5cc20b4
+                    description: Internal Server Error.
+                    code: 500
+                    status: failed
+                '4':
+                  summary: Failed
+                  value:
+                    request_id: 01956ecd-ba5d-7019-9f1c-ddf054dd759b
+                    description: Unauthorized access.
+                    code: 401
+                    status: failed
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                    description: Unique request id of request.
+                  description:
+                    type: string
+                    description: Api response description.
+                  code:
+                    type: integer
+                    description: Response status Code.
+                    example: 400
+                  status:
+                    type: string
+                    description: Status of api request.
+                    example: success
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        field:
+                          type: string
+                          description: Field name for which error (validation) raised.
+                        message:
+                          type: string
+                          description: Error message/validation message
+                    description: Array of error objects. Consist of all validation errors.
+                required:
+                - request_id
+                - description
+                - code
+                - status
+              example:
+                request_id: 019ae923-4cac-71bc-968b-cf624a7ef547
+                description: Validation Failure.
+                code: 400
+                status: failed
+                errors:
+                - field: data.audience_details[0].audience_id
+                  message: Data not found.
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                    description: Unique request id of request.
+                  description:
+                    type: string
+                    description: Api response description.
+                  code:
+                    type: integer
+                    description: Response status Code.
+                    example: 401
+                  status:
+                    type: string
+                    description: Status of api request.
+                    example: failure
+                required:
+                - request_id
+                - description
+                - code
+                - status
+              example:
+                request_id: 019ae928-dde3-7c60-a9fd-3bd5833b5b22
+                description: Unauthorized access.
+                code: 401
+                status: failed
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                    description: Unique request id of request.
+                  description:
+                    type: string
+                    description: Api response description.
+                  code:
+                    type: integer
+                    description: Response status Code.
+                    example: 500
+                  status:
+                    type: string
+                    description: Status of api request.
+                    example: failure
+                required:
+                - request_id
+                - description
+                - code
+                - status
+              example:
+                request_id: 019ae927-9b47-7488-8717-3aa12c6847e8
+                description: Internal Server Error.
+                code: 500
+                status: failed
+          headers: {}
+      security:
+      - ApiKeyAuth: []
+      operationId: postContactUpsert
+      x-operation-id-source: derived
+components:
+  schemas:
+    ServerErrorsResponse:
+      type: object
+      properties:
+        request_id:
+          type: string
+          description: The request id of the API.
+          maxLength: 32
+        description:
+          type: string
+          description: 'Internal Server Error. '
+        status:
+          type: string
+          description: '500'
+        code:
+          type: integer
+          description: Failed.
+      required:
+      - request_id
+      - description
+      - status
+      - code
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: api-key
+      description: "API key needed to access the endpoints. \nExample: `5evddf6604d2845b3b27023e5c2716f1`"
+      x-default: 5evddf6604d2845b3b27023e5c2716f1
+x-provenance:
+  method: searched
+  source: https://developer.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on developer.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

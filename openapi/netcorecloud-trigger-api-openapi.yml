@@ -1,0 +1,504 @@
+openapi: 3.2.0
+info:
+  title: Trigger API
+  description: ''
+  version: 1.0.0
+servers:
+- url: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  description: US
+- url: ' https://netcoreapi-main-prod-ind.netcorein.com/v5/'
+  description: IND
+- url: ' https://netcoreapi-main-prod-eu.netcorein.com/v5/'
+  description: EU
+security:
+- ApiKeyAuth: []
+tags:
+- name: Trigger
+paths:
+  /trigger/publish:
+    post:
+      summary: Publish Trigger - APN
+      deprecated: false
+      description: Use this endpoint to publish push notifications via APN to targeted app users. This API supports both real-time and scheduled notifications and allows callback configuration for delivery status updates.
+      tags:
+      - Trigger
+      parameters:
+      - name: api-key
+        in: header
+        description: API key for authentication. You must have a unique and valid API key.
+        required: true
+        example: 6a8f3c1b9d2e4f7a123b456c7890abcd
+        schema:
+          type: string
+      - name: Content-Type
+        in: header
+        description: Specify the request content type. It must be application/json
+        required: true
+        example: application/json
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    triggers:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          tags:
+                            type: array
+                            description: 'A set of labels or identifiers that help categorize and filter the trigger event. Tags can be used for reporting, analytics, or downstream segmentation logic.
+
+
+                              Usage Guideline:
+
+
+                              You may pass up to 15 tags in a single trigger.
+
+                              Each tags should be a string with a maximum length of 75 characters.
+
+                              Tags should be meaningful identifiers like ''product_launch'', ''flash_sale'', or ''user_engagement''.'
+                            items:
+                              type: string
+                          channel:
+                            type: string
+                            description: 'Channel name to send through: APN'
+                            maxLength: 20
+                            enum:
+                            - apn
+                          channel_config:
+                            type: object
+                            properties:
+                              app_ids:
+                                type: array
+                                items:
+                                  type: string
+                                  description: 'Represents a single App ID entry used to route push notifications to the correct mobile application. Each string identifies a pre-registered app(Android or iOS). Allowed characters: Alphanumeric, dashes(-), and underscores(_).'
+                                  maxLength: 50
+                                  minItems: 1
+                                  title: APP ID
+                                description: Specifies the App IDs to which the notification should be delivered. Each App ID represents a registered application (iOS or Android) on which the push message should appear. This helps route the message to the correct app instance across platforms.
+                                maxItems: 50
+                                minItems: 1
+                                title: App ID's
+                              ttl:
+                                type: integer
+                                description: TTL(Time to Live) defines how long(in seconds) the notification should be retained for delivery if the target device is offline. The actual behavior on TTL expiry depeends on the underlying delivery system.
+                                maximum: 2419200
+                                title: TTL in seconds
+                            required:
+                            - app_ids
+                            - ttl
+                            description: Channel-specific configuration like App IDs
+                          content:
+                            type: object
+                            properties:
+                              template_type:
+                                type: string
+                                description: The message template format. Only 'Simple' is supported as per current API spec.
+                                maxLength: 10
+                                enum:
+                                - Simple
+                              landing_page_type:
+                                type: string
+                                description: Specifies the redirection behavior on click. Determines whether users land on the app homepage, a deep link, or an external URL.
+                                enum:
+                                - home
+                                - deeplink
+                                - url
+                                title: ''
+                                maxLength: 10
+                              landing_page_url:
+                                type: string
+                                format: uri
+                                description: The URL or deep link to open when the user taps the notification.
+                              title:
+                                type: string
+                                maxLength: 100
+                                description: The title text shown in the push notification. This is labeled as “APN Title” in the schema. Either 'title' or 'description' must be provided — at least one of the two is required. If description is omitted, 'title' becomes mandatory, and vice versa.
+                                title: APN Title
+                              description:
+                                type: string
+                                maxLength: 1000
+                                description: Body text shown in the push message. Either 'title' or 'description' must be provided. The schema does not enforce mutual exclusivity, but documentation and logic should enforce that at least one is present.
+                              os:
+                                type: array
+                                description: 'OS-specific metadata. One object per platform: Android and/or iOS.'
+                                items:
+                                  type: object
+                                  properties:
+                                    os_name:
+                                      type: string
+                                      description: Specifies the operating system to which this push content configuration applies. This is a required field within each object in the 'os' array. Only 'android' and 'ios' are accepted values.
+                                      enum:
+                                      - android
+                                      - ios
+                                      maxLength: 10
+                                    subtitle:
+                                      type: string
+                                      description: Optional subtitle text to be displayed in the push notification. This can be used to supplement the title with additional context or highlight.
+                                      maxLength: 30
+                                      title: APN Subtitle
+                                  required:
+                                  - os_name
+                                minItems: 1
+                                maxItems: 2
+                                title: OS
+                            required:
+                            - template_type
+                            - landing_page_type
+                            - landing_page_url
+                            - os
+                            description: Defines the message content for the push notification, including template type, landing behavior, OS-specific elements, title, and description.
+                          audience_details:
+                            type: object
+                            properties:
+                              contact_type:
+                                type: string
+                                description: Defines the category of the recipient. Use 'contact_master' for unified contact profiles, 'identified' for known identities (e.g., mobile/email), and 'anonymous' for temporary identifiers.
+                                enum:
+                                - contact_master
+                                - identified
+                                - anonymous
+                              contact_attribute:
+                                type: string
+                                description: The attribute type used to identify the user (For example, 'identity', 'token'). This must align with the contact type selected.
+                              attribute_value:
+                                type: array
+                                description: The values corresponding to the selected contact attribute. This is typically a list of identities like phone numbers, email addresses, or tokens.
+                                items:
+                                  type: string
+                            required:
+                            - contact_type
+                            - contact_attribute
+                            - attribute_value
+                            description: Contains details about the target audience for the notification. You must specify the type of contact, the attribute used for identification, and the values for that attribute.
+                          schedule_details:
+                            type: object
+                            description: Specifies when the notification should be sent. If omitted, the message is assumed to be sent immediately.
+                            properties:
+                              schedule_type:
+                                type: string
+                                description: Indicates the schedule behavior. Common values may include now or a datetime-based strategy. Specific allowed values are not defined in the schema but should be agreed upon with your backend system. This is madatory only if 'schedule_details' is present.
+                            required:
+                            - schedule_type
+                        description: Trigger
+                        required:
+                        - channel
+                        maxProperties: 1
+                        minProperties: 1
+                        title: Trigger Object
+                      description: Trigger array of objects
+                  required:
+                  - triggers
+                  description: Contains an arry of trigger objects.
+                notify_callback:
+                  type: object
+                  properties:
+                    callback:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          url:
+                            type: string
+                            description: Webhook URL
+                          method:
+                            type: string
+                            description: HTTP Method
+                            enum:
+                            - GET
+                            - POST
+                            - DELETE
+                          headers:
+                            type: object
+                            properties:
+                              Content-Type:
+                                type: string
+                              Authorization:
+                                type: string
+                              <Custom-Key-Name>:
+                                type: string
+                              X-API-UUID:
+                                type: string
+                            required:
+                            - Content-Type
+                            - Authorization
+                            - <Custom-Key-Name>
+                            - X-API-UUID
+                            description: Headers
+                          body_params:
+                            type: object
+                            properties:
+                              key:
+                                type: string
+                            required:
+                            - key
+                            description: Payload Body Object
+                          query_params:
+                            type: object
+                            properties: {}
+                            description: GET Query Params
+                          webhook_id:
+                            type: integer
+                            description: Existing Webhook ID
+                        required:
+                        - body_params
+                      description: Callback
+                  required:
+                  - callback
+                  description: Notify and Callback
+              required:
+              - data
+              - notify_callback
+            example:
+              data:
+                triggers:
+                - tags:
+                  - Trigger
+                  channel: apn
+                  channel_config:
+                    app_ids:
+                    - android-app-id-1-1
+                    - ios-app-id-1-2
+                    ttl: 2800
+                  content:
+                    template_type: Simple
+                    landing_page_type: home
+                    landing_page_url: url
+                    title: Title
+                    description: Description
+                    os:
+                    - os_name: android
+                      subtitle: Sub Title Text
+                    - os_name: ios
+                      subtitle: Sub Title Text
+                  audience_details:
+                    contact_type: identified
+                    contact_attribute: identity
+                    attribute_value:
+                    - '1234567890'
+                  schedule_details:
+                    schedule_type: now
+              notify_callback:
+                callback:
+                - url: https://www.webhook.com/test
+                  method: POST
+                  headers:
+                    Content-Type: application/json
+                    Authorization: Bearer <token>
+                    <Custom-Key-Name>: <Custom-Key-Value>
+                    X-API-UUID: <Client-UUID>
+                  body_params: {}
+                  query_params: {}
+                - webhook_id: 1
+                  body_params:
+                    key: value
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                  code:
+                    type: integer
+                  status:
+                    type: string
+                  description:
+                    type: string
+                required:
+                - request_id
+                - code
+                - status
+                - description
+              examples:
+                '1':
+                  summary: Publish Trigger - APN - Success
+                  value:
+                    request_id: a7add3e4-2206-49f6-927e-3dfd917b906a
+                    code: 200
+                    status: success
+                    description: Your request was accepted successfully. It may take a few minutes to process your request.
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                  code:
+                    type: integer
+                  status:
+                    type: string
+                  description:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        field:
+                          type: string
+                        message:
+                          type: string
+                required:
+                - request_id
+                - code
+                - status
+                - description
+                - errors
+              examples:
+                '1':
+                  summary: Publish Trigger - APN - Failed - Validation - Missing mandatory field
+                  value:
+                    request_id: 506611fa-1519-4624-94d2-5b59623de608
+                    code: 400
+                    status: failed
+                    description: Validation Failure.
+                    errors:
+                    - field: data.triggers[0]
+                      message: '"channel" Missing required field'
+          headers: {}
+        x-400:Publish Trigger - APN - Failed - Validation - Invalid Value Type:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                  code:
+                    type: integer
+                  status:
+                    type: string
+                  description:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        field:
+                          type: string
+                        message:
+                          type: string
+                required:
+                - request_id
+                - code
+                - status
+                - description
+                - errors
+              examples:
+                '1':
+                  summary: Publish Trigger - APN - Failed - Validation - Invalid Value Type
+                  value:
+                    request_id: 506611fa-1519-4624-94d2-5b59623de608
+                    code: 400
+                    status: failed
+                    description: Validation Failure.
+                    errors:
+                    - field: data.triggers[0].ttl
+                      message: Invalid value type.
+          headers: {}
+        x-400:Publish Trigger - APN - Failed - Validation - Invalid Value:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                  code:
+                    type: integer
+                  status:
+                    type: string
+                  description:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        field:
+                          type: string
+                        message:
+                          type: string
+                required:
+                - request_id
+                - code
+                - status
+                - description
+                - errors
+              examples:
+                '1':
+                  summary: Publish Trigger - APN - Failed - Validation - Invalid Value
+                  value:
+                    request_id: 506611fa-1519-4624-94d2-5b59623de608
+                    code: 400
+                    status: failed
+                    description: Validation Failure.
+                    errors:
+                    - field: data.triggers[0].content.os[0].os_name
+                      message: Invalid value type.
+          headers: {}
+        x-200:Publish Trigger - APN - Success:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                  code:
+                    type: integer
+                  status:
+                    type: string
+                  description:
+                    type: string
+                required:
+                - request_id
+                - code
+                - status
+                - description
+              examples:
+                '1':
+                  summary: Publish Trigger - APN - Success
+                  value:
+                    request_id: a7add3e4-2206-49f6-927e-3dfd917b906a
+                    code: 200
+                    status: success
+                    description: Your request was accepted successfully. It may take a few minutes to process your request.
+          headers: {}
+      security:
+      - ApiKeyAuth: []
+      operationId: postTriggerPublish
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: api-key
+      description: "API key needed to access the endpoints. \nExample: `5evddf6604d2845b3b27023e5c2716f1`"
+      x-default: 5evddf6604d2845b3b27023e5c2716f1
+x-provenance:
+  method: searched
+  source: https://developer.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on developer.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

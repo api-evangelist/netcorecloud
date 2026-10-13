@@ -1,0 +1,62 @@
+generated: '2026-10-13'
+method: derived
+source: openapi/netcorecloud-attributes-api-openapi.yml, openapi/netcorecloud-campaigns-api-openapi.yml,
+  openapi/netcorecloud-contacts-api-openapi.yml, openapi/netcorecloud-email-api-v5-openapi.yml,
+  openapi/netcorecloud-email-api-v6-openapi.yml, openapi/netcorecloud-exports-api-openapi.yml,
+  openapi/netcorecloud-orbit-router-openapi.yml, openapi/netcorecloud-rcs-api-openapi.yml, openapi/netcorecloud-sms-api-openapi.yml,
+  openapi/netcorecloud-templates-api-openapi.yml, openapi/netcorecloud-trigger-api-openapi.yml,
+  openapi/netcorecloud-whatsapp-api-openapi.yml
+summary:
+  types:
+  - apiKey
+  - http
+  api_key_in:
+  - header
+schemes:
+- name: ApiKeyAuth
+  type: apiKey
+  in: header
+  parameter: api-key
+  description: "API key needed to access the endpoints. \nExample: `5evddf6604d2845b3b27023e5c2716f1`"
+  sources:
+  - openapi/netcorecloud-attributes-api-openapi.yml
+  - openapi/netcorecloud-campaigns-api-openapi.yml
+  - openapi/netcorecloud-contacts-api-openapi.yml
+  - openapi/netcorecloud-exports-api-openapi.yml
+  - openapi/netcorecloud-templates-api-openapi.yml
+  - openapi/netcorecloud-trigger-api-openapi.yml
+- name: ApiKeyAuth
+  type: apiKey
+  in: header
+  parameter: api_key
+  description: Your Email API Key. You can find this in your Email API account at Settings->Integrations.
+  sources:
+  - openapi/netcorecloud-email-api-v5-openapi.yml
+  - openapi/netcorecloud-orbit-router-openapi.yml
+- name: bearer
+  type: http
+  scheme: bearer
+  sources:
+  - openapi/netcorecloud-email-api-v6-openapi.yml
+  - openapi/netcorecloud-orbit-router-openapi.yml
+  - openapi/netcorecloud-rcs-api-openapi.yml
+  - openapi/netcorecloud-whatsapp-api-openapi.yml
+- name: EngineApiKeyHeader
+  type: apiKey
+  in: header
+  parameter: X-API-Key
+  description: Engine API key via `X-API-Key` header (priority 2).
+  sources:
+  - openapi/netcorecloud-orbit-router-openapi.yml
+- name: headerAuth
+  type: apiKey
+  in: header
+  parameter: username
+  description: |-
+    Authentication requires two headers (for Report APIs):
+    - `username` — the API username
+    - `password` — the API password
+
+    Both are validated against the external Auth API.
+  sources:
+  - openapi/netcorecloud-sms-api-openapi.yml

@@ -1,0 +1,173 @@
+openapi: 3.2.0
+info:
+  title: Email API V6 Stats API
+  description: ''
+  version: 1.0.0
+servers:
+- url: https://emailapi.netcorecloud.net/v6
+  description: For Non EU region
+- url: https://apieu.netcorecloud.net/v6
+  description: For EU region
+security: []
+tags:
+- name: Stats API
+paths:
+  /stats:
+    get:
+      summary: Fetch Summary Stats
+      deprecated: false
+      description: 'This API tracks key events—such as opens, clicks, and unsubscribes— and generates performance statistics, updated hourly based on your profile’s timezone.
+
+        You can view this data in your Email API dashboard or retrieve it programmatically via this API.
+
+        Retention Policy: - Monthly stats are retained for the lifetime of the domain. - Event-level data is retained for 90 days.'
+      operationId: get-stats
+      tags:
+      - Stats API
+      parameters:
+      - name: start_date
+        in: query
+        description: The starting date of the statistics to retrieve. Must follow format YYYY-MM-DD.
+        required: false
+        schema:
+          type: string
+          examples:
+          - '2023-10-01'
+      - name: end_date
+        in: query
+        description: The end date of the statistics to retrieve. Defaults to today. Must follow format YYYY-MM-DD.
+        required: false
+        schema:
+          type: string
+          examples:
+          - '2023-10-10'
+      - name: aggregated_by
+        in: query
+        description: 'How to group the statistics. Must be one of: day, week, month, tag, fromdomain, recipientdomain, fromaddress, subaccount.'
+        required: false
+        schema:
+          type: string
+          enum:
+          - day
+          - week
+          - month
+          - tag
+          - fromdomain
+          - recipientdomain
+          - fromaddress
+          - subaccount
+          default: day
+      - name: on-behalf-of
+        in: header
+        description: When a master account API key is used you can fetch the summary stats of the subaccount by providing subaccount username.
+        required: false
+        schema:
+          type: string
+        example: customer_abc
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                        stats:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              metrics:
+                                type: object
+                                properties:
+                                  bounce:
+                                    type: number
+                                  click:
+                                    type: number
+                                  dropped:
+                                    type: number
+                                  invalid:
+                                    type: number
+                                  open:
+                                    type: number
+                                  sent:
+                                    type: number
+                                  spam:
+                                    type: number
+                                  unique_click:
+                                    type: number
+                                  unique_open:
+                                    type: number
+                                  unsub:
+                                    type: number
+                                  processed:
+                                    type: number
+                      examples:
+                      - date: string
+                        stats:
+                        - metrics:
+                            bounce: 0
+                            click: 0
+                            dropped: 0
+                            invalid: 0
+                            open: 0
+                            sent: 0
+                            spam: 0
+                            unique_click: 0
+                            unique_open: 0
+                            unsub: 0
+                            processed: 0
+                      x-examples:
+                        example-1:
+                          date: '2017-07-03'
+                          stats:
+                          - metrics:
+                              bounce: '0'
+                              click: '44'
+                              dropped: '0'
+                              invalid: '0'
+                              open: '21'
+                              sent: '28'
+                              spam: '0'
+                              unique_click: '19'
+                              unique_open: '21'
+                              unsub: '0'
+              example:
+                data:
+                - date: '2023-10-10'
+                  stats:
+                  - metrics:
+                      bounce: 0
+                      click: 0
+                      dropped: 0
+                      invalid: 0
+                      open: 0
+                      sent: 0
+                      spam: 0
+                      unique_click: 0
+                      unique_open: 0
+                      unsub: 0
+                      processed: 0
+      security:
+      - bearer: []
+components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

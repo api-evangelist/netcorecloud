@@ -1,0 +1,107 @@
+openapi: 3.2.0
+info:
+  title: Templates APN Template API
+  description: ''
+  version: 1.0.0
+servers:
+- url: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  description: US
+- url: ' https://netcoreapi-main-prod-ind.netcorein.com/v5/'
+  description: IND
+- url: ' https://netcoreapi-main-prod-eu.netcorein.com/v5/'
+  description: EU
+security:
+- ApiKeyAuth: []
+tags:
+- name: APN Template
+paths:
+  /client/template/create:
+    post:
+      summary: Template Create
+      deprecated: false
+      description: Creates one or more APN templates.
+      tags:
+      - APN Template
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            examples: {}
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+      security: []
+      operationId: postClientTemplateCreate
+      x-operation-id-source: derived
+  /client/template/search:
+    post:
+      summary: Template Search
+      deprecated: false
+      description: ''
+      tags:
+      - APN Template
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+            examples: {}
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+      security: []
+      operationId: postClientTemplateSearch
+      x-operation-id-source: derived
+  /client/template/update:
+    post:
+      summary: Template Update
+      deprecated: false
+      description: ''
+      tags:
+      - APN Template
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            examples: {}
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+      security: []
+      operationId: postClientTemplateUpdate
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: api-key
+      description: "API key needed to access the endpoints. \nExample: `5evddf6604d2845b3b27023e5c2716f1`"
+      x-default: 5evddf6604d2845b3b27023e5c2716f1
+x-provenance:
+  method: searched
+  source: https://developer.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on developer.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

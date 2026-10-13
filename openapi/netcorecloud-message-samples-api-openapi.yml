@@ -1,0 +1,289 @@
+openapi: 3.2.0
+info:
+  title: WHATSAPP Message Samples API
+  version: '1.0'
+  description: Comprehensive collection of WhatsApp APIs that allow users to interact with WhatsApp Flows, Templates, Message Sending, Conversations, Consent Management, Webhooks, Payments, and Media associated with a specific WABA (WhatsApp Business Account).
+  license:
+    name: Proprietary
+    identifier: proprietary
+servers:
+- url: https://cpaaswa.netcorecloud.net/api
+  description: WhatsApp APIs Server
+- url: https://cpaaswa.netcorecloud.net
+  description: WhatsApp Root Server
+security:
+- bearerAuth: []
+tags:
+- name: Message Samples
+paths:
+  /v3/metainfo/message_samples:
+    post:
+      summary: Upload Message Samples API
+      tags:
+      - Message Samples
+      operationId: uploadMessageSamples
+      description: 'Use this API to upload message samples to onboard for direct utility message sending.
+
+        The request body structure determines the template type.
+
+        Batching is supported: include up to **100** messages in the `message` array per request.'
+      parameters:
+      - name: Content-Type
+        in: header
+        required: true
+        description: Must be set to 'application/json' for JSON requests.
+        schema:
+          type: string
+          example: application/json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              anyOf:
+              - title: Text message
+                type: object
+                properties:
+                  type:
+                    type: string
+                    enum:
+                    - text
+                  text:
+                    type: object
+                    properties:
+                      body:
+                        type: string
+                    required:
+                    - body
+                required:
+                - type
+                - text
+                example:
+                  type: text
+                  text:
+                    body: <BODY_TEXT>
+              - title: Interactive CTA URL
+                type: object
+                properties:
+                  type:
+                    type: string
+                    enum:
+                    - interactive
+                  interactive:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                        - cta_url
+                      header:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                            - text
+                          text:
+                            type: string
+                      body:
+                        type: object
+                        properties:
+                          text:
+                            type: string
+                        required:
+                        - text
+                      footer:
+                        type: object
+                        properties:
+                          text:
+                            type: string
+                      action:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          parameters:
+                            type: object
+                            properties:
+                              display_text:
+                                type: string
+                              url:
+                                type: string
+                            required:
+                            - display_text
+                            - url
+                        required:
+                        - name
+                        - parameters
+                        additionalProperties: false
+                    required:
+                    - type
+                    - body
+                    - action
+                    example:
+                      type: interactive
+                      interactive:
+                        type: cta_url
+                        header:
+                          type: text
+                          text: <HEADER_TEXT>
+                        body:
+                          text: <BODY_TEXT>
+                        footer:
+                          text: <FOOTER_TEXT>
+                        action:
+                          name: cta_url
+                          parameters:
+                            display_text: <BUTTON_TEXT>
+                            url: <BUTTON_URL>
+                required:
+                - type
+                - interactive
+              - title: Interactive Reply Buttons
+                type: object
+                properties:
+                  type:
+                    type: string
+                    enum:
+                    - interactive
+                  interactive:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                        - button
+                      header:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                            - text
+                          text:
+                            type: string
+                      body:
+                        type: object
+                        properties:
+                          text:
+                            type: string
+                        required:
+                        - text
+                      footer:
+                        type: object
+                        properties:
+                          text:
+                            type: string
+                      action:
+                        type: object
+                        properties:
+                          buttons:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                type:
+                                  type: string
+                                  enum:
+                                  - reply
+                                reply:
+                                  type: object
+                                  properties:
+                                    id:
+                                      type: string
+                                    title:
+                                      type: string
+                                  required:
+                                  - id
+                                  - title
+                            minItems: 1
+                            maxItems: 3
+                            uniqueItems: true
+                        required:
+                        - buttons
+                        additionalProperties: false
+                    required:
+                    - type
+                    - body
+                    - action
+                    example:
+                      type: interactive
+                      interactive:
+                        type: button
+                        header:
+                          type: text
+                          text: <HEADER_TEXT>
+                        body:
+                          text: <BODY_TEXT>
+                        footer:
+                          text: <FOOTER_TEXT>
+                        action:
+                          buttons:
+                          - type: reply
+                            reply:
+                              id: <BUTTON_ID>
+                              title: <BUTTON_LABEL_TEXT>
+                required:
+                - type
+                - interactive
+            examples:
+              TextMessage:
+                summary: Text message sample
+                description: Upload a plain text sample for utility onboarding.
+                value:
+                  type: text
+                  text:
+                    body: <BODY_TEXT>
+              InteractiveCTAURL:
+                summary: Interactive CTA URL sample
+                description: Upload an interactive CTA URL sample with header, body, footer, and button.
+                value:
+                  type: interactive
+                  interactive:
+                    type: cta_url
+                    header:
+                      type: text
+                      text: <HEADER_TEXT>
+                    body:
+                      text: <BODY_TEXT>
+                    footer:
+                      text: <FOOTER_TEXT>
+                    action:
+                      name: cta_url
+                      parameters:
+                        display_text: <BUTTON_TEXT>
+                        url: <BUTTON_URL>
+              InteractiveReplyButtons:
+                summary: Interactive reply buttons sample
+                description: Upload an interactive button sample with up to three quick-reply buttons.
+                value:
+                  type: interactive
+                  interactive:
+                    type: button
+                    header:
+                      type: text
+                      text: <HEADER_TEXT>
+                    body:
+                      text: <BODY_TEXT>
+                    footer:
+                      text: <FOOTER_TEXT>
+                    action:
+                      buttons:
+                      - type: reply
+                        reply:
+                          id: <BUTTON_ID>
+                          title: <BUTTON_LABEL_TEXT>
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer token authentication using JWT. Include the token in the Authorization header as 'Bearer <your_token>'.
+x-stoplight:
+  id: o7al2fnfvhxlr
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

@@ -1,0 +1,134 @@
+﻿# Netcore
+
+> Agentic Marketing Platform for increased conversions, engagement, and personalization.
+
+Netcore.ai offers an Agentic Marketing Platform designed to help enterprise and mid-market businesses, particularly in e-commerce, retail, BFSI, and travel, enhance customer engagement and drive conversions. The platform leverages AI to personalize user experiences across multiple channels, including email, push notifications, in-app messages, and SMS. It aims to improve key metrics such as user engagement, conversion rates, and customer retention.
+
+The core value proposition lies in its ability to deliver hyper-personalized customer journeys through an AI-driven approach. This enables businesses to understand their customers better via a Customer Data Platform (CDP) and then act on those insights using a suite of communication tools. The platform is suitable for businesses of all sizes looking to optimize their marketing efforts and achieve measurable growth. Key use cases include increasing ROI, improving product discovery, driving policy renewals, and enhancing overall customer lifetime value.
+
+## Core Platform & Features
+
+- [Netcore - #1 Agentic Marketing Platform](https://netcore.ai/): Discover Netcore's Agentic Marketing Platform for enhanced conversions and personalization.
+- [Agentic Marketing Platform](https://netcore.ai/agentic-marketing-platform/): Explore Netcore's AI-powered platform for co-owning marketing outcomes and driving growth.
+- [Customer Engagement Platform](https://netcore.ai/customer-engagement-platform/): Learn about Netcore's platform for engaging customers across multiple channels.
+- [Marketing Automation Platform](https://netcore.ai/marketing-automation-platform/): Understand Netcore's marketing automation capabilities for streamlining campaigns.
+- [Customer Retention Management Platform](https://netcore.ai/customer-retention-management-platform/): Discover how Netcore helps manage and improve customer retention.
+- [Product Experience](https://netcore.ai/product-experience/): Enhance user product experiences with Netcore's personalization tools.
+- [Personalization](https://netcore.ai/personalization/): Implement AI-driven personalization strategies across customer touchpoints.
+- [Customer Data Platform](https://netcore.ai/customer-data-platform/): Unify customer data for deeper insights and targeted marketing.
+
+## Communication Channels
+
+- [Email Marketing Platform](https://netcore.ai/email/): Leverage Netcore's email platform for effective email marketing campaigns.
+- [Email Marketing](https://netcore.ai/email/email-marketing/): Master email marketing strategies with Netcore's comprehensive tools.
+- [Email API](https://netcore.ai/email/email-api/): Integrate Netcore's email API for programmatic email sending.
+- [App Push Notifications](https://netcore.ai/app-push-notifications/): Drive app engagement with targeted push notifications.
+- [Web Push Notifications](https://netcore.ai/web-push-notifications/): Re-engage website visitors using web push notifications.
+- [In-App Messages](https://netcore.ai/in-app-messages/): Deliver timely messages within your application to users.
+- [Web Messages](https://netcore.ai/web-messages/): Engage website visitors with targeted web messages.
+- [WhatsApp Marketing](https://netcore.ai/whatsapp-marketing/): Utilize WhatsApp for customer communication and marketing.
+- [Voice](https://netcore.ai/voice/): Explore voice communication solutions for customer engagement.
+- [SMS Marketing](https://netcore.ai/sms/): Send SMS messages for marketing and notifications.
+- [RCS Messaging](https://netcore.ai/rcs/): Engage users with Rich Communication Services (RCS).
+- [CPaaS](https://netcore.ai/cpaas/): Understand Netcore's Communications Platform as a Service offerings.
+
+## Industries Served
+
+- [E-commerce Marketing Platform](https://netcore.ai/industries/ecommerce-marketing-platform/): Boost e-commerce sales with specialized marketing tools.
+- [Retail Marketing Solutions](https://netcore.ai/retail/): Discover marketing solutions tailored for the retail industry.
+- [BFSI Marketing Platform](https://netcore.ai/industries/bfsi/): Engage customers in Banking, Financial Services, and Insurance.
+- [BFSI](https://netcore.ai/bfsi): Learn about Netcore's solutions for the BFSI sector.
+- [Automotive Marketing](https://netcore.ai/auto): Drive growth in the automotive sector with Netcore's platform.
+- [OTT Marketing Platform](https://netcore.ai/industries/ott/): Enhance engagement for Over-The-Top streaming services.
+- [Travel Marketing Platform](https://netcore.ai/industries/travel/): Optimize marketing for the travel and hospitality industry.
+- [EdTech Marketing Platform](https://netcore.ai/industries/edtech/): Engage learners and drive enrollment in EdTech.
+- [E-commerce & Online Retail](https://netcore.ai/industries/e-commerce-online-retail/): Solutions for online retail businesses to increase conversions.
+
+## Resources & Learning
+
+- [Success Stories](https://netcore.ai/resources/success-story/): Read case studies of businesses achieving results with Netcore.
+- [Crocs Success Story](https://netcore.ai/success-story/crocs-13x-roi-ai-multi-agent/): See how Crocs achieved 13x ROI using Netcore's AI.
+- [Backcountry Success Story](https://netcore.ai/success-story/backcountry-ai-search-performance-case-study/): Learn how Backcountry improved search performance with AI.
+- [Bajaj General Insurance Success Story](https://netcore.ai/success-story/bajaj-general-insurance-digital-policy-renewals/): Discover how Bajaj improved digital policy renewals.
+- [Navia Markets Success Story](https://netcore.ai/success-story/navia-markets-40-percent-mau-growth-agentic-marketing/): See Navia Markets' 40% MAU growth via agentic marketing.
+- [Hero Motocorp Success Story](https://netcore.ai/success-story/hero-motocorp-digital-growth-success-netcore-cloud/): Learn about Hero Motocorp's digital growth with Netcore.
+- [Air India Express Success Story](https://netcore.ai/success-story/70x-roi-for-air-india-express/): Understand how Air India Express achieved 70x ROI.
+- [Learn Agentic Marketing](https://netcore.ai/resources/learn-agentic-marketing/): Explore resources to understand and implement agentic marketing.
+- [Blog](https://netcore.ai/blog/): Read the latest articles on marketing, AI, and customer engagement.
+- [Netcore vs. MoEngage](https://netcore.ai/blog/netcore-vs-moengage/): Compare Netcore's features and benefits against MoEngage.
+- [Netcore vs. CleverTap](https://netcore.ai/blog/netcore-vs-clevertap-comparison-2026/): Analyze Netcore's advantages over CleverTap.
+- [Netcore vs. Braze](https://netcore.ai/blog/netcore-vs-braze-comparison-2026/): Understand how Netcore compares to Braze.
+- [Netcore vs. Salesforce](https://netcore.ai/blog/netcore-vs-salesforce-comparison-2026/): Compare Netcore's agentic marketing platform with Salesforce.
+- [Best Customer Engagement Software](https://netcore.ai/blog/best-customer-engagement-software/): Discover top software for enhancing customer engagement.
+- [Best Agentic Marketing Platforms](https://netcore.ai/agentic-marketing/best-agentic-marketing-platforms/): Identify leading platforms in agentic marketing.
+- [Top Omnichannel Marketing Platform](https://netcore.ai/blog/top-omnichannel-marketing-platform/): Find the best platforms for omnichannel marketing strategies.
+- [Customer Retention Management Software](https://netcore.ai/blog/customer-retention-management-software/): Learn about software to improve customer retention.
+- [Best Journey Orchestration Platform](https://netcore.ai/blog/best-journey-orchestration-platform/): Discover top platforms for orchestrating customer journeys.
+- [Best Online Product Experience Tools](https://netcore.ai/blog/best-online-product-experience-tools/): Find tools to enhance online product experiences.
+- [Best Push Notification Platform](https://netcore.ai/blog/best-push-notification-platform/): Identify leading platforms for push notification marketing.
+- [Marketing Automation Platform](https://netcore.ai/blog/marketing-automation-platform/): Understand the benefits of a marketing automation platform.
+- [Personalization Tools](https://netcore.ai/blog/personalization-tools/): Explore tools for effective customer personalization.
+- [Best WhatsApp Marketing Tools](https://netcore.ai/blog/best-whatsapp-marketing-tools/): Discover top tools for WhatsApp marketing.
+- [Ebooks](https://netcore.ai/resources/ebook/): Download ebooks on marketing strategies and platform insights.
+- [Podcasts](https://netcore.ai/resources/podcasts/): Listen to podcasts on marketing trends and expert interviews.
+- [Podcasts Channel](https://netcore.ai/resources/podcasts-channel/): Access Netcore's podcast channel for marketing discussions.
+- [Webinars](https://netcore.ai/resources/webinars/): Register for and watch webinars on various marketing topics.
+- [Videos](https://netcore.ai/resources/videos/): Watch videos explaining platform features and marketing concepts.
+- [Guides](https://netcore.ai/resources/guides/): Find comprehensive guides on marketing best practices.
+- [Interactive Product Demos](https://netcore.ai/resources/interactive-product-demos/): Try interactive demos to explore product features.
+- [Inbox Commerce Demos](https://netcore.ai/resources/inbox-commerce-demos/): Explore demos for inbox commerce capabilities.
+- [Inbox Commerce Use Cases](https://netcore.ai/resources/inbox-commerce-use-cases/): Learn about practical applications of inbox commerce.
+- [Demo Center](https://netcore.ai/resources/demo-center/): Access various product demos and request personalized ones.
+- [Tools](https://netcore.ai/resources/tools/): Explore helpful marketing tools provided by Netcore.
+- [Tools](https://netcore.ai/tools/): Access Netcore's suite of marketing and analytics tools.
+- [Glossary](https://netcore.ai/glossary/): Understand key marketing and AI terms in the glossary.
+
+## About Netcore
+
+- [About Us](https://netcore.ai/about-us/): Learn about Netcore's mission, vision, and company history.
+- [Leadership Team](https://netcore.ai/leadership/): Meet the leaders driving Netcore's innovation.
+- [Partners](https://netcore.ai/partners/): Discover Netcore's technology and channel partners.
+- [Netcore Rebrands to Agentic Marketing Platform](https://netcore.ai/press-release/netcore-cloud-rebrands-to-netcore-ai-agentic-marketing-platform/): Understand the company's rebranding to Netcore AI.
+- [Press Releases](https://netcore.ai/press-releases/): Read official announcements and news from Netcore.
+- [Netcore Wins Google Cloud Partner Award](https://netcore.ai/press-release/netcore-cloud-wins-2025-google-cloud-business-applications-partner-of-the-year-for-emerging-industry/): Learn about Netcore's recognition from Google Cloud.
+- [Newsroom](https://netcore.ai/newsroom/): Find company news, media mentions, and press kits.
+- [Corporate Social Responsibility](https://netcore.ai/corporate-social-responsibility/): Learn about Netcore's commitment to social responsibility.
+
+## Getting Started & Support
+
+- [Switch to Netcore](https://netcore.ai/switch-to-netcore/): Get guidance on migrating to the Netcore platform.
+- [Why Netcore](https://netcore.ai/why-netcore/): Understand the key benefits of choosing Netcore.
+- [Startup Program](https://netcore.ai/startup-program/): Learn about Netcore's program for startups.
+- [India Startup Apps Program](https://netcore.ai/startups/india/apps/): Details on Netcore's program for Indian app startups.
+- [Pricing](https://netcore.ai/plan-and-pricing/): View Netcore's pricing plans and options.
+- [Contact Us](https://netcore.ai/contact-us/): Find ways to get in touch with Netcore support or sales.
+- [Login](https://netcore.ai/login/): Access the Netcore customer login portal.
+- [Request Demo](https://netcore.ai/request-demo/): Request a personalized demonstration of the Netcore platform.
+- [Customers](https://netcore.ai/customers/): See a list of Netcore's notable customers.
+- [Careers](https://netcore.ai/careers/): Explore job opportunities at Netcore.
+- [AMP](https://netcore.ai/amp/): Information about Accelerated Mobile Pages (AMP) integration.
+- [Email Consultancy](https://netcore.ai/email-consultancy/): Learn about Netcore's email strategy consulting services.
+- [Gamechanger](https://netcore.ai/gamechanger/): Discover Netcore's innovative marketing solutions.
+- [Infrastructure & Security](https://netcore.ai/infrastructure-security/): Understand Netcore's infrastructure and security measures.
+
+## Legal & Policies
+
+- [Terms of Service](https://netcore.ai/terms-of-service/): Review the terms and conditions for using Netcore services.
+- [Scope of Service](https://netcore.ai/scope-of-service/): Understand the scope and limitations of Netcore services.
+- [WhatsApp Terms of Use](https://netcore.ai/whatsapp-terms-of-use/): Read the terms specific to WhatsApp services.
+- [Search, Browse, Recommendations T&C](https://netcore.ai/t-and-c-for-search-browse-recommendations/): Terms for using search, browse, and recommendation features.
+- [Reseller Agreement](https://netcore.ai/additional-terms-netcore-and-reseller-agreement/): Understand terms related to Netcore reseller agreements.
+- [Privacy Policy](https://netcore.ai/privacy-policy/): Learn how Netcore collects, uses, and protects your data.
+- [GDPR Compliance](https://netcore.ai/gdpr/): Understand Netcore's commitment to GDPR regulations.
+- [Email API Terms & Policies](https://netcore.ai/email-api-terms-and-policies/): Review terms and policies for the Email API.
+- [Responsible Disclosure](https://netcore.ai/responsible-disclosure/): Report security vulnerabilities responsibly.
+- [Security](https://netcore.ai/security/): Information about Netcore's security practices and certifications.
+
+## Reports & Awards
+
+- [Forrester Wave: Commerce Search](https://netcore.ai/lp/forrester-wave-2025-commerce-search-product-discovery/): Access the Forrester Wave report on commerce search.
+- [Forrester Wave: Email Marketing](https://netcore.ai/forrester-wave-email-marketing-q1-netcore/): Read the Forrester Wave report on email marketing.
+
+## International
+
+- [Portuguese Version](https://netcore.ai/pt): Access the Netcore website in Portuguese.

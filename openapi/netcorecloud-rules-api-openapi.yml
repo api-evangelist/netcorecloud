@@ -1,0 +1,323 @@
+openapi: 3.2.0
+info:
+  title: Orbit Router Rules API
+  version: 1.0.0
+  description: Complete API specification for the Orbit Router email routing platform.
+  contact:
+    name: Orbit Engineering
+  license:
+    name: Proprietary
+servers:
+- url: https://orbitus.netcorecloud.com
+  description: Production — Orbit Engine (HTTP Relay)
+- url: https://orbitus.netcorecloud.com/apiorbit
+  description: Production — Orbit Backend (Config & Management)
+security: []
+tags:
+- name: Rules
+paths:
+  /rules:
+    post:
+      operationId: createRule
+      tags:
+      - Rules
+      summary: Create a rule
+      description: Creates a new rule with route assignments. Expression is validated at creation time.
+      security:
+      - BackendJWT: []
+      parameters:
+      - $ref: '#/components/parameters/ClientIdHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RuleCreate'
+      responses:
+        '201':
+          description: Rule created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rule'
+        '400':
+          description: Validation error (invalid expression, missing fields).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackendErrorResponse'
+    get:
+      operationId: listRules
+      tags:
+      - Rules
+      summary: List all rules
+      description: Lists rules for the current client, including associated route assignments with weights.
+      security:
+      - BackendJWT: []
+      parameters:
+      - $ref: '#/components/parameters/ClientIdHeader'
+      responses:
+        '200':
+          description: List of rules.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Rule'
+  /rules/{id}:
+    parameters:
+    - $ref: '#/components/parameters/ResourceId'
+    delete:
+      operationId: deleteRule
+      tags:
+      - Rules
+      summary: Delete a rule
+      description: Deletes a rule and all its route/provider associations.
+      security:
+      - BackendJWT: []
+      parameters:
+      - $ref: '#/components/parameters/ClientIdHeader'
+      responses:
+        '200':
+          description: Rule deleted.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: rule deleted
+        '404':
+          description: Rule not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackendErrorResponse'
+    put:
+      operationId: updateRule
+      tags:
+      - Rules
+      summary: Update a rule
+      description: Update a rule. If `rule_routes` is provided, existing route mappings are **replaced entirely**.
+      security:
+      - BackendJWT: []
+      parameters:
+      - $ref: '#/components/parameters/ClientIdHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RuleCreate'
+      responses:
+        '200':
+          description: Rule updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rule'
+        '404':
+          description: Rule not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackendErrorResponse'
+  /rules/validate:
+    post:
+      operationId: validateRuleExpression
+      tags:
+      - Rules
+      summary: Validate a rule expression
+      description: Validates a rule expression without saving. Uses `expr.Compile()` to verify syntax.
+      security:
+      - BackendJWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - expression
+              properties:
+                expression:
+                  type: string
+                  description: Rule expression to validate.
+                  example: Contains(from_domain, "example.com") && size > 1024
+      responses:
+        '200':
+          description: Validation result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  valid:
+                    type: boolean
+                  error:
+                    type: string
+                    description: Present only when `valid` is `false`.
+              examples:
+                valid:
+                  value:
+                    valid: true
+                invalid:
+                  value:
+                    valid: false
+                    error: unexpected token EOF (1:42)
+components:
+  parameters:
+    ClientIdHeader:
+      name: X-Client-ID
+      in: header
+      required: false
+      schema:
+        type: integer
+      description: Switch client context (multi-tenant).
+    ResourceId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+      description: Resource ID.
+  schemas:
+    RuleCreate:
+      type: object
+      required:
+      - rule_name
+      - expression
+      - priority
+      - enabled
+      properties:
+        rule_name:
+          type: string
+        expression:
+          type: string
+          description: Must compile with `expr.Compile()`.
+        tag:
+          type: string
+          default: default
+        priority:
+          type: integer
+          description: Lower number = higher priority.
+        enabled:
+          type: boolean
+        rule_routes:
+          type: array
+          items:
+            type: object
+            required:
+            - route_id
+            - weight
+            properties:
+              route_id:
+                type: integer
+                description: Must exist for the current client.
+              weight:
+                type: integer
+                minimum: 0
+                maximum: 100
+              enabled:
+                type: boolean
+                default: true
+    Rule:
+      type: object
+      properties:
+        id:
+          type: integer
+        client_id:
+          type: integer
+        rule_name:
+          type: string
+        tag:
+          type: string
+        priority:
+          type: integer
+          description: Lower number = higher priority.
+        expression:
+          type: string
+          description: 'Expression evaluated by `expr.Compile()`. Available variables:
+
+            `from_address`, `from_domain`, `from_local`, `to_address`, `to_domain`,
+
+            `to_local`, `headers`, `remote_ip`, `helo`, `size`.
+
+            Helper functions: `StartsWith()`, `EndsWith()`, `Contains()`, `Matches()`,
+
+            `ToLower()`, `ToUpper()`, `Trim()`.
+
+            '
+        enabled:
+          type: boolean
+        rule_routes:
+          type: array
+          items:
+            $ref: '#/components/schemas/RuleRouteAssignment'
+        created_at:
+          type: string
+          format: date-time
+    RuleRouteAssignment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        provider_name:
+          type: string
+          readOnly: true
+        route_id:
+          type: integer
+        route_name:
+          type: string
+          readOnly: true
+        weight:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description: Distribution weight.
+        enabled:
+          type: boolean
+          default: true
+    BackendErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        field:
+          type: string
+          description: Optional field that caused the error.
+  securitySchemes:
+    BackendJWT:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'JWT token obtained from `POST /auth/login`. Access token lifetime: 15 minutes.
+
+        Claims: `user_id`, `client_id`, `role`, `jti`, `exp`, `iat`.
+
+        '
+    EngineApiKeyBearer:
+      type: http
+      scheme: bearer
+      description: 'Engine API key via `Authorization: Bearer <api_key>` (priority 1).'
+    EngineApiKeyHeader:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: Engine API key via `X-API-Key` header (priority 2).
+    EngineApiKeyFallback:
+      type: apiKey
+      in: header
+      name: api_key
+      description: Engine API key via `api_key` header (priority 3, fallback).
+x-readme:
+  explorer-enabled: true
+  proxy-enabled: true
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

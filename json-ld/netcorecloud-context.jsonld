@@ -1,0 +1,966 @@
+{
+  "@context": {
+    "@vocab": "https://netcorecloud.com/schema#",
+    "schema": "https://schema.org/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "dcterms": "http://purl.org/dc/terms/",
+    "netcorecloud": "https://netcorecloud.com/schema#",
+    "ValidationFailureResponse": "netcorecloud:ValidationFailureResponse",
+    "request_id": {
+      "@id": "netcorecloud:request_id",
+      "@type": "xsd:string"
+    },
+    "description": {
+      "@id": "netcorecloud:description",
+      "@type": "xsd:string"
+    },
+    "errors": {
+      "@id": "netcorecloud:errors",
+      "@container": "@list"
+    },
+    "status": {
+      "@id": "netcorecloud:status",
+      "@type": "xsd:string"
+    },
+    "code": {
+      "@id": "netcorecloud:code",
+      "@type": "xsd:string"
+    },
+    "ServerErrorsResponse": "netcorecloud:ServerErrorsResponse",
+    "UnauthorizedAccessResponse": "netcorecloud:UnauthorizedAccessResponse",
+    "FailureSchema": "netcorecloud:FailureSchema",
+    "SuccessSearchSchemaForCounts": "netcorecloud:SuccessSearchSchemaForCounts",
+    "count": {
+      "@id": "netcorecloud:count",
+      "@type": "xsd:integer"
+    },
+    "GoogleAnalytics": "netcorecloud:GoogleAnalytics",
+    "enable_ga_tracking": {
+      "@id": "netcorecloud:enable_ga_tracking",
+      "@type": "xsd:boolean"
+    },
+    "global_level_ga_tracking": {
+      "@id": "netcorecloud:global_level_ga_tracking",
+      "@type": "xsd:boolean"
+    },
+    "utm_source": {
+      "@id": "netcorecloud:utm_source",
+      "@type": "xsd:string"
+    },
+    "utm_medium": {
+      "@id": "netcorecloud:utm_medium",
+      "@type": "xsd:string"
+    },
+    "utm_campaign": {
+      "@id": "netcorecloud:utm_campaign",
+      "@type": "xsd:string"
+    },
+    "utm_content": {
+      "@id": "netcorecloud:utm_content",
+      "@type": "xsd:string"
+    },
+    "custom_key_value_parameters": {
+      "@id": "netcorecloud:custom_key_value_parameters"
+    },
+    "ConversionTracking": "netcorecloud:ConversionTracking",
+    "enable_conversion_tracking": {
+      "@id": "netcorecloud:enable_conversion_tracking",
+      "@type": "xsd:boolean"
+    },
+    "global_level_conversion_tracking": {
+      "@id": "netcorecloud:global_level_conversion_tracking",
+      "@type": "xsd:boolean"
+    },
+    "payload_params": {
+      "@id": "netcorecloud:payload_params",
+      "@container": "@list"
+    },
+    "event_name": {
+      "@id": "netcorecloud:event_name",
+      "@type": "xsd:string"
+    },
+    "conversion_window": {
+      "@id": "netcorecloud:conversion_window"
+    },
+    "FrequencyCapping": "netcorecloud:FrequencyCapping",
+    "enable_frequency_capping": {
+      "@id": "netcorecloud:enable_frequency_capping",
+      "@type": "xsd:boolean"
+    },
+    "AudienceDetails": "netcorecloud:AudienceDetails",
+    "include_audience": {
+      "@id": "netcorecloud:include_audience"
+    },
+    "exclude_audience": {
+      "@id": "netcorecloud:exclude_audience"
+    },
+    "CampaignSpecific": "netcorecloud:CampaignSpecific",
+    "app_ids": {
+      "@id": "netcorecloud:app_ids",
+      "@container": "@list"
+    },
+    "app_inbox": {
+      "@id": "netcorecloud:app_inbox"
+    },
+    "local_PN": {
+      "@id": "netcorecloud:local_PN",
+      "@type": "xsd:string"
+    },
+    "time_to_live": {
+      "@id": "netcorecloud:time_to_live"
+    },
+    "site_id": {
+      "@id": "netcorecloud:site_id",
+      "@type": "xsd:string"
+    },
+    "autohide_notification": {
+      "@id": "netcorecloud:autohide_notification",
+      "@type": "xsd:boolean"
+    },
+    "subject": {
+      "@id": "netcorecloud:subject",
+      "@type": "xsd:string"
+    },
+    "domain_filter": {
+      "@id": "netcorecloud:domain_filter"
+    },
+    "sender_details": {
+      "@id": "netcorecloud:sender_details"
+    },
+    "preheader": {
+      "@id": "netcorecloud:preheader",
+      "@type": "xsd:string"
+    },
+    "attachments": {
+      "@id": "netcorecloud:attachments",
+      "@container": "@list"
+    },
+    "header": {
+      "@id": "netcorecloud:header"
+    },
+    "browser_view": {
+      "@id": "netcorecloud:browser_view",
+      "@type": "xsd:boolean"
+    },
+    "mobile_view": {
+      "@id": "netcorecloud:mobile_view",
+      "@type": "xsd:boolean"
+    },
+    "footer": {
+      "@id": "netcorecloud:footer"
+    },
+    "throttle_limit": {
+      "@id": "netcorecloud:throttle_limit"
+    },
+    "split_details": {
+      "@id": "netcorecloud:split_details"
+    },
+    "slice_and_send_details": {
+      "@id": "netcorecloud:slice_and_send_details"
+    },
+    "sto_details": {
+      "@id": "netcorecloud:sto_details"
+    },
+    "audience_limit": {
+      "@id": "netcorecloud:audience_limit",
+      "@type": "xsd:integer"
+    },
+    "ContentDetails": "netcorecloud:ContentDetails",
+    "template_id": {
+      "@id": "netcorecloud:template_id",
+      "@type": "xsd:string"
+    },
+    "ScheduleDetails": "netcorecloud:ScheduleDetails",
+    "schedule_type": {
+      "@id": "netcorecloud:schedule_type",
+      "@type": "xsd:string"
+    },
+    "schedule_time": {
+      "@id": "netcorecloud:schedule_time",
+      "@type": "xsd:string"
+    },
+    "FilterBlock": "netcorecloud:FilterBlock",
+    "filtering_criteria_operator": {
+      "@id": "netcorecloud:filtering_criteria_operator",
+      "@type": "xsd:string"
+    },
+    "filtering_criteria": {
+      "@id": "netcorecloud:filtering_criteria",
+      "@container": "@list"
+    },
+    "OutputBlock": "netcorecloud:OutputBlock",
+    "get_count": {
+      "@id": "netcorecloud:get_count",
+      "@type": "xsd:boolean"
+    },
+    "sorting": {
+      "@id": "netcorecloud:sorting",
+      "@container": "@list"
+    },
+    "pagination": {
+      "@id": "netcorecloud:pagination"
+    },
+    "fields": {
+      "@id": "netcorecloud:fields",
+      "@container": "@list"
+    },
+    "TestCampaign": "netcorecloud:TestCampaign",
+    "campaign_id": {
+      "@id": "netcorecloud:campaign_id",
+      "@type": "xsd:integer"
+    },
+    "channel": {
+      "@id": "netcorecloud:channel",
+      "@type": "xsd:string"
+    },
+    "test_user_details": {
+      "@id": "netcorecloud:test_user_details"
+    },
+    "ApiKeyCreated": "netcorecloud:ApiKeyCreated",
+    "id": {
+      "@id": "netcorecloud:id",
+      "@type": "xsd:integer"
+    },
+    "name": {
+      "@id": "netcorecloud:name",
+      "@type": "xsd:string"
+    },
+    "key": {
+      "@id": "netcorecloud:key",
+      "@type": "xsd:string"
+    },
+    "type": {
+      "@id": "netcorecloud:type",
+      "@type": "xsd:string"
+    },
+    "created_at": {
+      "@id": "netcorecloud:created_at",
+      "@type": "xsd:dateTime"
+    },
+    "BackendErrorResponse": "netcorecloud:BackendErrorResponse",
+    "error": {
+      "@id": "netcorecloud:error",
+      "@type": "xsd:string"
+    },
+    "field": {
+      "@id": "netcorecloud:field",
+      "@type": "xsd:string"
+    },
+    "Provider": "netcorecloud:Provider",
+    "provider_name": {
+      "@id": "netcorecloud:provider_name",
+      "@type": "xsd:string"
+    },
+    "protocol_type": {
+      "@id": "netcorecloud:protocol_type",
+      "@type": "xsd:string"
+    },
+    "enabled": {
+      "@id": "netcorecloud:enabled",
+      "@type": "xsd:boolean"
+    },
+    "ProviderCreate": "netcorecloud:ProviderCreate",
+    "Route": "netcorecloud:Route",
+    "provider_id": {
+      "@id": "netcorecloud:provider_id",
+      "@type": "xsd:integer"
+    },
+    "route_name": {
+      "@id": "netcorecloud:route_name",
+      "@type": "xsd:string"
+    },
+    "host": {
+      "@id": "netcorecloud:host",
+      "@type": "xsd:string"
+    },
+    "port": {
+      "@id": "netcorecloud:port",
+      "@type": "xsd:integer"
+    },
+    "username": {
+      "@id": "netcorecloud:username",
+      "@type": "xsd:string"
+    },
+    "password": {
+      "@id": "netcorecloud:password",
+      "@type": "xsd:string"
+    },
+    "api_key": {
+      "@id": "netcorecloud:api_key",
+      "@type": "xsd:string"
+    },
+    "worker_size": {
+      "@id": "netcorecloud:worker_size",
+      "@type": "xsd:integer"
+    },
+    "buffer_size": {
+      "@id": "netcorecloud:buffer_size",
+      "@type": "xsd:integer"
+    },
+    "is_default": {
+      "@id": "netcorecloud:is_default",
+      "@type": "xsd:boolean"
+    },
+    "tls_mode": {
+      "@id": "netcorecloud:tls_mode",
+      "@type": "xsd:string"
+    },
+    "RouteCreate": "netcorecloud:RouteCreate",
+    "RuleRouteAssignment": "netcorecloud:RuleRouteAssignment",
+    "route_id": {
+      "@id": "netcorecloud:route_id",
+      "@type": "xsd:integer"
+    },
+    "weight": {
+      "@id": "netcorecloud:weight",
+      "@type": "xsd:integer"
+    },
+    "Rule": "netcorecloud:Rule",
+    "client_id": {
+      "@id": "netcorecloud:client_id",
+      "@type": "xsd:integer"
+    },
+    "rule_name": {
+      "@id": "netcorecloud:rule_name",
+      "@type": "xsd:string"
+    },
+    "tag": {
+      "@id": "netcorecloud:tag",
+      "@type": "xsd:string"
+    },
+    "priority": {
+      "@id": "netcorecloud:priority",
+      "@type": "xsd:integer"
+    },
+    "expression": {
+      "@id": "netcorecloud:expression",
+      "@type": "xsd:string"
+    },
+    "rule_routes": {
+      "@id": "netcorecloud:rule_routes",
+      "@container": "@list"
+    },
+    "RuleCreate": "netcorecloud:RuleCreate",
+    "ClientSummary": "netcorecloud:ClientSummary",
+    "clientname": {
+      "@id": "netcorecloud:clientname",
+      "@type": "xsd:string"
+    },
+    "UserProfile": "netcorecloud:UserProfile",
+    "email": {
+      "@id": "netcorecloud:email",
+      "@type": "xsd:string"
+    },
+    "full_name": {
+      "@id": "netcorecloud:full_name",
+      "@type": "xsd:string"
+    },
+    "role": {
+      "@id": "netcorecloud:role",
+      "@type": "xsd:string"
+    },
+    "two_factor_enabled": {
+      "@id": "netcorecloud:two_factor_enabled",
+      "@type": "xsd:boolean"
+    },
+    "UserCreate": "netcorecloud:UserCreate",
+    "allowed_subclient_ids": {
+      "@id": "netcorecloud:allowed_subclient_ids",
+      "@container": "@list"
+    },
+    "DashboardStats": "netcorecloud:DashboardStats",
+    "totalRoutes": {
+      "@id": "netcorecloud:totalRoutes",
+      "@type": "xsd:integer"
+    },
+    "enabledRoutes": {
+      "@id": "netcorecloud:enabledRoutes",
+      "@type": "xsd:integer"
+    },
+    "totalRules": {
+      "@id": "netcorecloud:totalRules",
+      "@type": "xsd:integer"
+    },
+    "activeRules": {
+      "@id": "netcorecloud:activeRules",
+      "@type": "xsd:integer"
+    },
+    "totalProviders": {
+      "@id": "netcorecloud:totalProviders",
+      "@type": "xsd:integer"
+    },
+    "totalUsers": {
+      "@id": "netcorecloud:totalUsers",
+      "@type": "xsd:integer"
+    },
+    "IpWhitelist": "netcorecloud:IpWhitelist",
+    "ips": {
+      "@id": "netcorecloud:ips",
+      "@type": "xsd:string"
+    },
+    "MetricsResponse": "netcorecloud:MetricsResponse",
+    "total_requests": {
+      "@id": "netcorecloud:total_requests",
+      "@type": "xsd:integer"
+    },
+    "success_requests": {
+      "@id": "netcorecloud:success_requests",
+      "@type": "xsd:integer"
+    },
+    "failed_requests": {
+      "@id": "netcorecloud:failed_requests",
+      "@type": "xsd:integer"
+    },
+    "in_flight": {
+      "@id": "netcorecloud:in_flight",
+      "@type": "xsd:integer"
+    },
+    "uptime_seconds": {
+      "@id": "netcorecloud:uptime_seconds",
+      "@type": "xsd:integer"
+    },
+    "SmtpConfig": "netcorecloud:SmtpConfig",
+    "default_from_email": {
+      "@id": "netcorecloud:default_from_email",
+      "@type": "xsd:string"
+    },
+    "default_from_name": {
+      "@id": "netcorecloud:default_from_name",
+      "@type": "xsd:string"
+    },
+    "bounce_email": {
+      "@id": "netcorecloud:bounce_email",
+      "@type": "xsd:string"
+    },
+    "max_retries": {
+      "@id": "netcorecloud:max_retries",
+      "@type": "xsd:string"
+    },
+    "retry_interval_seconds": {
+      "@id": "netcorecloud:retry_interval_seconds",
+      "@type": "xsd:string"
+    },
+    "ApiKeySummary": "netcorecloud:ApiKeySummary",
+    "preview": {
+      "@id": "netcorecloud:preview",
+      "@type": "xsd:string"
+    },
+    "AuditLogEntry": "netcorecloud:AuditLogEntry",
+    "user_id": {
+      "@id": "netcorecloud:user_id",
+      "@type": "xsd:integer"
+    },
+    "action": {
+      "@id": "netcorecloud:action",
+      "@type": "xsd:string"
+    },
+    "resource_type": {
+      "@id": "netcorecloud:resource_type",
+      "@type": "xsd:string"
+    },
+    "resource_name": {
+      "@id": "netcorecloud:resource_name",
+      "@type": "xsd:string"
+    },
+    "ip_address": {
+      "@id": "netcorecloud:ip_address",
+      "@type": "xsd:string"
+    },
+    "AuditLogPage": "netcorecloud:AuditLogPage",
+    "logs": {
+      "@id": "netcorecloud:logs",
+      "@container": "@list"
+    },
+    "total": {
+      "@id": "netcorecloud:total",
+      "@type": "xsd:integer"
+    },
+    "page": {
+      "@id": "netcorecloud:page",
+      "@type": "xsd:integer"
+    },
+    "limit": {
+      "@id": "netcorecloud:limit",
+      "@type": "xsd:integer"
+    },
+    "IncomingAuth": "netcorecloud:IncomingAuth",
+    "allowed_ips": {
+      "@id": "netcorecloud:allowed_ips",
+      "@type": "xsd:string"
+    },
+    "allowed_domains": {
+      "@id": "netcorecloud:allowed_domains",
+      "@type": "xsd:string"
+    },
+    "LoginRequest": "netcorecloud:LoginRequest",
+    "account_name": {
+      "@id": "netcorecloud:account_name",
+      "@type": "xsd:string"
+    },
+    "LoginResponse": "netcorecloud:LoginResponse",
+    "token": {
+      "@id": "netcorecloud:token",
+      "@type": "xsd:string"
+    },
+    "refresh_token": {
+      "@id": "netcorecloud:refresh_token",
+      "@type": "xsd:string"
+    },
+    "refresh_expires_at": {
+      "@id": "netcorecloud:refresh_expires_at",
+      "@type": "xsd:dateTime"
+    },
+    "clients": {
+      "@id": "netcorecloud:clients",
+      "@container": "@list"
+    },
+    "is_parent": {
+      "@id": "netcorecloud:is_parent",
+      "@type": "xsd:boolean"
+    },
+    "user": {
+      "@id": "netcorecloud:user",
+      "@type": "@id"
+    },
+    "TwoFactorRequiredResponse": "netcorecloud:TwoFactorRequiredResponse",
+    "two_factor_required": {
+      "@id": "netcorecloud:two_factor_required",
+      "@type": "xsd:boolean"
+    },
+    "EmailAddress": "netcorecloud:EmailAddress",
+    "SendGridPersonalization": "netcorecloud:SendGridPersonalization",
+    "to": {
+      "@id": "netcorecloud:to",
+      "@container": "@list"
+    },
+    "cc": {
+      "@id": "netcorecloud:cc",
+      "@container": "@list"
+    },
+    "bcc": {
+      "@id": "netcorecloud:bcc",
+      "@container": "@list"
+    },
+    "NetcoreContent": "netcorecloud:NetcoreContent",
+    "value": {
+      "@id": "netcorecloud:value",
+      "@type": "xsd:string"
+    },
+    "NetcorePayload": "netcorecloud:NetcorePayload",
+    "personalizations": {
+      "@id": "netcorecloud:personalizations",
+      "@container": "@list"
+    },
+    "from": {
+      "@id": "netcorecloud:from",
+      "@type": "@id"
+    },
+    "content": {
+      "@id": "netcorecloud:content",
+      "@container": "@list"
+    },
+    "tags": {
+      "@id": "netcorecloud:tags",
+      "@container": "@list"
+    },
+    "settings": {
+      "@id": "netcorecloud:settings"
+    },
+    "EngineSuccessResponse": "netcorecloud:EngineSuccessResponse",
+    "success": {
+      "@id": "netcorecloud:success",
+      "@type": "xsd:string"
+    },
+    "req_id": {
+      "@id": "netcorecloud:req_id",
+      "@type": "xsd:string"
+    },
+    "message": {
+      "@id": "netcorecloud:message",
+      "@type": "xsd:string"
+    },
+    "EngineErrorResponse": "netcorecloud:EngineErrorResponse",
+    "error_code": {
+      "@id": "netcorecloud:error_code",
+      "@type": "xsd:string"
+    },
+    "SendGridContent": "netcorecloud:SendGridContent",
+    "SendGridAttachment": "netcorecloud:SendGridAttachment",
+    "filename": {
+      "@id": "netcorecloud:filename",
+      "@type": "xsd:string"
+    },
+    "disposition": {
+      "@id": "netcorecloud:disposition",
+      "@type": "xsd:string"
+    },
+    "SendGridPayload": "netcorecloud:SendGridPayload",
+    "reply_to": {
+      "@id": "netcorecloud:reply_to",
+      "@type": "@id"
+    },
+    "categories": {
+      "@id": "netcorecloud:categories",
+      "@container": "@list"
+    },
+    "TwoFactorSetupResponse": "netcorecloud:TwoFactorSetupResponse",
+    "secret": {
+      "@id": "netcorecloud:secret",
+      "@type": "xsd:string"
+    },
+    "provisioning_uri": {
+      "@id": "netcorecloud:provisioning_uri",
+      "@type": "xsd:string"
+    },
+    "qr_code": {
+      "@id": "netcorecloud:qr_code",
+      "@type": "xsd:string"
+    },
+    "SignupRequest": "netcorecloud:SignupRequest",
+    "accountName": {
+      "@id": "netcorecloud:accountName",
+      "@type": "xsd:string"
+    },
+    "fullName": {
+      "@id": "netcorecloud:fullName",
+      "@type": "xsd:string"
+    },
+    "TestSendRequest": "netcorecloud:TestSendRequest",
+    "TestSendResponse": "netcorecloud:TestSendResponse",
+    "provider": {
+      "@id": "netcorecloud:provider",
+      "@type": "xsd:string"
+    },
+    "status_code": {
+      "@id": "netcorecloud:status_code",
+      "@type": "xsd:string"
+    },
+    "response": {
+      "@id": "netcorecloud:response",
+      "@type": "xsd:string"
+    },
+    "IncomingAuthUpsert": "netcorecloud:IncomingAuthUpsert",
+    "api_key_id": {
+      "@id": "netcorecloud:api_key_id",
+      "@type": "xsd:integer"
+    },
+    "TwoFactorVerifyRequest": "netcorecloud:TwoFactorVerifyRequest",
+    "setup": {
+      "@id": "netcorecloud:setup",
+      "@type": "xsd:boolean"
+    },
+    "TwoFactorSetupConfirmResponse": "netcorecloud:TwoFactorSetupConfirmResponse",
+    "backup_codes": {
+      "@id": "netcorecloud:backup_codes",
+      "@container": "@list"
+    },
+    "DLRReportItem": "netcorecloud:DLRReportItem",
+    "mobile_no": {
+      "@id": "netcorecloud:mobile_no",
+      "@type": "xsd:string"
+    },
+    "sender_id": {
+      "@id": "netcorecloud:sender_id",
+      "@type": "xsd:string"
+    },
+    "dlt_template_id": {
+      "@id": "netcorecloud:dlt_template_id",
+      "@type": "xsd:integer"
+    },
+    "feed_name": {
+      "@id": "netcorecloud:feed_name",
+      "@type": "xsd:string"
+    },
+    "operator": {
+      "@id": "netcorecloud:operator",
+      "@type": "xsd:string"
+    },
+    "circle": {
+      "@id": "netcorecloud:circle",
+      "@type": "xsd:string"
+    },
+    "requested_on": {
+      "@id": "netcorecloud:requested_on",
+      "@type": "xsd:string"
+    },
+    "last_activity": {
+      "@id": "netcorecloud:last_activity",
+      "@type": "xsd:string"
+    },
+    "sms_count": {
+      "@id": "netcorecloud:sms_count",
+      "@type": "xsd:integer"
+    },
+    "transaction_id": {
+      "@id": "netcorecloud:transaction_id",
+      "@type": "xsd:integer"
+    },
+    "message_type": {
+      "@id": "netcorecloud:message_type",
+      "@type": "xsd:string"
+    },
+    "DLRReportResponse": "netcorecloud:DLRReportResponse",
+    "scroll_id": {
+      "@id": "netcorecloud:scroll_id",
+      "@type": "xsd:string"
+    },
+    "data": {
+      "@id": "netcorecloud:data",
+      "@container": "@list"
+    },
+    "DLRErrorResponse": "netcorecloud:DLRErrorResponse",
+    "JsonSingleApiV2Request": "netcorecloud:JsonSingleApiV2Request",
+    "feedid": {
+      "@id": "netcorecloud:feedid",
+      "@type": "xsd:string"
+    },
+    "jobname": {
+      "@id": "netcorecloud:jobname",
+      "@type": "xsd:string"
+    },
+    "short": {
+      "@id": "netcorecloud:short",
+      "@type": "xsd:string"
+    },
+    "tz": {
+      "@id": "netcorecloud:tz",
+      "@type": "xsd:string"
+    },
+    "time": {
+      "@id": "netcorecloud:time",
+      "@type": "xsd:string"
+    },
+    "mobile": {
+      "@id": "netcorecloud:mobile",
+      "@type": "xsd:string"
+    },
+    "messages": {
+      "@id": "netcorecloud:messages",
+      "@type": "xsd:string"
+    },
+    "senderid": {
+      "@id": "netcorecloud:senderid",
+      "@type": "xsd:string"
+    },
+    "entityid": {
+      "@id": "netcorecloud:entityid",
+      "@type": "xsd:string"
+    },
+    "templateid": {
+      "@id": "netcorecloud:templateid",
+      "@type": "xsd:string"
+    },
+    "async": {
+      "@id": "netcorecloud:async",
+      "@type": "xsd:string"
+    },
+    "dlt_template_type": {
+      "@id": "netcorecloud:dlt_template_type",
+      "@type": "xsd:string"
+    },
+    "jobid": {
+      "@id": "netcorecloud:jobid",
+      "@type": "xsd:string"
+    },
+    "mtype": {
+      "@id": "netcorecloud:mtype",
+      "@type": "xsd:string"
+    },
+    "url": {
+      "@id": "netcorecloud:url",
+      "@type": "xsd:string"
+    },
+    "udh": {
+      "@id": "netcorecloud:udh",
+      "@type": "xsd:string"
+    },
+    "hexflag": {
+      "@id": "netcorecloud:hexflag",
+      "@type": "xsd:string"
+    },
+    "response_type": {
+      "@id": "netcorecloud:response_type",
+      "@type": "xsd:string"
+    },
+    "DepId": {
+      "@id": "netcorecloud:DepId",
+      "@type": "xsd:string"
+    },
+    "AppID": {
+      "@id": "netcorecloud:AppID",
+      "@type": "xsd:string"
+    },
+    "ssl": {
+      "@id": "netcorecloud:ssl",
+      "@type": "xsd:string"
+    },
+    "ssliv": {
+      "@id": "netcorecloud:ssliv",
+      "@type": "xsd:string"
+    },
+    "aesKey": {
+      "@id": "netcorecloud:aesKey",
+      "@type": "xsd:string"
+    },
+    "CreateFlowSuccessResponse": "netcorecloud:CreateFlowSuccessResponse",
+    "CreateTemplateSuccessResponse": "netcorecloud:CreateTemplateSuccessResponse",
+    "DeleteFlowSuccessResponse": "netcorecloud:DeleteFlowSuccessResponse",
+    "DeleteTemplateSuccessResponse": "netcorecloud:DeleteTemplateSuccessResponse",
+    "DeprecateFlowSuccessResponse": "netcorecloud:DeprecateFlowSuccessResponse",
+    "EditFlowSuccessResponse": "netcorecloud:EditFlowSuccessResponse",
+    "EditTemplateSuccessResponse": "netcorecloud:EditTemplateSuccessResponse",
+    "FlowListSuccessResponse": "netcorecloud:FlowListSuccessResponse",
+    "paging": {
+      "@id": "netcorecloud:paging"
+    },
+    "TemplateListSuccessResponse": "netcorecloud:TemplateListSuccessResponse",
+    "FlowPreviewSuccessResponse": "netcorecloud:FlowPreviewSuccessResponse",
+    "PaymentStatusResponse": "netcorecloud:PaymentStatusResponse",
+    "WebhookInfo": "netcorecloud:WebhookInfo",
+    "urlEndpoint": {
+      "@id": "netcorecloud:urlEndpoint",
+      "@type": "@id"
+    },
+    "failureAlertEmail": {
+      "@id": "netcorecloud:failureAlertEmail",
+      "@type": "xsd:string"
+    },
+    "sourceKey": {
+      "@id": "netcorecloud:sourceKey",
+      "@type": "xsd:string"
+    },
+    "BlocklistManagementRequest": "netcorecloud:BlocklistManagementRequest",
+    "recipients": {
+      "@id": "netcorecloud:recipients",
+      "@container": "@list"
+    },
+    "ConsentRecipient": "netcorecloud:ConsentRecipient",
+    "recipient": {
+      "@id": "netcorecloud:recipient",
+      "@type": "xsd:string"
+    },
+    "source": {
+      "@id": "netcorecloud:source",
+      "@type": "xsd:string"
+    },
+    "user_agent": {
+      "@id": "netcorecloud:user_agent",
+      "@type": "xsd:string"
+    },
+    "ip": {
+      "@id": "netcorecloud:ip",
+      "@type": "xsd:string"
+    },
+    "ConsentResponse": "netcorecloud:ConsentResponse",
+    "ConsentManagementRequest": "netcorecloud:ConsentManagementRequest",
+    "ManageWebhookRequest": "netcorecloud:ManageWebhookRequest",
+    "webhook_name": {
+      "@id": "netcorecloud:webhook_name",
+      "@type": "xsd:string"
+    },
+    "WebhookOperationResponse": "netcorecloud:WebhookOperationResponse",
+    "PreviewTemplateSuccessResponse": "netcorecloud:PreviewTemplateSuccessResponse",
+    "preview_data": {
+      "@id": "netcorecloud:preview_data"
+    },
+    "RefundRequest": "netcorecloud:RefundRequest",
+    "reference_id": {
+      "@id": "netcorecloud:reference_id",
+      "@type": "xsd:string"
+    },
+    "speed": {
+      "@id": "netcorecloud:speed",
+      "@type": "xsd:string"
+    },
+    "payment_config_id": {
+      "@id": "netcorecloud:payment_config_id",
+      "@type": "xsd:string"
+    },
+    "amount": {
+      "@id": "netcorecloud:amount"
+    },
+    "RefundResponse": "netcorecloud:RefundResponse",
+    "PublishFlowSuccessResponse": "netcorecloud:PublishFlowSuccessResponse",
+    "ConversionEventRequest": "netcorecloud:ConversionEventRequest",
+    "ConversionEvent": "netcorecloud:ConversionEvent",
+    "event_time": {
+      "@id": "netcorecloud:event_time",
+      "@type": "xsd:integer"
+    },
+    "action_source": {
+      "@id": "netcorecloud:action_source",
+      "@type": "xsd:string"
+    },
+    "messaging_channel": {
+      "@id": "netcorecloud:messaging_channel",
+      "@type": "xsd:string"
+    },
+    "user_data": {
+      "@id": "netcorecloud:user_data",
+      "@type": "@id"
+    },
+    "custom_data": {
+      "@id": "netcorecloud:custom_data",
+      "@type": "@id"
+    },
+    "ConversionUserData": "netcorecloud:ConversionUserData",
+    "mobile_number": {
+      "@id": "netcorecloud:mobile_number",
+      "@type": "xsd:string"
+    },
+    "ctwa_clid": {
+      "@id": "netcorecloud:ctwa_clid",
+      "@type": "xsd:string"
+    },
+    "ConversionCustomData": "netcorecloud:ConversionCustomData",
+    "currency": {
+      "@id": "netcorecloud:currency",
+      "@type": "xsd:string"
+    },
+    "content_ids": {
+      "@id": "netcorecloud:content_ids",
+      "@container": "@list"
+    },
+    "content_type": {
+      "@id": "netcorecloud:content_type",
+      "@type": "xsd:string"
+    },
+    "order_id": {
+      "@id": "netcorecloud:order_id",
+      "@type": "xsd:string"
+    },
+    "content_name": {
+      "@id": "netcorecloud:content_name",
+      "@type": "xsd:string"
+    },
+    "content_category": {
+      "@id": "netcorecloud:content_category",
+      "@type": "xsd:string"
+    },
+    "num_items": {
+      "@id": "netcorecloud:num_items",
+      "@type": "xsd:integer"
+    },
+    "search_string": {
+      "@id": "netcorecloud:search_string",
+      "@type": "xsd:string"
+    },
+    "ConversionResponse": "netcorecloud:ConversionResponse",
+    "UpdateWebhookRequest": "netcorecloud:UpdateWebhookRequest",
+    "headers": {
+      "@id": "netcorecloud:headers",
+      "@type": "xsd:string"
+    }
+  },
+  "@type": "schema:Dataset",
+  "schema:name": "Netcore Cloud API JSON-LD context",
+  "schema:description": "A JSON-LD @context for the objects Netcore Cloud's own API contract declares: one class per component schema, one property per declared field, typed from the contract. Derived by script (derive-json-ld.py, 2026-10-13) from openapi/netcorecloud-attributes-api-openapi.yml, openapi/netcorecloud-campaigns-api-openapi.yml, openapi/netcorecloud-contacts-api-openapi.yml.",
+  "dcterms:created": "2026-10-13",
+  "dcterms:source": [
+    "openapi/netcorecloud-attributes-api-openapi.yml",
+    "openapi/netcorecloud-campaigns-api-openapi.yml",
+    "openapi/netcorecloud-contacts-api-openapi.yml",
+    "openapi/netcorecloud-email-api-v5-openapi.yml",
+    "openapi/netcorecloud-email-api-v6-openapi.yml"
+  ]
+}

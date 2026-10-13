@@ -1,0 +1,73 @@
+openapi: 3.2.0
+info:
+  title: Email API V6 Scope API
+  description: ''
+  version: 1.0.0
+servers:
+- url: https://emailapi.netcorecloud.net/v6
+  description: For Non EU region
+- url: https://apieu.netcorecloud.net/v6
+  description: For EU region
+security: []
+tags:
+- name: Scope API
+paths:
+  /scopes:
+    get:
+      summary: Retrieve All Scopes
+      deprecated: false
+      description: This endpoint returns a list of all scopes that this user has access to.
+      operationId: get-scopes
+      tags:
+      - Scope API
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  scopes:
+                    type: array
+                    description: The list of scopes for which this user has access.
+                    uniqueItems: true
+                    items:
+                      type: string
+              example:
+                scopes:
+                - Suppression Read/Write
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/paths/~1webhooks/get/responses/400/content/application~1json/schema'
+                required:
+                - error
+              example:
+                error:
+                - message: invalid entry
+                  field: ''
+          headers: {}
+      security:
+      - bearer: []
+components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

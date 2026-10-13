@@ -1,0 +1,886 @@
+openapi: 3.2.0
+info:
+  title: Netcorecloud Events API
+  version: '1.0'
+  description: 'Operations tagged Events API across 2 of this provider''s published API definitions: netcorecloud-email-api-v5-openapi.yml, netcorecloud-email-api-v6-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://emailapi.netcorecloud.net/v5.1
+  description: Non-EU customers
+- url: https://apieu.netcorecloud.net/v5.1
+  description: EU customers
+- url: https://emailapi.netcorecloud.net/v6
+  description: For Non EU region
+- url: https://apieu.netcorecloud.net/v6
+  description: For EU region
+tags:
+- name: Events API
+paths:
+  /stats:
+    get:
+      tags:
+      - Events API
+      summary: Fetch Summary Stats
+      description: 'Email API captures different events like Open, Click, Unsubscribe etc and generates statistics. This data is available in your Email API account as well as you can fetch the same via this API.
+
+
+        The statistics are calculated every hour in your set timezone.
+
+
+        Note: To check and update timezone, please log in to your Email API account and navigate through My Profile.
+
+
+        The following retention policy is applied to the statistics:
+
+
+        Monthly stats are stored throughout the lifespan of the domain.
+
+        Events data are available for last 90 days only.'
+      operationId: GET_stats
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 100
+          maximum: 100
+          minimum: 1
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 1
+          minimum: 1
+      - name: aggregated_by
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - day
+          - week
+          - month
+      - name: enddate
+        in: query
+        description: 'The end date of the statistics to retrieve. Defaults to today. Must follow format YYYY-MM-DD.
+
+          '
+        required: false
+        schema:
+          type: string
+          format: date
+          default: '2018-08-02'
+      - name: startdate
+        in: query
+        description: 'The starting date of the statistics to retrieve. Must follow format YYYY-MM-DD.
+
+          '
+        required: true
+        schema:
+          type: string
+          format: date
+          default: '2017-07-01'
+      - name: api_key
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                        stats:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              metrics:
+                                type: object
+                                properties:
+                                  bounce:
+                                    type: string
+                                  click:
+                                    type: string
+                                  dropped:
+                                    type: string
+                                  invalid:
+                                    type: string
+                                  open:
+                                    type: string
+                                  sent:
+                                    type: string
+                                  spam:
+                                    type: string
+                                  unique_click:
+                                    type: string
+                                  unique_open:
+                                    type: string
+                                  unsub:
+                                    type: string
+                  message:
+                    type: string
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_info:
+                    type: object
+                    properties:
+                      error_code:
+                        type: integer
+                      error_message:
+                        type: string
+                  message:
+                    type: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_info:
+                    type: object
+                    properties:
+                      error_code:
+                        type: integer
+                      error_message:
+                        type: string
+                  message:
+                    type: string
+      security:
+      - ApiKeyAuth: []
+    servers:
+    - url: https://emailapi.netcorecloud.net/v5.1
+      description: Non-EU customers
+    - url: https://apieu.netcorecloud.net/v5.1
+      description: EU customers
+  /events:
+    get:
+      tags:
+      - Events API
+      summary: Fetch Event Logs
+      description: '**Lets you to retrieve the email transaction logs.**
+
+
+        Following events can be passed in query parameter `events`:
+
+
+        * Processed
+
+        * Sent
+
+        * Bounce (Hard bounce and Soft bounce)
+
+        * Dropped
+
+        * Invalid
+
+        * Opened
+
+        * Clicked
+
+        * Unsubscribe
+
+        * Abuse
+
+
+        you can also pass Aggregate events :
+
+
+        * total_requested (Includes all entries)
+
+        * total_delivered (Includes ''Sent'', ''Open'', ''Click'', ''Unsubscribe'' and ''Spam'')
+
+        * total_opened (Includes ''Open'', ''Click'', ''Unsubscribe'' and ''Spam'')
+
+        * total_clicked (Includes ''Click'' and ''Unsubscribe'')
+
+
+        Make sure to pass the above events individually as any combination including the above 4 event types will return an error. Data fetching is based on a combination of ''limit'' & ''scrollid''. ''limit'' indicates the number of rows that will be passed in the response. The maximum number of rows allowed for a single request is 5000. If the ''limit'' is not set, 50 rows are retrieved. In the response message, the ''scrollid'' is shared for that request. To fetch the next batch of rows, The ''scrollid'' needs to be passed.'
+      operationId: logs
+      parameters:
+      - name: scrollid
+        in: query
+        description: Use the scrollid provided in your first query to fetch the next batch of data
+        schema:
+          type: string
+      - name: offset
+        in: query
+        description: The point in the list to begin retrieving results.
+        schema:
+          type: integer
+          default: 0
+          maximum: 1000
+          minimum: 0
+      - name: fromaddress
+        in: query
+        description: Filter logs based on fromaddress
+        schema:
+          type: string
+          maxLength: 255
+      - name: email
+        in: query
+        description: Filter logs based on recipient's email
+        schema:
+          type: string
+          maxLength: 255
+      - name: xapiheader
+        in: query
+        description: Filter logs based on x-apiheader
+        schema:
+          type: string
+          maxLength: 255
+      - name: subject
+        in: query
+        description: Filter logs based on subject
+        schema:
+          type: string
+          maxLength: 255
+      - name: limit
+        in: query
+        description: The number of results to return.
+        schema:
+          type: integer
+          default: 10
+          maximum: 1000
+          minimum: 1
+      - name: enddate
+        in: query
+        description: The end date of the statistics to retrieve. Defaults to today. Must follow format YYYY-MM-DD.
+        schema:
+          type: string
+          format: date
+      - name: startdate
+        in: query
+        description: The starting date of the statistics to retrieve. Must follow format YYYY-MM-DD.
+        schema:
+          type: string
+          format: date
+      - name: sort
+        in: query
+        description: Sort based on email sent time
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+      - name: events
+        in: query
+        description: Filter based on different email events. If not passed, all events will be fetched. Multiple comma separated events are allowed.
+        schema:
+          type: string
+          enum:
+          - processed
+          - sent
+          - open
+          - click
+          - unsubscribe
+          - bounce
+          - softbounce
+          - spam
+          - invalid
+          - dropped
+          - hardbounce
+      - name: api_key
+        in: header
+        description: Your Email API Key. This you can get by login into your account.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+      security:
+      - ApiKeyAuth: []
+    servers:
+    - url: https://emailapi.netcorecloud.net/v5.1
+      description: Non-EU customers
+    - url: https://apieu.netcorecloud.net/v5.1
+      description: EU customers
+  /logs/download:
+    post:
+      tags:
+      - Events API
+      summary: Download Logs
+      description: 'This endpoint allows you to download the email transaction logs which includes following events:
+
+
+        1. Processed
+
+        2. Sent
+
+        3. Bounce (Hardbounce and Softbounce)
+
+        4. Dropped
+
+        5. Invalid
+
+        6. Opened
+
+        7. Clicked
+
+        8. Unsubscribe
+
+        9. Abuse'
+      parameters:
+      - name: api_key
+        in: header
+        description: Your Pepipost API Key. This you can get by login into your account.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                startdate:
+                  type: string
+                  description: The starting date of the statistics to retrieve. Must follow format YYYY-MM-DD.
+                  format: date
+                enddate:
+                  type: string
+                  description: The end date of the statistics to retrieve. Defaults to today. Must follow format YYYY-MM-DD.
+                  format: date
+                events:
+                  type: string
+                  enum:
+                  - processed
+                  - sent
+                  - open
+                  - click
+                  - unsubscribe
+                  - bounce
+                  - softbounce
+                  - invalid
+                  - spam
+                  - dropped
+                  - hardbounce
+                  description: Filter based on different email events. If not passed, all events will be fetched. Multiple comma separated events are allowed.
+                email:
+                  type: string
+                  description: Filter logs based on recipient's email
+                fromaddress:
+                  type: string
+                  description: Filter logs based on fromaddress
+                subject:
+                  type: string
+                  description: Filter logs based on subject
+                xapiheader:
+                  type: string
+                  description: Filter logs based on x-apiheader
+              required:
+              - startdate
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      requestid:
+                        type: integer
+                  status:
+                    type: string
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+      security:
+      - ApiKeyAuth: []
+      operationId: postLogsDownload
+      x-operation-id-source: derived
+    servers:
+    - url: https://emailapi.netcorecloud.net/v5.1
+      description: Non-EU customers
+    - url: https://apieu.netcorecloud.net/v5.1
+      description: EU customers
+  /messages:
+    get:
+      summary: Fetch Logs
+      deprecated: false
+      description: 'Retrieves a paginated list of email event logs with multiple filtering options. You can filter logs by time range, event type, recipient details, sender details, and more. Supported Authorization type is “Bearer” along with value of your Email API KEY Which you can find in your Email API account under Settings >Integrations > API.
+
+        This endpoint supports scroll-based pagination via the `scrollId` mechanism. The maximum number of records per request is 1000. If no limit is specified, 50 records will be returned.
+
+        **Supported event types:** `processed`, `sent`, `open`, `click`, `unsubscribe`, `bounce`, `softbounce`, `spam`, `invalid`, `dropped`, `hardbounce`, `scheduled`, `cancelled`'
+      operationId: get-events
+      tags:
+      - Events API
+      parameters:
+      - name: on-behalf-of
+        in: header
+        description: 'Optional header used when making API calls with a master account’s API key.  Allows performing actions for a specific subaccount by providing its username.
+
+          '
+        required: false
+        schema:
+          type: string
+          example: subaccount_username
+      - name: start_date
+        in: query
+        description: Start date in `YYYY-MM-DD` format (required).
+        required: true
+        schema:
+          type: string
+          format: date
+          example: '2024-03-01'
+      - name: end_date
+        in: query
+        description: Optional end date in `YYYY-MM-DD` format.
+        required: false
+        schema:
+          type: string
+          format: date
+          example: '2024-03-31'
+      - name: event_start_date
+        in: query
+        description: Start date and time in `YYYY-MM-DD HH:mm:ss` format (required).
+        required: true
+        schema:
+          type: string
+          format: date-time
+          example: '2024-03-01 00:00:00'
+      - name: event_end_date
+        in: query
+        description: Optional end date and time in `YYYY-MM-DD HH:mm:ss` format.
+        required: false
+        schema:
+          type: string
+          format: date-time
+          example: '2024-03-31 23:59:59'
+      - name: events
+        in: query
+        description: 'Optional list of event types to filter logs by.
+
+          '
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - processed
+            - sent
+            - open
+            - click
+            - unsubscribe
+            - bounce
+            - softbounce
+            - spam
+            - invalid
+            - dropped
+            - hardbounce
+            - scheduled
+            - cancelled
+      - name: email
+        in: query
+        description: Filter by recipient email address.
+        required: false
+        schema:
+          type: string
+      - name: subject
+        in: query
+        description: Filter by email subject.
+        required: false
+        schema:
+          type: string
+      - name: custom_args
+        in: query
+        description: Filter by custom arguments passed in the email payload.
+        required: false
+        schema:
+          type: string
+      - name: tags
+        in: query
+        description: Filter by tags.
+        required: false
+        schema:
+          type: string
+      - name: fromaddress
+        in: query
+        description: Filter by sender's email address.
+        required: false
+        schema:
+          type: string
+      - name: fromdomain
+        in: query
+        description: Filter by sender's domain.
+        required: false
+        schema:
+          type: string
+      - name: recipient_domain
+        in: query
+        description: Filter by recipient's domain.
+        required: false
+        schema:
+          type: string
+      - name: message_id
+        in: query
+        description: Filter logs based on message_id
+        required: false
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: 'Number of records to return. Maximum: 1000.'
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 1000
+          default: 50
+          example: 100
+      - name: sort
+        in: query
+        description: Sort order for the logs based on sent time. Use `asc` or `desc`.
+        required: false
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+          default: asc
+      - name: scrollid
+        in: query
+        description: Scroll ID for fetching the next page of results.
+        required: false
+        schema:
+          type: string
+          example: DXF1ZXJ5QW5kRmV0Y2gBAAAAAACXzVwWTXZBaGJGOE5UZW1vWGxabjhfM0JnQQ==
+      responses:
+        '200':
+          description: Logs fetched successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                  scrollId:
+                    type: string
+              example:
+                data:
+                - trid: 12345
+                  rcptEmail: recipient@example.com
+                  fromaddress: sender@example.com
+                  requestedTime: '2024-03-20T10:00:00Z'
+                  deliveryTime: '2024-03-20T10:00:05Z'
+                  modifiedTime: '2024-03-20T10:00:10Z'
+                  status: delivered
+                  size: 1024
+                  remarks: Success
+                  subject: Test Email
+                  xapiheader: custom_value
+                  tags:
+                  - tag1
+                  - tag2
+                  opens:
+                  - time: '2024-03-20T10:01:00Z'
+                    ip: 192.168.1.1
+                    browser: Chrome
+                    os: Windows
+                    device: Desktop
+                  clicks:
+                  - time: '2024-03-20T10:02:00Z'
+                    link: https://example.com
+                    ip: 192.168.1.1
+                    browser: Chrome
+                    os: Windows
+                    device: Desktop
+                scrollId: DXF1ZXJ5QW5kRmV0Y2gBAAAAAACXzVwWTXZBaGJGOE5UZW1vWGxabjhfM0JnQQ==
+        '400':
+          description: Bad Request – Invalid date ranges or malformed parameters.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: event end date must be within 31 days of the event start date
+      security:
+      - bearer: []
+    servers:
+    - url: https://emailapi.netcorecloud.net/v6
+      description: For Non EU region
+    - url: https://apieu.netcorecloud.net/v6
+      description: For EU region
+  /messages/download:
+    get:
+      summary: Check Download Status
+      deprecated: false
+      description: ''
+      operationId: message-status-get
+      tags:
+      - Events API
+      parameters:
+      - name: request_id
+        in: query
+        description: The ID of the download request
+        required: true
+        schema:
+          type: integer
+          examples:
+          - 3452
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                  status:
+                    type: string
+                  request_date:
+                    type: string
+                    format: date-time
+                    examples:
+                    - '2024-03-20T10:00:00Z'
+                  completed_date:
+                    type: string
+                    examples:
+                    - '2024-03-20T10:05:00Z'
+                    format: date-time
+                required:
+                - request_id
+                - status
+                - request_date
+                - completed_date
+              example:
+                request_id: '12345'
+                status: Completed
+                request_date: '2024-03-20T10:00:00Z'
+                completed_date: '2024-03-20T10:05:00Z'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                required:
+                - error
+              example:
+                error: request_id must be an integer
+      security:
+      - bearer: []
+    post:
+      summary: Download Logs
+      deprecated: false
+      description: 'This endpoint allows you to download the email transaction logs which includes following events:
+
+
+        1. Processed
+
+        2. Sent
+
+        3. Bounce (Hardbounce and Softbounce)
+
+        4. Dropped
+
+        5. Invalid
+
+        6. Opened
+
+        7. Clicked
+
+        8. Unsubscribe
+
+        9. Abuse
+
+
+        The link to the final file with all the logs will be sent to the registered email id or the selected SFTP server.'
+      operationId: post-messages-download
+      tags:
+      - Events API
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                start_date:
+                  type: string
+                  format: date
+                  description: The starting date of the statistics to retrieve. Must follow format YYYY-MM-DD.
+                  example: '2023-10-01'
+                end_date:
+                  type: string
+                  format: date
+                  description: The ending date of the statistics to retrieve. Must follow format YYYY-MM-DD.
+                  example: '2023-10-31'
+                event_start_date:
+                  type: string
+                  format: date-time
+                  description: Use this parameter to download events data happening on a particular day. Must follow format (yyyy-mm-dd HH:mm:ss)
+                  example: '2025-02-03 23:00:00'
+                event_end_date:
+                  type: string
+                  format: date-time
+                  description: Use this parameter to download events data happening on a particular day. Must follow format (yyyy-mm-dd HH:mm:ss)
+                  example: '2025-02-25 09:00:00'
+                email:
+                  type: string
+                  description: Filter logs based on recipient's email
+                fromaddress:
+                  type: string
+                  description: Filter logs based on fromaddress
+                subject:
+                  type: string
+                  description: Filter logs based on subject
+                custom_args:
+                  type: string
+                  description: Additional custom arguments or headers.
+                tags:
+                  type: string
+                  description: Filter logs based on tags
+                delivery_type:
+                  type: string
+                  description: Report delivery method for logs. Defaults to registered email.
+                  enum:
+                  - sftp
+                  - email
+                  default: email
+                sftp_connection_name:
+                  type: string
+                  description: Name of the SFTP connection for file upload. Obtained from CPaaS panel.
+                events:
+                  type: array
+                  description: Provide event types to filter logs.
+                  items:
+                    type: string
+                    enum:
+                    - processed
+                    - sent
+                    - open
+                    - click
+                    - unsubscribe
+                    - bounce
+                    - softbounce
+                    - spam
+                    - invalid
+                    - dropped
+                    - hardbounce
+                    - scheduled
+                    - cancelled
+                latest:
+                  type: boolean
+                  description: 'If true, you will receive details of all the statuses in the report.   If false, only the current status of the email request is included.
+
+                    '
+                  default: false
+      responses:
+        '202':
+          description: 'Accepted
+
+            '
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      request:
+                        type: integer
+                x-examples:
+                  Example 1:
+                    data:
+                      request_id: 176835
+              example:
+                data:
+                  request_id: 12345
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                required:
+                - error
+              example:
+                error: end date must be within 31 days of the start date
+      security:
+      - bearer: []
+    servers:
+    - url: https://emailapi.netcorecloud.net/v6
+      description: For Non EU region
+    - url: https://apieu.netcorecloud.net/v6
+      description: For EU region
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: api_key
+      in: header
+      description: Your Email API Key. You can find this in your Email API account at Settings->Integrations.
+    bearer:
+      type: http
+      scheme: bearer
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+x-refined-from:
+- netcorecloud-email-api-v5-openapi.yml
+- netcorecloud-email-api-v6-openapi.yml
+x-provenance:
+  method: searched
+  source: https://developer.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on developer.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

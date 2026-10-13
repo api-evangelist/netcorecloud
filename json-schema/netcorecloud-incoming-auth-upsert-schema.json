@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/netcorecloud/main/json-schema/netcorecloud-incoming-auth-upsert-schema.json",
+  "title": "IncomingAuthUpsert",
+  "x-generated": "2026-10-13",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/IncomingAuthUpsert",
+  "type": "object",
+  "required": [
+    "protocol_type"
+  ],
+  "properties": {
+    "protocol_type": {
+      "type": "string",
+      "enum": [
+        "smtp",
+        "https"
+      ]
+    },
+    "username": {
+      "type": "string",
+      "description": "SMTP username."
+    },
+    "password": {
+      "type": "string",
+      "format": "password",
+      "description": "SHA-256 hashed before storage."
+    },
+    "api_key": {
+      "type": "string",
+      "description": "For HTTP; hashed before storage."
+    },
+    "api_key_id": {
+      "type": "integer",
+      "description": "Reference to `api_keys.id`."
+    },
+    "allowed_ips": {
+      "type": "string",
+      "description": "Comma-separated IPs or `*`."
+    },
+    "allowed_domains": {
+      "type": "string",
+      "description": "Comma-separated domains or `*`."
+    }
+  }
+}

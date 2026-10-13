@@ -1,0 +1,356 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/netcorecloud/main/json-schema/netcorecloud-campaign-specific-schema.json",
+  "title": "CampaignSpecific",
+  "description": "Channel Specific details for the campaign.",
+  "x-generated": "2026-10-13",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/netcorecloud-campaigns-api-openapi.yml#/components/schemas/CampaignSpecific",
+  "type": "object",
+  "properties": {
+    "app_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "[APN] List of app IDs associated with the campaign."
+    },
+    "app_inbox": {
+      "type": "object",
+      "properties": {
+        "app_inbox_enabled": {
+          "type": "boolean",
+          "description": "Indicates if the app inbox is enabled."
+        },
+        "app_inbox_category": {
+          "type": "string",
+          "description": "Category for the app inbox."
+        },
+        "app_inbox_ttl": {
+          "type": "string",
+          "description": "Time to live for the app inbox."
+        }
+      },
+      "description": "[APN] App inbox details."
+    },
+    "local_PN": {
+      "type": "string",
+      "description": "[APN] Indicates if the campaign is a local push notification."
+    },
+    "time_to_live": {
+      "type": "object",
+      "properties": {
+        "ttl_type": {
+          "type": "string",
+          "description": "[APN] Type of time to live. Allowed: \"specific\", \"immediate\""
+        },
+        "ttl_date_time": {
+          "type": "string",
+          "description": "[APN] Date and time for time to live. Only should be present with \"Specific\""
+        },
+        "cut_off_date": {
+          "type": "string",
+          "description": "[APN] Cut-off date for time to live. Only should be present with \"Immediate\""
+        },
+        "unit": {
+          "type": "string",
+          "description": "[BPN] Allowed: hours, days"
+        },
+        "value": {
+          "type": "integer",
+          "description": "[BPN] Actual Value"
+        }
+      },
+      "description": "[APN,BPN] Time to live details for the campaign."
+    },
+    "site_id": {
+      "type": "string",
+      "description": "[BPN] Website id"
+    },
+    "autohide_notification": {
+      "type": "boolean",
+      "description": "[BPN] Auto-hide notification after approx 8 seconds"
+    },
+    "subject": {
+      "type": "string",
+      "description": "[EMAIL] Subject of the email."
+    },
+    "domain_filter": {
+      "type": "object",
+      "properties": {
+        "enable_domain_filter": {
+          "type": "boolean"
+        },
+        "domain_filter_conditions": {
+          "type": "object",
+          "properties": {
+            "operator": {
+              "type": "string"
+            },
+            "condition_array": {
+              "type": "object",
+              "properties": {
+                "operator": {
+                  "type": "string"
+                },
+                "domain": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "description": "[EMAIL] Filter emails by Domain.",
+      "required": [
+        "enable_domain_filter"
+      ]
+    },
+    "sender_details": {
+      "type": "object",
+      "properties": {
+        "sender_name": {
+          "type": "string",
+          "description": "[EMAIL]"
+        },
+        "sender_email": {
+          "type": "string",
+          "description": "[EMAIL]"
+        },
+        "reply_email": {
+          "type": "string",
+          "description": "[EMAIL]"
+        },
+        "cc": {
+          "type": "string",
+          "description": "[EMAIL]"
+        },
+        "channel_id": {
+          "type": "integer",
+          "description": "[SMS] Channel_id which comes from bizbond"
+        },
+        "sender_id": {
+          "type": "string",
+          "description": "[SMS] Sender_id which falls under channel_id"
+        },
+        "custom_domain": {
+          "type": "string",
+          "description": "[SMS] Custom Domain for sms (Can be null)"
+        },
+        "business_number": {
+          "type": "integer",
+          "description": "[WHATSAPP]  Business number to be used"
+        }
+      },
+      "description": "[EMAIL,SMS,WHATSAPP] Manditory block if campaign_state is schedule."
+    },
+    "preheader": {
+      "type": "string",
+      "description": "[EMAIL] Preheader for the email"
+    },
+    "attachments": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "[EMAIL] Attachments via Email"
+    },
+    "header": {
+      "type": "object",
+      "properties": {
+        "header_type": {
+          "type": "string",
+          "description": "[EMAIL] custom or predefined. Note: If either browser_view or mobile_view is enabled, header value is replaced."
+        },
+        "header_id": {
+          "type": "string",
+          "description": "[EMAIL] If header type is predefined, header_id should be present."
+        },
+        "header_string": {
+          "type": "string",
+          "description": "[EMAIL] If header type is custom, header_string should be present"
+        }
+      },
+      "description": "[EMAIL] Use custom header inside Email Template. Note: Only use this field if both, browser_view and mobile_view are disabled."
+    },
+    "browser_view": {
+      "type": "boolean",
+      "description": "[EMAIL] To enable browserview in header. If enabled, header value is replaced."
+    },
+    "mobile_view": {
+      "type": "boolean",
+      "description": "[EMAIL] To enable mobileview in header. If enabled, header value is replaced."
+    },
+    "footer": {
+      "type": "object",
+      "properties": {
+        "footer_id": {
+          "type": "string",
+          "description": "[EMAIL] Footers only allowed via pre-made templates."
+        }
+      },
+      "description": "[EMAIL] Use custom footer inside Email Template."
+    },
+    "throttle_limit": {
+      "type": "object",
+      "properties": {
+        "throttle_limit_enabled": {
+          "type": "boolean",
+          "description": "[SMS] Throttle limit enabled/disabled"
+        },
+        "sms_limit": {
+          "type": "integer",
+          "description": "[SMS] SMS per minute"
+        }
+      },
+      "description": "[SMS] Throttle limit for SMS"
+    },
+    "split_details": {
+      "type": "object",
+      "properties": {
+        "winner_details": {
+          "type": "object",
+          "properties": {
+            "distribution": {
+              "type": "integer"
+            },
+            "criteria": {
+              "type": "string",
+              "description": "Allowed options: open/click/conversion"
+            },
+            "duration_count": {
+              "type": "string"
+            },
+            "duration_type": {
+              "type": "string",
+              "description": "Allowed Options: hour/day"
+            }
+          },
+          "required": [
+            "duration_count",
+            "duration_type"
+          ]
+        },
+        "variant_details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "variant_name": {
+                "type": "string"
+              },
+              "variant_distribution": {
+                "type": "integer"
+              },
+              "sender_name": {
+                "type": "string"
+              },
+              "sender_email": {
+                "type": "string"
+              },
+              "preheader": {
+                "type": "string"
+              },
+              "reply_email_id": {
+                "type": "string"
+              },
+              "attachments": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "template_id": {
+                "type": "integer"
+              },
+              "browser_view": {
+                "type": "boolean"
+              },
+              "mobile_view": {
+                "type": "boolean"
+              },
+              "custom_footer": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "description": "[ANY] This block will be used when Campaign type is split"
+    },
+    "slice_and_send_details": {
+      "type": "object",
+      "properties": {
+        "slice_size": {
+          "type": "integer"
+        },
+        "slice_campaign_start_at": {
+          "type": "string"
+        },
+        "slice_campaign_end_at": {
+          "type": "string"
+        },
+        "slice_frequency_type": {
+          "type": "string",
+          "description": "Allowed Options: daily/custom"
+        },
+        "slice_custom_days": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "slice_send_times": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "[ANY] This block will be used when Campaign type is Slice and Send"
+    },
+    "sto_details": {
+      "type": "object",
+      "properties": {
+        "sto_start_time": {
+          "type": "string"
+        },
+        "sto_end_time": {
+          "type": "string"
+        },
+        "sto_unpredictable": {
+          "type": "object",
+          "properties": {
+            "send_at": {
+              "type": "string",
+              "description": "Allowed options: best/custom/end"
+            },
+            "custom_send_time": {
+              "type": "string"
+            }
+          }
+        },
+        "control_group_details": {
+          "type": "object",
+          "properties": {
+            "enable_control_group": {
+              "type": "boolean"
+            },
+            "control_group_percentage": {
+              "type": "integer"
+            },
+            "set_default_time": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "description": "[ANY] This block will be used when Campaign type is sto"
+    },
+    "audience_limit": {
+      "type": "integer",
+      "description": "[ANY] Max audience limit. Limits the no. of users that the campaign needs to be sent out to. Frequency Capping and Limit cannot be used together for a single campaign. Manditory block if campaign_state is schedule."
+    }
+  }
+}

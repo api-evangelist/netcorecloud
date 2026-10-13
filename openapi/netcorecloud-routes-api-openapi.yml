@@ -1,0 +1,291 @@
+openapi: 3.2.0
+info:
+  title: Orbit Router Routes API
+  version: 1.0.0
+  description: Complete API specification for the Orbit Router email routing platform.
+  contact:
+    name: Orbit Engineering
+  license:
+    name: Proprietary
+servers:
+- url: https://orbitus.netcorecloud.com
+  description: Production — Orbit Engine (HTTP Relay)
+- url: https://orbitus.netcorecloud.com/apiorbit
+  description: Production — Orbit Backend (Config & Management)
+security: []
+tags:
+- name: Routes
+paths:
+  /routes:
+    post:
+      operationId: createRoute
+      tags:
+      - Routes
+      summary: Create a route
+      description: Passwords and API keys are AES-256 encrypted at rest.
+      security:
+      - BackendJWT: []
+      parameters:
+      - $ref: '#/components/parameters/ClientIdHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RouteCreate'
+      responses:
+        '201':
+          description: Route created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Route'
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackendErrorResponse'
+    get:
+      operationId: listRoutes
+      tags:
+      - Routes
+      summary: List all routes
+      description: Lists routes for the current client. Passwords are masked; API keys are decrypted and masked.
+      security:
+      - BackendJWT: []
+      parameters:
+      - $ref: '#/components/parameters/ClientIdHeader'
+      responses:
+        '200':
+          description: List of routes.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Route'
+  /routes/{id}:
+    parameters:
+    - $ref: '#/components/parameters/ResourceId'
+    delete:
+      operationId: deleteRoute
+      tags:
+      - Routes
+      summary: Delete a route
+      description: Blocked if referenced by `rule_routes`.
+      security:
+      - BackendJWT: []
+      parameters:
+      - $ref: '#/components/parameters/ClientIdHeader'
+      responses:
+        '200':
+          description: Route deleted.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: route deleted
+        '400':
+          description: Route has associated rules.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackendErrorResponse'
+        '404':
+          description: Route not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackendErrorResponse'
+    put:
+      operationId: updateRoute
+      tags:
+      - Routes
+      summary: Update a route
+      description: Partial update supported.
+      security:
+      - BackendJWT: []
+      parameters:
+      - $ref: '#/components/parameters/ClientIdHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RouteCreate'
+      responses:
+        '200':
+          description: Route updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Route'
+        '404':
+          description: Route not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackendErrorResponse'
+components:
+  parameters:
+    ClientIdHeader:
+      name: X-Client-ID
+      in: header
+      required: false
+      schema:
+        type: integer
+      description: Switch client context (multi-tenant).
+    ResourceId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+      description: Resource ID.
+  schemas:
+    Route:
+      type: object
+      properties:
+        id:
+          type: integer
+        provider_id:
+          type: integer
+        route_name:
+          type: string
+        host:
+          type: string
+        port:
+          type: integer
+          description: SMTP port; null for HTTP routes.
+        username:
+          type: string
+          description: SMTP username (masked on read).
+        password:
+          type: string
+          description: Masked value.
+        api_key:
+          type: string
+          description: Masked value.
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+        protocol_type:
+          type: string
+          enum:
+          - smtp
+          - http
+        worker_size:
+          type: integer
+        buffer_size:
+          type: integer
+        is_default:
+          type: boolean
+        tls_mode:
+          type: string
+          enum:
+          - starttls
+          - tls
+          - none
+        created_at:
+          type: string
+          format: date-time
+    RouteCreate:
+      type: object
+      required:
+      - provider_id
+      - route_name
+      - host
+      properties:
+        provider_id:
+          type: integer
+          description: Must exist in `providers` table.
+        route_name:
+          type: string
+        host:
+          type: string
+          description: SMTP hostname or full HTTP URL.
+        port:
+          type: integer
+          description: SMTP port (not used for HTTP).
+        username:
+          type: string
+          description: SMTP username.
+        password:
+          type: string
+          format: password
+          description: AES-256 encrypted at rest.
+        api_key:
+          type: string
+          description: HTTP provider API key; AES-256 encrypted at rest.
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+          default: active
+        protocol_type:
+          type: string
+          enum:
+          - smtp
+          - http
+        worker_size:
+          type: integer
+          default: 5
+        buffer_size:
+          type: integer
+          default: 1000
+        is_default:
+          type: boolean
+          description: Only one default per client.
+        tls_mode:
+          type: string
+          enum:
+          - starttls
+          - tls
+          - none
+    BackendErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        field:
+          type: string
+          description: Optional field that caused the error.
+  securitySchemes:
+    BackendJWT:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'JWT token obtained from `POST /auth/login`. Access token lifetime: 15 minutes.
+
+        Claims: `user_id`, `client_id`, `role`, `jti`, `exp`, `iat`.
+
+        '
+    EngineApiKeyBearer:
+      type: http
+      scheme: bearer
+      description: 'Engine API key via `Authorization: Bearer <api_key>` (priority 1).'
+    EngineApiKeyHeader:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: Engine API key via `X-API-Key` header (priority 2).
+    EngineApiKeyFallback:
+      type: apiKey
+      in: header
+      name: api_key
+      description: Engine API key via `api_key` header (priority 3, fallback).
+x-readme:
+  explorer-enabled: true
+  proxy-enabled: true
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

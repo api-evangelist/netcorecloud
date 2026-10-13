@@ -1,0 +1,1786 @@
+openapi: 3.2.0
+info:
+  title: Attributes API
+  description: ''
+  version: 1.0.0
+servers:
+- url: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  description: US
+- url: ' https://netcoreapi-main-prod-ind.netcorein.com/v5/'
+  description: IND
+- url: ' https://netcoreapi-main-prod-eu.netcorein.com/v5/'
+  description: EU
+security:
+- ApiKeyAuth: []
+tags:
+- name: Attributes
+paths:
+  /client/attribute/create:
+    post:
+      summary: Create Attributes
+      deprecated: false
+      description: Use the Create Attributes API to add custom attributes to Netcore CE.
+      tags:
+      - Attributes
+      parameters:
+      - name: api-key
+        in: header
+        description: API key used for authentication.
+        required: true
+        example: 5evddf6604d2845b3b27023e5c2716f1
+        schema:
+          type: string
+      - name: Content-Type
+        in: header
+        description: Specify the request content type. It must be application/json
+        required: true
+        example: application/json
+        schema:
+          type: string
+      requestBody:
+        description: "All necessary parameters should be passed in the request body in JSON format. Click '+' icon to enter a value for each parameter. \n You can optionally provide notify_callback to receive a callback notification after the attribute creation is complete."
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: array
+                  description: A list of custom attributes you want to add, like age or gender. For each field, define its name, type (number, text, etc.), and other optional settings.
+                  items:
+                    type: object
+                    properties:
+                      attribute_name:
+                        type: string
+                        description: Name of the attribute. The specification describes the allowed pattern as **(A-Za-z0-9_)**.
+                      attribute_category:
+                        type: string
+                        description: ' Category of the attribute. Supported values specified are **custom**, **predicted**, and **calculated**.'
+                      data_type:
+                        type: string
+                        description: This is the data type of the attribute. The schema specifies **textline**, **date**, **int**, **decimal**, and **longtext**.
+                      map_to:
+                        type: string
+                        description: System attribute name to which the custom attribute can be mapped. Use an empty string when no mapping is required.
+                      data_mask:
+                        type: string
+                        description: It controls data masking. The specification describes the values as true, false, or an empty string.
+                      default_value:
+                        type: string
+                        description: It is the default value for the attribute.
+                    required:
+                    - attribute_name
+                    - attribute_category
+                    - data_type
+                    - map_to
+                    - data_mask
+                    - default_value
+                notify_callback:
+                  type: object
+                  properties:
+                    callback:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          url:
+                            type: string
+                          method:
+                            type: string
+                            description: GET | POST
+                          headers:
+                            type: object
+                            properties:
+                              Content-Type:
+                                type: string
+                                description: application/json
+                              Authorization:
+                                type: string
+                            required:
+                            - Content-Type
+                          query_params:
+                            type: object
+                            properties:
+                              param1:
+                                type: string
+                              param2:
+                                type: string
+                            required:
+                            - param1
+                            - param2
+                          body_params:
+                            type: object
+                            properties:
+                              param3:
+                                type: string
+                              param4:
+                                type: string
+                            required:
+                            - param3
+                            - param4
+                        required:
+                        - url
+                        - method
+                        - headers
+                  required:
+                  - callback
+              required:
+              - data
+              - notify_callback
+            examples:
+              defaultAttributes:
+                summary: Create attributes without callback notification.
+                description: Use this example to create custom attributes for textline and integer data types without setting up a callback notification.
+                value:
+                  data:
+                  - attribute_name: MY_PHONE9
+                    attribute_category: custom
+                    data_type: integer
+                    map_to: ''
+                    data_mask: ''
+                    default_value: ''
+                  - attribute_name: NEW_TXT9
+                    attribute_category: custom
+                    data_type: textline
+                    map_to: ''
+                    data_mask: ''
+                    default_value: ''
+              createAttributesWithCallBack:
+                summary: Create attributes with callback notification.
+                description: Use this example to create custom attributes for textline and integer data types with a callback notification. The callback will notify you when the attribute creation is complete.
+                value:
+                  data:
+                  - attribute_name: AGE
+                    attribute_category: custom
+                    data_type: integer
+                    map_to: ''
+                    data_mask: ''
+                    default_value: ''
+                  notify_callback:
+                    callback:
+                    - url: https://webhook.site/8f146838-36de-49b0-b87a-8ea2ec69f181
+                      method: POST
+                      headers:
+                        Content-Type: application/json
+                        Authorization: Bearer <token>
+                      query_params:
+                        param1: value1
+                        param2: value2
+                      body_params:
+                        param3: value3
+                        param4: value4
+              createAttributesWithoutAuthInCallback:
+                summary: Create attributes with callback notification without authentication in the callback.
+                description: Use this API to create a custom attribute and set up a callback notification without including authentication in the callback request if the callback API doesn't require it.
+                value:
+                  data:
+                  - attribute_name: Last Name
+                    attribute_category: custom
+                    data_type: textline
+                    map_to: ''
+                    data_mask: ''
+                    default_value: ''
+                  notify_callback:
+                    callback:
+                    - url: https://webhook.site/8f146838-36de-49b0-b87a-8ea2ec69f181
+                      method: POST
+                      headers:
+                        Content-Type: application/json
+                      query_params:
+                        param1: value1
+                        param2: value2
+                      body_params:
+                        param3: value3
+                        param4: value4
+              textlineIntegerAttributes:
+                summary: Create attributes of textline and integer data types with callback notification.
+                description: Use this API to create custom attributes for textline and integer data types. You can also set up a callback notification to be informed when the attribute creation is complete.
+                value:
+                  data:
+                  - attribute_name: MY_PHONE9
+                    attribute_category: custom
+                    data_type: integer
+                    map_to: ''
+                    data_mask: ''
+                    default_value: ''
+                  - attribute_name: NEW_TXT9
+                    attribute_category: custom
+                    data_type: textline
+                    map_to: ''
+                    data_mask: ''
+                    default_value: ''
+                  notify_callback:
+                    callback:
+                    - url: https://webhook.site/8f146838-36de-49b0-b87a-8ea2ec69f181
+                      method: POST
+                      headers:
+                        Content-Type: application/json
+                        Authorization: Bearer <token>
+                      query_params:
+                        param1: value1
+                        param2: value2
+                      body_params:
+                        param3: value3
+                        param4: value4
+              emailMobileAttributes:
+                summary: Create attributes of email and mobile data types with callback notification.
+                description: Use this API to create custom attributes for email and mobile data types. You can also set up a callback notification to be informed when the attribute creation is complete.
+                value:
+                  data:
+                  - attribute_name: Custom Email
+                    attribute_category: custom
+                    data_type: email
+                    map_to: ''
+                    data_mask: ''
+                    default_value: ''
+                  - attribute_name: Custom Mobile
+                    attribute_category: custom
+                    data_type: mobile
+                    map_to: ''
+                    data_mask: ''
+                    default_value: ''
+                  notify_callback:
+                    callback:
+                    - url: https://webhook.site/8f146838-36de-49b0-b87a-8ea2ec69f181
+                      method: POST
+                      headers:
+                        Content-Type: application/json
+                        Authorization: Bearer <token>
+                      query_params:
+                        param1: value1
+                        param2: value2
+                      body_params:
+                        param3: value3
+                        param4: value4
+              createMultipleAttributes:
+                summary: Create multiple attributes of different data types with callback notification at once.
+                description: Use this API to create multiple custom attributes of different data types (email, mobile, textline, integer) in a single request. You can also set up a callback notification to be informed when the attribute creation is complete.
+                value:
+                  data:
+                  - attribute_name: Custom Email
+                    attribute_category: custom
+                    data_type: email
+                    map_to: ''
+                    data_mask: ''
+                    default_value: ''
+                  - attribute_name: Custom Mobile
+                    attribute_category: custom
+                    data_type: mobile
+                    map_to: ''
+                    data_mask: ''
+                    default_value: ''
+                  - attribute_name: First Name
+                    attribute_category: custom
+                    data_type: textline
+                    map_to: ''
+                    data_mask: ''
+                    default_value: ''
+                  - attribute_name: Mobile Number
+                    attribute_category: custom
+                    data_type: integer
+                    map_to: ''
+                    data_mask: ''
+                    default_value: ''
+                  - attribute_name: Date of Birth
+                    attribute_category: custom
+                    data_type: date
+                    map_to: ''
+                    data_mask: ''
+                    default_value: ''
+                  - attribute_name: Product Url
+                    attribute_category: custom
+                    data_type: url
+                    map_to: ''
+                    data_mask: ''
+                    default_value: ''
+                  - attribute_name: Product Description
+                    attribute_category: custom
+                    data_type: textline
+                    map_to: ''
+                    data_mask: ''
+                    default_value: ''
+                  notify_callback:
+                    callback:
+                    - url: https://webhook.site/8f146838-36de-49b0-b87a-8ea2ec69f181
+                      method: POST
+                      headers:
+                        Content-Type: application/json
+                        Authorization: Bearer <token>
+                      query_params:
+                        param1: value1
+                        param2: value2
+                      body_params:
+                        param3: value3
+                        param4: value4
+              createMaskedAttributes:
+                summary: Create Attributes with masking enabled.
+                description: Use this API to create attributes with masking enabled. Masking ensures that sensitive data is not exposed in logs or API responses.
+                value:
+                  data:
+                  - attribute_name: Email Id
+                    attribute_category: custom
+                    data_type: email
+                    map_to: ''
+                    data_mask: 'true'
+                    default_value: ''
+              createMappedAttributes:
+                summary: Create Attributes to map it with System Attributes.
+                description: Use this API to create an attribute and map it to a system attribute. Mapping allows you to link custom attributes with predefined system attributes for better data organization.
+                value:
+                  data:
+                  - attribute_name: First Name
+                    attribute_category: custom
+                    data_type: textline
+                    map_to: First Name
+                    data_mask: 'true'
+                    default_value: ''
+              createAttributesWithDefaultValues:
+                summary: Create Attributes with default values.
+                description: Use this API to create attributes with default values.
+                value:
+                  data:
+                  - attribute_name: Country
+                    attribute_category: custom
+                    data_type: textline
+                    map_to: ''
+                    data_mask: ''
+                    default_value: India
+              createAttributesWithNonLatinDefaultValues:
+                summary: Create Attributes with non-Latin default values.
+                description: Use this API to create attributes with non-Latin default values.
+                value:
+                  data:
+                  - attribute_name: Country
+                    attribute_category: custom
+                    data_type: textline
+                    map_to: ''
+                    data_mask: ''
+                    default_value: India 🇮🇳
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                  description:
+                    type: string
+                  code:
+                    type: integer
+                  status:
+                    type: string
+                  data:
+                    type: string
+                required:
+                - request_id
+                - description
+                - code
+                - status
+                - data
+              example:
+                request_id: 019be5ec-2b6c-750a-ad3f-fac164c975bc
+                description: Your request was accepted successfully. It is being processed asynchronously.
+                code: 200
+                status: success
+                data:
+                - id: 28
+                  attribute_code: att28
+                  attribute_name: TEST_ATTR
+                  data_type: varchar(255)
+                  attribute_type: varchar
+                  mapped_to: null
+                  ownerid: 1
+                  created_at: '2025-01-22 18:06:59'
+                  default_value: this is a test attribute.
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationFailureResponse'
+              example:
+                request_id: 019be5ef-58ee-7c16-a4d5-84e401c92a46
+                description: Validation Failure.
+                code: 400
+                status: failed
+                errors:
+                - field: data[0].attribute_name
+                  message: 'Should match the required pattern: [^a-zA-Z0-9_].'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedAccessResponse'
+              example:
+                request_id: 019be5f0-6a0e-7383-82c6-b20d6e379553
+                description: Unauthorized access.
+                code: 401
+                status: failed
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorsResponse'
+              example:
+                request_id: 019be5f1-6e22-72e2-9be2-e4666c71fc3e
+                description: Internal Server Error.
+                code: 500
+                status: failed
+          headers: {}
+      security:
+      - ApiKeyAuth: []
+      operationId: postClientAttributeCreate
+      x-operation-id-source: derived
+  /client/attribute/delete:
+    post:
+      summary: Delete Attribute
+      deprecated: false
+      description: ''
+      tags:
+      - Attributes
+      parameters:
+      - name: api-key
+        in: header
+        description: ''
+        required: true
+        example: 5evddf6604d2845b3b27023e5c2716f1
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                attributeName:
+                  type: string
+                notify_callback:
+                  type: object
+                  properties:
+                    callback:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          url:
+                            type: string
+                          method:
+                            type: string
+                            description: GET | POST
+                          headers:
+                            type: object
+                            properties:
+                              Content-Type:
+                                type: string
+                                description: application/json
+                              Authorization:
+                                type: string
+                            required:
+                            - Content-Type
+                          query_params:
+                            type: object
+                            properties:
+                              param1:
+                                type: string
+                              param2:
+                                type: string
+                            required:
+                            - param1
+                            - param2
+                          body_params:
+                            type: object
+                            properties:
+                              param3:
+                                type: string
+                              param4:
+                                type: string
+                            required:
+                            - param3
+                            - param4
+                        required:
+                        - url
+                        - method
+                        - headers
+                  required:
+                  - callback
+              required:
+              - attributeName
+              - notify_callback
+            examples:
+              deleteAttribute:
+                summary: API to delete an attribute without Callback.
+                description: Use this API to delete a specific attribute.
+                value:
+                  attributeName: LASTNAME
+              deleteAttributeWithCallback:
+                summary: API to delete an attribute with Callback.
+                description: Use this API to delete a specific attribute. Use the notify_callback object to specify a callback URL that will be notified when the attribute deletion is complete.
+                value:
+                  attributeName: LASTNAME123
+                  notify_callback:
+                    callback:
+                    - url: https://example.com/callback
+                      method: POST
+                      headers:
+                        Content-Type: application/json
+                        Authorization: Bearer your_token_here
+                      query_params:
+                        param1: value1
+                        param2: value2
+                      body_params:
+                        param3: value3
+                        param4: value4
+              deleteAttributeWithCallbackWithoutAuth:
+                summary: API to delete an attribute without Authorization in Callback.
+                description: Use this API to delete a specific attribute and with the notify_callback object to specify a callback URL that will be notified when the attribute deletion is complete when you don't have any authorization on the callback API.
+                value:
+                  attributeName: LASTNAME123
+                  notify_callback:
+                    callback:
+                    - url: https://example.com/callback
+                      method: POST
+                      headers:
+                        Content-Type: application/json
+                      query_params:
+                        param1: value1
+                        param2: value2
+                      body_params:
+                        param3: value3
+                        param4: value4
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                  description:
+                    type: string
+                  code:
+                    type: integer
+                  status:
+                    type: string
+                  data:
+                    type: string
+                required:
+                - request_id
+                - description
+                - code
+                - status
+                - data
+              example:
+                request_id: 019455a8-dba9-7aaf-83c1-87c144725f85
+                description: Deleted successfully.
+                code: 200
+                status: success
+                data: Your request was accepted successfully. It is being processed asynchronously.
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationFailureResponse'
+              example:
+                request_id: 019455d4-c905-7805-a62f-1f336e5179ba
+                description: Validation Failure.
+                status: failed
+                code: 400
+                error:
+                - field: attributeName
+                  message: An attribute with name 'LASTNAME123' does not exists
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedAccessResponse'
+              example:
+                code: 401
+                message: Unauthorized
+                error: Unable to authenticate
+                requestId: 0193b9e3-bd75-79ea-b0be-872c70ed7b5e
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorsResponse'
+              example:
+                request_id: 0194559d-2111-75de-8b15-65d081f4fd27
+                description: Internal Server Error
+                code: 500
+                error: Something went wrong
+          headers: {}
+      security:
+      - ApiKeyAuth: []
+      operationId: postClientAttributeDelete
+      x-operation-id-source: derived
+  /client/attribute/search:
+    post:
+      summary: Search Attributes
+      deprecated: false
+      description: Searches for custom attributes created for various entities such as user, event, or transaction. You can filter attributes based on entity type, name, or data type. This endpoint supports partial search for attribute names and is useful in UIs that require dynamic attribute lookups or filtering
+      tags:
+      - Attributes
+      parameters:
+      - name: api-key
+        in: header
+        description: API key for authentication. You must have a unique and valid API key
+        required: true
+        example: f19136e33b5126b31b3135ce4e06a575
+        schema:
+          type: string
+      - name: Content-Type
+        in: header
+        description: Specifies the request content type. Must be application/json.
+        required: true
+        example: application/json
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filtering_criteria:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      condition_operator:
+                        type: string
+                      condition_details:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            field:
+                              type: string
+                            operation:
+                              type: string
+                            value:
+                              type: array
+                              items:
+                                oneOf:
+                                - type: string
+                                - type: integer
+                          required:
+                          - field
+                          - operation
+                          - value
+                output:
+                  type: object
+                  properties:
+                    fields:
+                      type: array
+                      items:
+                        type: string
+                    get_count:
+                      type: boolean
+                    pagination:
+                      type: object
+                      properties:
+                        page:
+                          type: integer
+                        limit:
+                          type: integer
+                      required:
+                      - page
+                      - limit
+                    sorting:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          field:
+                            type: string
+                          direction:
+                            type: string
+                  required:
+                  - fields
+                  - pagination
+                  - sorting
+                  - get_count
+              required:
+              - filtering_criteria
+              - output
+            example:
+              filtering_criteria:
+              - condition_operator: or
+                condition_details:
+                - field: contact_type
+                  operation: equals
+                  value:
+                  - anonymous
+                - field: name
+                  operation: equals
+                  value:
+                  - email
+              output:
+                get_count: false
+                sorting:
+                - field: id
+                  direction: desc
+                fields:
+                - id
+                - attribute_name
+                - attribute_code
+                - data_type
+                - attribute_type
+                - default_value
+                - attribute_category
+                pagination:
+                  page: 1
+                  limit: 10
+      responses:
+        '200':
+          description: Attributes matching the filters were retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                    description: Unique request id of the request.
+                  code:
+                    type: integer
+                    description: Response status code indicating the result of the request.
+                    enum:
+                    - 200
+                    - 400
+                    - 401
+                    - 500
+                  status:
+                    type: string
+                    description: Status of the API request.
+                    enum:
+                    - success
+                    - failed
+                  description:
+                    type: string
+                    description: API response description.
+                  data:
+                    type: array
+                    description: List of attributes returned in the response.
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          description: Unique identifier for the attribute.
+                        attribute_code:
+                          type: string
+                          description: Unique attribute code.
+                        attribute_name:
+                          type: string
+                          description: Name of the attribute.
+                        attribute_category:
+                          type: string
+                          description: Category of the attribute.
+                        attribute_type:
+                          type: string
+                          description: Type of the attribute.
+                        data_type:
+                          type: string
+                          description: Data type of the attribute (e.g., boolean, string, integer).
+                        masked:
+                          type: boolean
+                          description: Indicates whether the attribute is masked.
+                        ownerid:
+                          type: integer
+                          description: ID of the user who created the attribute.
+                        created_at:
+                          type: string
+                          description: Date and time when the attribute was created.
+                        updated_at:
+                          type: string
+                          description: Date and time when the attribute was updated.
+                        segmentation:
+                          type: integer
+                          description: Whether the attribute is used for segmentation.
+                        system_attribute_name:
+                          type: string
+                          description: Name of the system attribute with which this attribute is mapped.
+                        settings:
+                          type: object
+                          description: Settings of the attribute.
+                        default_value:
+                          type: string
+                          description: A brief description of the attribute's purpose.
+                required:
+                - request_id
+                - code
+                - status
+                - description
+                - data
+              example:
+                request_id: 0197f447-e709-78e5-979a-28bf83a930bb
+                description: Searched successfully.
+                code: 200
+                status: success
+                data:
+                - attribute_category: source
+                  attribute_code: att1074
+                  attribute_name: A8
+                  attribute_type: varchar
+                  data_type: varchar(255)
+                  default_value: ''
+                  id: 1074
+                - attribute_category: source
+                  attribute_code: att1073
+                  attribute_name: A7
+                  attribute_type: varchar
+                  data_type: varchar(255)
+                  default_value: ''
+                  id: 1073
+                - attribute_category: source
+                  attribute_code: att1072
+                  attribute_name: A6
+                  attribute_type: varchar
+                  data_type: varchar(255)
+                  default_value: ''
+                  id: 1072
+                - attribute_category: source
+                  attribute_code: att1071
+                  attribute_name: A5
+                  attribute_type: varchar
+                  data_type: varchar(255)
+                  default_value: ''
+                  id: 1071
+                - attribute_category: source
+                  attribute_code: att1070
+                  attribute_name: A4
+                  attribute_type: varchar
+                  data_type: varchar(255)
+                  default_value: ''
+                  id: 1070
+          headers: {}
+        '400':
+          description: Malformed query or unsupported filter value
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailureSchema'
+              example:
+                description: Validation Failure.
+                code: 400
+                status: failed
+                errors:
+                - field: output.fields[0]
+                  message: value of field 'i' is invalid
+                - field: output.fields[1]
+                  message: value of field 'ribute_name' is invalid
+                - field: output.pagination.page
+                  message: pagination page '-1' can not be negative
+                - field: output.pagination.limit
+                  message: pagination limit '-10' can not be negative
+                requestId: 01938b56-15b6-736d-a13a-806af29b8915
+          headers: {}
+        '401':
+          description: Unauthorized Access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedAccessResponse'
+              example:
+                code: 401
+                message: Unauthorized
+                error: Unable to authenticate
+                requestId: 0193b9e3-bd75-79ea-b0be-872c70ed7b5e
+          headers: {}
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorsResponse'
+              example:
+                request_id: 0195afb0-f09f-70dc-a72b-c17310b3656d
+                description: Internal Server Error.
+                code: 500
+                status: failed
+          headers: {}
+        x-200:
+          description: Get Total Counts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessSearchSchemaForCounts'
+              example:
+                code: 200
+                status: success
+                description: searched successfully
+                count: 5
+                request_id: a7add3e4-2206-49f6-927e-3dfd917b906a
+          headers: {}
+      security:
+      - ApiKeyAuth: []
+      operationId: postClientAttributeSearch
+      x-operation-id-source: derived
+  /client/attribute/update:
+    post:
+      summary: Update Attribute
+      deprecated: false
+      description: ''
+      tags:
+      - Attributes
+      parameters:
+      - name: api-key
+        in: header
+        description: ''
+        required: true
+        example: 5evddf6604d2845b3b27023e5c2716f1
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      attribute_name:
+                        type: string
+                      attribute_new_name:
+                        type: string
+                      data_type:
+                        type: string
+                      map_to:
+                        type: string
+                      data_mask:
+                        type: string
+                      default_value:
+                        type: string
+                    required:
+                    - attribute_name
+                    - data_type
+              required:
+              - data
+            examples:
+              updateSingleAttributesName:
+                summary: Update single attribute name.
+                description: Use this example to update the name of a single attribute.
+                value:
+                  data:
+                  - attribute_name: FIRST_NAME
+                    attribute_new_name: FIRSTNAME
+                    data_type: textline
+                    map_to: ''
+                    data_mask: ''
+                    default_value: ''
+              updateMultipleAttributesName:
+                summary: Update multiple attribute names.
+                description: Use this example to update the names of multiple attributes.
+                value:
+                  data:
+                  - attribute_name: FIRST_NAME
+                    attribute_new_name: FIRSTNAME
+                    data_type: textline
+                    map_to: ''
+                    data_mask: ''
+                    default_value: ''
+                  - attribute_name: LAST_NAME
+                    attribute_new_name: LASTNAME
+                    data_type: textline
+                    map_to: ''
+                    data_mask: ''
+                    default_value: ''
+              updateAttributesToEnableMasking:
+                summary: Update attribute to enable masking.
+                description: Use this example to enable the masking of the attributes. In this case we can skip attribute_new_name field to not update its name.
+                value:
+                  data:
+                  - attribute_name: FIRST_NAME
+                    attribute_new_name: ''
+                    data_type: textline
+                    map_to: ''
+                    data_mask: 'true'
+                    default_value: ''
+                  - attribute_name: LAST_NAME
+                    attribute_new_name: ''
+                    data_type: textline
+                    map_to: ''
+                    data_mask: 'true'
+                    default_value: ''
+              updateAttributesToDisableMasking:
+                summary: Update attribute to disable masking.
+                description: Use this example to disable the masking of the attributes. In this case we can skip attribute_new_name field to not update its name.
+                value:
+                  data:
+                  - attribute_name: FIRST_NAME
+                    attribute_new_name: ''
+                    data_type: textline
+                    map_to: ''
+                    data_mask: 'false'
+                    default_value: ''
+                  - attribute_name: LAST_NAME
+                    attribute_new_name: ''
+                    data_type: textline
+                    map_to: ''
+                    data_mask: 'false'
+                    default_value: ''
+              updateAttributesMapping:
+                summary: Update attribute mapping.
+                description: Use this example to update the mapping of the attributes. Once mapped can not be revert or changed.
+                value:
+                  data:
+                  - attribute_name: FIRST_NAME
+                    attribute_new_name: ''
+                    data_type: textline
+                    map_to: FITST_NAME
+                    data_mask: ''
+                    default_value: ''
+                  - attribute_name: LAST_NAME
+                    attribute_new_name: ''
+                    data_type: textline
+                    map_to: LAST_NAME
+                    data_mask: ''
+                    default_value: ''
+              updateAttributesDefaultValue:
+                summary: Update attribute default value.
+                description: Use this example to update the default value of the attributes.
+                value:
+                  data:
+                  - attribute_name: FIRST_NAME
+                    attribute_new_name: ''
+                    data_type: textline
+                    map_to: ''
+                    data_mask: ''
+                    default_value: First Name
+                  - attribute_name: LAST_NAME
+                    attribute_new_name: ''
+                    data_type: textline
+                    map_to: ''
+                    data_mask: ''
+                    default_value: Last Name
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                  description:
+                    type: string
+                  code:
+                    type: integer
+                  status:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        attribute_code:
+                          type: string
+                        attribute_name:
+                          type: string
+                        data_type:
+                          type: string
+                        created_at:
+                          type: string
+                        updated_at:
+                          type: string
+                required:
+                - request_id
+                - description
+                - code
+                - status
+                - data
+              example:
+                request_id: 019455c3-d71c-725d-8bf2-7143befa0aed
+                description: Updated successfully.
+                code: 200
+                status: success
+                data:
+                - id: 844
+                  attribute_code: att844
+                  attribute_name: TEST_ATTR
+                  data_type: varchar(255)
+                  created_at: '2025-01-11 19:55:43'
+                  updated_at: '2025-01-11 19:58:06'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationFailureResponse'
+              example:
+                request_id: 019455da-a1f5-7922-804c-0f5466acb8a8
+                description: Validation Failure.
+                code: 400
+                status: failed
+                error:
+                - field: data[0].attribute_name
+                  message: An attribute with name 'LASTNAME123' already exists
+                - field: data[0].map_to
+                  message: 'Invalid system_attribute_name ''email'' for data_type ''int''. Allowed system_attribute_names are: [MOBILE, AGE, ZIP_CODE, NEW_ATTR]'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedAccessResponse'
+              example:
+                code: 401
+                message: Unauthorized
+                error: Unable to authenticate
+                requestId: 0193af9f-bc5f-78ea-94c0-475a4a42c59f
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorsResponse'
+              example:
+                request_id: 0194559d-2111-75de-8b15-65d081f4fd27
+                description: Internal Server Error
+                code: 500
+                error: Something went wrong
+          headers: {}
+      security:
+      - ApiKeyAuth: []
+      operationId: postClientAttributeUpdate
+      x-operation-id-source: derived
+  /client/attribute/usage:
+    post:
+      summary: Get Attribute Usage
+      deprecated: false
+      description: ''
+      tags:
+      - Attributes
+      parameters:
+      - name: api-key
+        in: header
+        description: ''
+        required: true
+        example: 5evddf6604d2845b3b27023e5c2716f1
+        schema:
+          type: string
+      - name: Content-Type
+        in: header
+        description: Specify the request content type. It must be application/json
+        required: true
+        example: application/json
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                attributeName:
+                  type: string
+              required:
+              - attributeName
+            examples:
+              getAttributeUsage:
+                summary: API to get the attribute usage.
+                description: Use this API to get the usage information for a specific attribute across Campaign, Journey, Segments etc.
+                value:
+                  data:
+                  - attributeName: FIRSTNAME
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                  description:
+                    type: string
+                  code:
+                    type: integer
+                  status:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      journey:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            name:
+                              type: string
+                            status:
+                              type: string
+                            inserted:
+                              type: string
+                            modified:
+                              type: string
+                      cohort:
+                        type: array
+                        items:
+                          type: string
+                      funnel:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            name:
+                              type: string
+                            status:
+                              type: string
+                            inserted:
+                              type: string
+                            modified:
+                              type: string
+                      campaigns:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            email:
+                              type: array
+                              items:
+                                type: string
+                            sms:
+                              type: array
+                              items:
+                                type: string
+                            apn:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                  name:
+                                    type: string
+                                  status:
+                                    type: string
+                                  inserted:
+                                    type: string
+                                  modified:
+                                    type: string
+                                required:
+                                - id
+                                - name
+                                - status
+                                - inserted
+                                - modified
+                            web:
+                              type: array
+                              items:
+                                type: string
+                            whatsapp:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                  name:
+                                    type: string
+                                  status:
+                                    type: string
+                                  inserted:
+                                    type: string
+                                  modified:
+                                    type: string
+                                required:
+                                - id
+                                - name
+                                - status
+                                - inserted
+                                - modified
+                            onsiteInApp:
+                              type: array
+                              items:
+                                type: string
+                            onsiteWeb:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                  name:
+                                    type: string
+                                  status:
+                                    type: string
+                                  inserted:
+                                    type: string
+                                  modified:
+                                    type: string
+                                required:
+                                - id
+                                - name
+                                - status
+                                - inserted
+                                - modified
+                            content_personalization:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                  name:
+                                    type: string
+                                  status:
+                                    type: string
+                                  inserted:
+                                    type: string
+                                  modified:
+                                    type: string
+                      segment:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            adhoc:
+                              type: array
+                              items:
+                                type: string
+                            business:
+                              type: array
+                              items:
+                                type: string
+                            custom:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                  name:
+                                    type: string
+                                  status:
+                                    type: string
+                                  inserted:
+                                    type: string
+                                  modified:
+                                    type: string
+                                required:
+                                - id
+                                - name
+                                - status
+                                - inserted
+                                - modified
+                      report_scheduler:
+                        type: array
+                        items:
+                          type: string
+                      gcm:
+                        type: array
+                        items:
+                          type: string
+                      fb_audience:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            name:
+                              type: string
+                            status:
+                              type: string
+                            sync_status:
+                              type: string
+                            inserted:
+                              type: string
+                            modified:
+                              type: string
+                          required:
+                          - id
+                          - name
+                          - status
+                          - sync_status
+                          - inserted
+                          - modified
+                    required:
+                    - journey
+                    - cohort
+                    - funnel
+                    - campaigns
+                    - segment
+                    - report_scheduler
+                    - gcm
+                    - fb_audience
+                required:
+                - request_id
+                - description
+                - code
+                - status
+                - data
+              example:
+                request_id: 0194acc0-552b-731f-a289-5ff286ae59a3
+                description: Searched successfully.
+                code: 200
+                status: success
+                data:
+                  journey:
+                  - id: 863
+                    name: Whatsapp url Config test journey
+                    status: Ongoing
+                    inserted: '2025-01-27 15:26:11'
+                    modified: '2025-01-27 15:36:21'
+                  cohort: []
+                  funnel:
+                  - id: 5
+                    name: CITY
+                    status: ''
+                    inserted: '2024-03-27 15:17:03'
+                    modified: '2024-03-27 15:17:03'
+                  campaigns:
+                  - email: []
+                    sms: []
+                    apn:
+                    - id: 190
+                      name: test split 24t june
+                      status: draft
+                      inserted: '2024-06-24 16:09:52'
+                      modified: '2024-06-24 16:10:00'
+                    - id: 248
+                      name: asd
+                      status: draft
+                      inserted: '2024-12-27 12:48:26'
+                      modified: '2024-12-27 12:48:33'
+                    web: []
+                    whatsapp:
+                    - id: 31
+                      name: arpan_broadcast_1
+                      status: draft
+                      inserted: '2024-05-31 18:59:03'
+                      modified: '2024-05-31 19:03:25'
+                    - id: 240
+                      name: sefadw
+                      status: draft
+                      inserted: '2024-09-20 14:39:52'
+                      modified: '2024-09-20 14:40:35'
+                    - id: 265
+                      name: new camp test
+                      status: submitted
+                      inserted: '2024-09-26 19:55:00'
+                      modified: '2024-09-26 20:07:36'
+                    - id: 269
+                      name: Copy:27 Sep 2024 @12:06pm-Tetsing link track
+                      status: submitted
+                      inserted: '2024-09-27 12:06:25'
+                      modified: '2024-09-27 12:14:26'
+                    - id: 271
+                      name: Copy:27 Sep 2024 @1:04pm-Copy:27 Sep 2024 @12:06pm-Tetsing link track
+                      status: submitted
+                      inserted: '2024-09-27 13:04:47'
+                      modified: '2024-09-27 13:07:52'
+                    onsiteInApp: []
+                    onsiteWeb:
+                    - id: 14
+                      name: integration_001
+                      status: paused
+                      inserted: '2024-05-22 15:52:53'
+                      modified: '2024-06-27 16:38:07'
+                    - id: 15
+                      name: integration_002
+                      status: paused
+                      inserted: '2024-05-22 16:10:40'
+                      modified: '2024-06-27 16:42:56'
+                    content_personalization:
+                    - id: 73
+                      name: new content
+                      status: running
+                      inserted: '2025-01-24 11:45:57'
+                      modified: '2025-01-24 11:48:59'
+                  segment:
+                  - adhoc: []
+                    business: []
+                    custom:
+                    - id: 124
+                      name: test009
+                      status: Failed
+                      inserted: '2024-04-30 15:27:17'
+                      modified: ''
+                    - id: 125
+                      name: test00sdnmfbdkjfds9
+                      status: Failed
+                      inserted: '2024-04-30 15:28:22'
+                      modified: '2024-05-07 19:29:22'
+                    - id: 131
+                      name: sstest1
+                      status: Failed
+                      inserted: '2024-05-06 17:07:22'
+                      modified: ''
+                    - id: 132
+                      name: sstest gocro 1
+                      status: Completed
+                      inserted: '2024-05-06 18:47:08'
+                      modified: '2025-01-24 11:50:36'
+                    - id: 133
+                      name: sstest gocro 2
+                      status: Completed
+                      inserted: '2024-05-06 18:47:48'
+                      modified: '2025-01-24 11:50:36'
+                    - id: 136
+                      name: test gocro3
+                      status: Completed
+                      inserted: '2024-05-07 17:48:05'
+                      modified: '2025-01-28 02:05:02'
+                    - id: 147
+                      name: integration_test_01
+                      status: Completed
+                      inserted: '2024-05-22 15:20:08'
+                      modified: '2025-01-24 11:50:34'
+                    - id: 274
+                      name: AnonIden
+                      status: Completed
+                      inserted: '2024-08-08 17:14:07'
+                      modified: '2024-08-09 01:05:06'
+                    - id: 295
+                      name: Test-Multiple-Attribute
+                      status: Failed
+                      inserted: '2024-10-20 22:27:43'
+                      modified: '2024-11-04 19:52:05'
+                    - id: 324
+                      name: asdsweqw
+                      status: Failed
+                      inserted: '2024-12-10 16:15:32'
+                      modified: '2025-01-10 01:14:16'
+                  report_scheduler: []
+                  gcm: []
+                  fb_audience:
+                  - id: 6
+                    name: test audience
+                    status: Low Audience
+                    sync_status: Active
+                    inserted: '2025-01-21 11:31:00'
+                    modified: '2025-01-21 11:31:02'
+                  - id: 8
+                    name: last_name_audience
+                    status: Low Audience
+                    sync_status: Inactive
+                    inserted: '2025-01-21 21:03:54'
+                    modified: '2025-01-24 11:08:40'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationFailureResponse'
+              example:
+                request_id: 019455d4-c905-7805-a62f-1f336e5179ba
+                description: Validation Failure.
+                status: failed
+                code: 400
+                error:
+                - field: attributeName
+                  message: An attribute with name 'LASTNAME123' does not exists
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedAccessResponse'
+              example:
+                code: 401
+                message: Unauthorized
+                error: Unable to authenticate
+                requestId: 0193b9e3-bd75-79ea-b0be-872c70ed7b5e
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorsResponse'
+              example:
+                request_id: 0194559d-2111-75de-8b15-65d081f4fd27
+                description: Internal Server Error
+                code: 500
+                error: Something went wrong
+          headers: {}
+      security:
+      - ApiKeyAuth: []
+      operationId: postClientAttributeUsage
+      x-operation-id-source: derived
+components:
+  schemas:
+    FailureSchema:
+      type: object
+      properties:
+        request_id:
+          type: string
+          description: Alphanumeric Characters, max length (32 chars)
+        description:
+          type: string
+          description: Validation Error. Max char length 22
+        code:
+          type: integer
+          description: '400'
+        status:
+          type: string
+          description: failed
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                description: Name of the field on which an error occurs.max length (200 chars)
+              message:
+                type: string
+                description: Exact error message. max length (100 chars)
+            required:
+            - field
+            - message
+      required:
+      - request_id
+      - description
+      - code
+      - status
+      - errors
+    ValidationFailureResponse:
+      type: object
+      properties:
+        request_id:
+          type: string
+          description: The request ID of the API.
+        description:
+          type: string
+          description: The description stating validation failure
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                description: The invalid key.
+              message:
+                type: string
+                description: The reason why key is invalid.
+            required:
+            - field
+            - message
+          description: The error block.
+        status:
+          type: string
+          description: Failed.
+        code:
+          type: string
+          description: The status code.
+      required:
+      - request_id
+      - description
+      - errors
+      - status
+      - code
+    SuccessSearchSchemaForCounts:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: '200 '
+        status:
+          type: string
+          description: success. (Max length 7 chars)
+        description:
+          type: string
+          description: Search Successfully. (Max length 32 chars)
+        count:
+          type: integer
+          description: Count of data as per generated query.
+        request_id:
+          type: string
+          description: Alphanumeric Characters, max length (32 chars)
+      required:
+      - code
+      - status
+      - description
+      - count
+      - request_id
+    UnauthorizedAccessResponse:
+      type: object
+      properties:
+        request_id:
+          type: string
+          description: The request ID of the API.
+          maxLength: 32
+        description:
+          type: string
+          description: Unauthorized access.
+        code:
+          type: integer
+          description: '401'
+        status:
+          type: string
+          description: failed
+      required:
+      - request_id
+      - description
+      - code
+      - status
+    ServerErrorsResponse:
+      type: object
+      properties:
+        request_id:
+          type: string
+          description: The request id of the API.
+          maxLength: 32
+        description:
+          type: string
+          description: 'Internal Server Error. '
+        status:
+          type: string
+          description: '500'
+        code:
+          type: integer
+          description: Failed.
+      required:
+      - request_id
+      - description
+      - status
+      - code
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: api-key
+      description: "API key needed to access the endpoints. \nExample: `5evddf6604d2845b3b27023e5c2716f1`"
+      x-default: 5evddf6604d2845b3b27023e5c2716f1
+x-provenance:
+  method: searched
+  source: https://developer.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on developer.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

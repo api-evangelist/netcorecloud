@@ -1,0 +1,391 @@
+openapi: 3.2.0
+info:
+  title: WHATSAPP Conversion Tracking API
+  version: '1.0'
+  description: Comprehensive collection of WhatsApp APIs that allow users to interact with WhatsApp Flows, Templates, Message Sending, Conversations, Consent Management, Webhooks, Payments, and Media associated with a specific WABA (WhatsApp Business Account).
+  license:
+    name: Proprietary
+    identifier: proprietary
+servers:
+- url: https://cpaaswa.netcorecloud.net/api
+  description: WhatsApp APIs Server
+- url: https://cpaaswa.netcorecloud.net
+  description: WhatsApp Root Server
+security:
+- bearerAuth: []
+tags:
+- name: Conversion Tracking
+paths:
+  /v3/metainfo/dispatch_capi_event:
+    post:
+      summary: Track Customer Conversions (CAPI)
+      tags:
+      - Conversion Tracking
+      operationId: trackConversions
+      description: The Conversions API (CAPI) allows businesses to send data about key customer interactions and conversions from WhatsApp conversations to Meta for improved ad targeting and performance measurement.
+      parameters:
+      - name: Content-Type
+        in: header
+        required: true
+        description: Must be set to application/json to indicate JSON-formatted request body
+        schema:
+          type: string
+          example: application/json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConversionEventRequest'
+            examples:
+              LeadSubmittedEvent:
+                summary: Lead Generation Event
+                description: Track when customer submits lead form
+                value:
+                  data:
+                  - event_name: Lead
+                    event_time: 1703876400
+                    action_source: business_messaging
+                    messaging_channel: whatsapp
+                    user_data:
+                      mobile_number: '919876543210'
+                      ctwa_clid: AQAAAAACS5FpgQ_cAAAAAD0QI3s
+                    custom_data:
+                      lead_type: product_inquiry
+                      product_category: electronics
+              PurchaseEvent:
+                summary: Purchase Conversion Event
+                description: Track successful purchase transactions
+                value:
+                  data:
+                  - event_name: Purchase
+                    event_time: 1703876400
+                    action_source: business_messaging
+                    messaging_channel: whatsapp
+                    user_data:
+                      mobile_number: '919876543210'
+                      ctwa_clid: AQAAAAACS5FpgQ_cAAAAAD0QI3s
+                    custom_data:
+                      currency: USD
+                      value: 149.99
+                      content_ids:
+                      - PROD_12345
+                      - PROD_67890
+                      content_type: product
+                      order_id: ORDER_ABC123
+              RegistrationEvent:
+                summary: Account Registration Event
+                description: Track new user registrations
+                value:
+                  data:
+                  - event_name: CompleteRegistration
+                    event_time: 1703876400
+                    action_source: business_messaging
+                    messaging_channel: whatsapp
+                    user_data:
+                      mobile_number: '919876543210'
+                      ctwa_clid: AQAAAAACS5FpgQ_cAAAAAD0QI3s
+                    custom_data:
+                      registration_method: whatsapp_flow
+                      account_type: premium
+              SubscriptionEvent:
+                summary: Subscription Event
+                description: Track newsletter/service subscriptions
+                value:
+                  data:
+                  - event_name: Subscribe
+                    event_time: 1703876400
+                    action_source: business_messaging
+                    messaging_channel: whatsapp
+                    user_data:
+                      mobile_number: '919876543210'
+                      ctwa_clid: AQAAAAACS5FpgQ_cAAAAAD0QI3s
+                    custom_data:
+                      subscription_type: premium_newsletter
+                      frequency: weekly
+              MultiplePurchases:
+                summary: Bulk Purchase Events
+                description: Track multiple purchases in single request
+                value:
+                  data:
+                  - event_name: Purchase
+                    event_time: 1703876400
+                    action_source: business_messaging
+                    messaging_channel: whatsapp
+                    user_data:
+                      mobile_number: '919876543210'
+                      ctwa_clid: AQAAAAACS5FpgQ_cAAAAAD0QI3s
+                    custom_data:
+                      currency: USD
+                      value: 99.99
+                      content_ids:
+                      - ITEM_001
+                      content_type: product
+                  - event_name: Purchase
+                    event_time: 1703876460
+                    action_source: business_messaging
+                    messaging_channel: whatsapp
+                    user_data:
+                      mobile_number: '919876543211'
+                      ctwa_clid: AQAAAAACS5FpgQ_cAAAAAD0QI3s
+                    custom_data:
+                      currency: USD
+                      value: 199.99
+                      content_ids:
+                      - ITEM_002
+                      - ITEM_003
+                      content_type: product
+      responses:
+        '200':
+          description: "**Conversion Event Tracked Successfully**\n\nThe conversion event has been processed and sent to Meta's systems.\n\n```json\n{\n    \"status\": \"success\",\n    \"message\": \"Request processed successfully\",\n    \"data\": {\n        \"events_received\": 1,\n        \"fbtrace_id\": \"AvuDhHGXLFxN8VAnWuV4E8o\"\n    }\n}\n```\n"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversionResponse'
+        '400':
+          description: "**Invalid Conversion Data**\n\nThe conversion event data is invalid or missing required fields.\n\nCommon Issues:\n- Missing ctwa_clid for CTWA campaigns\n- Invalid mobile number format\n- Missing required event fields\n- Invalid timestamp format\n\n```json\n{\n    \"status\": \"failure\",\n    \"message\": \"Meta API returned error\",\n    \"data\": {\n        \"error\": {\n            \"message\": \"Invalid parameter\",\n            \"type\": \"OAuthException\",\n            \"code\": 100,\n            \"error_subcode\": 2804071,\n            \"error_user_title\": \"Missing CTWA clid\",\n            \"error_user_msg\": \"Your event is missing a ctwa_clid parameter.\"\n        }\n    }\n}\n```\n"
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - status
+                - message
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - failure
+                    - error
+                    example: failure
+                  message:
+                    type: string
+                    example: Meta API returned error
+                  data:
+                    type: object
+                    properties:
+                      error:
+                        type: object
+                        properties:
+                          message:
+                            type: string
+                            example: Invalid parameter
+                          type:
+                            type: string
+                            example: OAuthException
+                          code:
+                            type: integer
+                            example: 100
+                          error_subcode:
+                            type: integer
+                            example: 2804071
+                          error_user_title:
+                            type: string
+                            example: Missing CTWA clid
+                          error_user_msg:
+                            type: string
+                            example: Your event is missing a ctwa_clid parameter.
+                          fbtrace_id:
+                            type: string
+                            example: AvuDhHGXLFxN8VAnWuV4E8o
+        '404':
+          description: "**Invalid WABA ID or Configuration**\n\nThe WhatsApp Business Account ID is invalid or not properly configured.\n\n```json\n{\n    \"status\": \"failure\",\n    \"message\": \"Invalid WABA ID\",\n    \"data\": null\n}\n```\n"
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1v3~1metainfo~1dispatch_capi_event/post/responses/400/content/application~1json/schema'
+        '500':
+          description: "**Internal Server Error**\n\nUnexpected server error occurred.\n\n```json\n{\n    \"status\": \"error\",\n    \"message\": \"Internal server error. Please try again later.\",\n    \"error_code\": \"INTERNAL_ERROR\"\n}\n```\n"
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - status
+                - message
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - error
+                    - failure
+                    example: error
+                  message:
+                    type: string
+                    example: Request processing failed
+                  error_code:
+                    type: string
+                    description: Specific error code for programmatic handling
+                    example: INVALID_PHONE
+                  details:
+                    type: object
+                    description: Additional error details
+                    additionalProperties: true
+components:
+  schemas:
+    ConversionUserData:
+      type: object
+      description: User identification data (at least one field required)
+      properties:
+        mobile_number:
+          type: string
+          description: Customer's mobile number with country code
+          pattern: ^[1-9][0-9]{6,14}$
+          example: '919876543210'
+        ctwa_clid:
+          type: string
+          description: Click-to-WhatsApp Click ID for attribution
+          example: AQAAAAACS5FpgQ_cAAAAAD0QI3s
+    ConversionEventRequest:
+      type: object
+      required:
+      - data
+      properties:
+        data:
+          type: array
+          description: Array of conversion events to track
+          minItems: 1
+          maxItems: 1000
+          items:
+            $ref: '#/components/schemas/ConversionEvent'
+    ConversionEvent:
+      type: object
+      required:
+      - event_name
+      - event_time
+      - action_source
+      - messaging_channel
+      - user_data
+      properties:
+        event_name:
+          type: string
+          description: Standard or custom event name
+          enum:
+          - Purchase
+          - Lead
+          - CompleteRegistration
+          - Subscribe
+          - StartTrial
+          - AddToCart
+          - InitiateCheckout
+          - AddPaymentInfo
+          - ViewContent
+          - Contact
+          - CustomizeProduct
+          - Donate
+          - FindLocation
+          - Schedule
+          - Search
+          - SubmitApplication
+          example: Purchase
+        event_time:
+          type: integer
+          description: Event timestamp in Unix epoch time
+          example: 1703876400
+        action_source:
+          type: string
+          description: Source of the action
+          enum:
+          - business_messaging
+          default: business_messaging
+        messaging_channel:
+          type: string
+          description: Messaging platform
+          enum:
+          - whatsapp
+          default: whatsapp
+        user_data:
+          $ref: '#/components/schemas/ConversionUserData'
+        custom_data:
+          $ref: '#/components/schemas/ConversionCustomData'
+    ConversionCustomData:
+      type: object
+      description: Additional event-specific data
+      properties:
+        currency:
+          type: string
+          description: Currency code for monetary events (ISO 4217)
+          pattern: ^[A-Z]{3}$
+          example: USD
+        value:
+          type: number
+          description: Monetary value of the event
+          minimum: 0
+          example: 149.99
+        content_ids:
+          type: array
+          description: Product or content identifiers
+          items:
+            type: string
+          example:
+          - PROD_12345
+          - PROD_67890
+        content_type:
+          type: string
+          description: Type of content
+          enum:
+          - product
+          - product_group
+          - service
+          - article
+          example: product
+        order_id:
+          type: string
+          description: Unique order identifier
+          example: ORDER_ABC123
+        content_name:
+          type: string
+          description: Name of the content/product
+          example: Premium Subscription
+        content_category:
+          type: string
+          description: Category of the content/product
+          example: Electronics
+        num_items:
+          type: integer
+          description: Number of items in the event
+          minimum: 1
+          example: 2
+        search_string:
+          type: string
+          description: Search query (for search events)
+          example: wireless headphones
+      additionalProperties: true
+    ConversionResponse:
+      type: object
+      required:
+      - status
+      - message
+      properties:
+        status:
+          type: string
+          enum:
+          - success
+          example: success
+        message:
+          type: string
+          example: Request processed successfully
+        data:
+          type: object
+          properties:
+            events_received:
+              type: integer
+              description: Number of events processed
+              example: 1
+            fbtrace_id:
+              type: string
+              description: Facebook trace ID for debugging
+              example: AvuDhHGXLFxN8VAnWuV4E8o
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer token authentication using JWT. Include the token in the Authorization header as 'Bearer <your_token>'.
+x-stoplight:
+  id: o7al2fnfvhxlr
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

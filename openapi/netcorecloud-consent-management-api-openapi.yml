@@ -1,0 +1,464 @@
+openapi: 3.2.0
+info:
+  title: WHATSAPP Consent Management API
+  version: '1.0'
+  description: Comprehensive collection of WhatsApp APIs that allow users to interact with WhatsApp Flows, Templates, Message Sending, Conversations, Consent Management, Webhooks, Payments, and Media associated with a specific WABA (WhatsApp Business Account).
+  license:
+    name: Proprietary
+    identifier: proprietary
+servers:
+- url: https://cpaaswa.netcorecloud.net/api
+  description: WhatsApp APIs Server
+- url: https://cpaaswa.netcorecloud.net
+  description: WhatsApp Root Server
+security:
+- bearerAuth: []
+tags:
+- name: Consent Management
+paths:
+  /v2/consent/manage:
+    post:
+      summary: Manage User Consent (Opt-in/Opt-out)
+      tags:
+      - Consent Management
+      operationId: manageUserConsent
+      description: 'Use this API to register or update user consent for WhatsApp messaging. Supports opt-in and opt-out actions with full compliance tracking.
+
+
+        **Opt-in Sources:**
+
+        - Website forms and checkboxes
+
+        - Mobile app interfaces
+
+        - SMS or IVR campaigns
+
+        - Retail and contact center interactions
+
+        - Session-based consent in WhatsApp
+
+
+        **Compliance Tracking:**
+
+        - Capture consent source and timestamp
+
+        - Log IP address and user agent
+
+        - Maintain records for audits
+
+
+        **Use Cases:**
+
+        - Marketing opt-ins (promotions, newsletters)
+
+        - Transactional messages (order updates, alerts)
+
+        - Service notifications (reminders, customer support)'
+      parameters:
+      - name: Content-Type
+        in: header
+        required: true
+        description: Indicates the request body format. Must be `application/json`.
+        schema:
+          type: string
+          example: application/json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsentManagementRequest'
+            examples:
+              WebsiteOptIn:
+                summary: ✅ Website Opt-in
+                description: User opted in via website form
+                value:
+                  type: optin
+                  recipients:
+                  - recipient: '919876543210'
+                    source: WEB
+                    user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+                    ip: 192.168.7.26
+              MobileAppOptIn:
+                summary: ✅ Mobile App Opt-in
+                description: User opted in via mobile app
+                value:
+                  type: optin
+                  recipients:
+                  - recipient: '919876543210'
+                    source: MOBILE_APP
+                    user_agent: MyApp/2.1.0 (iOS 15.0; iPhone13,3)
+                    ip: 203.0.113.45
+              SMSOptIn:
+                summary: ✅ SMS Campaign Opt-in
+                description: User opted in via SMS campaign
+                value:
+                  type: optin
+                  recipients:
+                  - recipient: '919876543210'
+                    source: SMS_CAMPAIGN
+                    user_agent: SMS Gateway/1.0
+                    ip: 198.51.100.42
+              BulkOptIn:
+                summary: ✅ Bulk Opt-in Processing
+                description: Multiple users opted in simultaneously
+                value:
+                  type: optin
+                  recipients:
+                  - recipient: '919876543210'
+                    source: WEB
+                    user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+                    ip: 192.168.7.26
+                  - recipient: '919876543211'
+                    source: MOBILE_APP
+                    user_agent: MyApp/2.1.0 (Android 11)
+                    ip: 203.0.113.47
+                  - recipient: '919876543212'
+                    source: RETAIL
+                    user_agent: Kiosk/1.0
+                    ip: 198.51.100.50
+              UserOptOut:
+                summary: ❌ User Opt-out
+                description: User requested to opt out of messages
+                value:
+                  type: optout
+                  recipients:
+                  - recipient: '919876543210'
+                    source: USER_REQUEST
+                    user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+                    ip: 192.168.7.26
+              ComplianceOptOut:
+                summary: ❌ Compliance Opt-out
+                description: Opt-out due to compliance policy
+                value:
+                  type: optout
+                  recipients:
+                  - recipient: '919876543210'
+                    source: COMPLIANCE
+                    user_agent: Admin Panel/1.0
+                    ip: 10.0.0.100
+      responses:
+        '200':
+          description: Indicates that user consent was updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentResponse'
+        '400':
+          description: The request parameters are invalid or the body is malformed.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Represents an error response with details for debugging.
+                required:
+                - status
+                - message
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - error
+                    - failure
+                    description: Indicates that the operation failed.
+                    example: error
+                  message:
+                    type: string
+                    description: Describes the reason for the error.
+                    example: Invalid request parameters
+                  details:
+                    type: object
+                    description: Contains additional diagnostic details.
+                    additionalProperties: true
+                  error_code:
+                    type: string
+                    description: Error code for programmatic handling.
+                    example: INVALID_PHONE_NUMBER
+        '401':
+          description: Authentication failed due to an invalid or missing token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1v2~1consent~1manage/post/responses/400/content/application~1json/schema'
+        '403':
+          description: The user does not have permission to perform this operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1v2~1consent~1manage/post/responses/400/content/application~1json/schema'
+        '500':
+          description: A server error occurred while processing the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1v2~1consent~1manage/post/responses/400/content/application~1json/schema'
+  /v2/consent/blocklist:
+    post:
+      summary: Manage Blocklist or Whitelist
+      tags:
+      - Consent Management
+      operationId: manageBlocklist
+      description: 'Use this API to add or remove phone numbers from the blocklist or whitelist.
+
+        Control message delivery to ensure compliance and prevent unwanted communication.
+
+
+        **When to Blocklist:**
+
+        - Users request no communication
+
+        - Repeated delivery failures or bounces
+
+        - Compliance or regulatory requirements
+
+        - Spam prevention and internal testing
+
+
+        **When to Whitelist:**
+
+        - Re-enable blocked users
+
+        - Prioritize VIP or testing numbers
+
+        - Allow emergency or system notifications
+
+
+        **Features:**
+
+        - Bulk operations supported
+
+        - Source tracking for audit purposes
+
+        - Integration with consent workflows
+
+        - GDPR-compliant data handling'
+      parameters:
+      - $ref: '#/paths/~1v2~1consent~1manage/post/parameters/0'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BlocklistManagementRequest'
+            examples:
+              BlocklistUser:
+                summary: 🚫 Blocklist Number
+                description: Add a number to the blocklist
+                value:
+                  type: blocklist
+                  recipients:
+                  - recipient: '919876543210'
+                    source: USER_REQUEST
+                    user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+                    ip: 192.168.7.26
+              WhitelistUser:
+                summary: ✅ Whitelist Number
+                description: Remove a number from the blocklist
+                value:
+                  type: whitelist
+                  recipients:
+                  - recipient: '919876543210'
+                    source: ADMIN_PANEL
+                    user_agent: AdminApp/1.0
+                    ip: 10.0.0.100
+              BulkBlocklist:
+                summary: 🚫 Bulk Blocklist Operation
+                description: Add multiple numbers to the blocklist
+                value:
+                  type: blocklist
+                  recipients:
+                  - recipient: '919876543210'
+                    source: GDPR_REQUEST
+                    user_agent: Compliance System/1.0
+                    ip: 10.0.0.200
+                  - recipient: '919876543211'
+                    source: SPAM_DETECTION
+                    user_agent: Security System/1.0
+                    ip: 10.0.0.201
+                  - recipient: '919876543212'
+                    source: USER_REQUEST
+                    user_agent: Customer Portal/1.0
+                    ip: 203.0.113.100
+              ComplianceBlocklist:
+                summary: 🚫 Regulatory Compliance Blocklist
+                description: Blocklist numbers for compliance reasons
+                value:
+                  type: blocklist
+                  recipients:
+                  - recipient: '919876543210'
+                    source: REGULATORY_COMPLIANCE
+                    user_agent: Compliance API/1.0
+                    ip: 10.0.0.250
+              TestingWhitelist:
+                summary: ✅ Testing Whitelist
+                description: Whitelist numbers for testing or development
+                value:
+                  type: whitelist
+                  recipients:
+                  - recipient: '919876543210'
+                    source: TESTING
+                    user_agent: Test Suite/1.0
+                    ip: 192.168.1.100
+                  - recipient: '919876543211'
+                    source: DEVELOPMENT
+                    user_agent: Dev Tools/1.0
+                    ip: 192.168.1.101
+      responses:
+        '200':
+          description: Indicates that blocklist or whitelist operation completed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentResponse'
+        '400':
+          $ref: '#/paths/~1v2~1consent~1manage/post/responses/400'
+        '401':
+          $ref: '#/paths/~1v2~1consent~1manage/post/responses/401'
+        '403':
+          $ref: '#/paths/~1v2~1consent~1manage/post/responses/403'
+        '500':
+          $ref: '#/paths/~1v2~1consent~1manage/post/responses/500'
+components:
+  schemas:
+    ConsentResponse:
+      type: object
+      description: Represents the standard success response for consent or blocklist actions.
+      required:
+      - status
+      - message
+      properties:
+        status:
+          type: string
+          enum:
+          - success
+          - error
+          description: Indicates success or failure of the request.
+          example: success
+        message:
+          type: string
+          description: Human-readable message about the response.
+          example: Opt-in successfully added.
+        data:
+          type: object
+          description: Contains operation result details.
+          properties:
+            processed_count:
+              type: integer
+              description: Number of recipients successfully processed.
+              example: 1
+            failed_count:
+              type: integer
+              description: Number of recipients that failed processing.
+              example: 0
+            failed_recipients:
+              type: array
+              description: List of recipients that failed processing.
+              items:
+                type: object
+                properties:
+                  recipient:
+                    type: string
+                    example: '919876543210'
+                  error:
+                    type: string
+                    example: Invalid phone number format
+    BlocklistManagementRequest:
+      type: object
+      description: Defines the payload for blocklisting or whitelisting recipients.
+      required:
+      - type
+      - recipients
+      properties:
+        type:
+          type: string
+          enum:
+          - blocklist
+          - whitelist
+          description: Specifies whether to add or remove numbers from the blocklist.
+          example: blocklist
+        recipients:
+          type: array
+          description: Lists the recipients to block or whitelist.
+          minItems: 1
+          maxItems: 1000
+          items:
+            $ref: '#/components/schemas/ConsentRecipient'
+    ConsentManagementRequest:
+      type: object
+      description: Defines the payload for managing user consent actions.
+      required:
+      - type
+      - recipients
+      properties:
+        type:
+          type: string
+          enum:
+          - optin
+          - optout
+          description: Specifies the consent action — opt-in or opt-out.
+          example: optin
+        recipients:
+          type: array
+          description: Lists the recipients whose consent will be managed.
+          minItems: 1
+          maxItems: 1000
+          items:
+            $ref: '#/components/schemas/ConsentRecipient'
+    ConsentRecipient:
+      type: object
+      description: Represents a single recipient’s consent or blocklist details.
+      required:
+      - recipient
+      - source
+      properties:
+        recipient:
+          type: string
+          description: Phone number of the recipient including country code (6–15 digits).
+          pattern: ^[1-9][0-9]{5,14}$
+          example: '919876543210'
+        source:
+          type: string
+          description: Source from which the consent or blocklist request originated.
+          enum:
+          - WEB
+          - MOBILE_APP
+          - SMS_CAMPAIGN
+          - IVR
+          - EMAIL
+          - RETAIL
+          - CONTACT_CENTER
+          - WHATSAPP_SESSION
+          - API
+          - ADMIN_PANEL
+          - USER_REQUEST
+          - COMPLIANCE
+          - GDPR_REQUEST
+          - SPAM_DETECTION
+          - REGULATORY_COMPLIANCE
+          - TESTING
+          - DEVELOPMENT
+          - OTHER
+          example: WEB
+        user_agent:
+          type: string
+          description: User agent string from the source device or application.
+          maxLength: 500
+          example: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+        ip:
+          type: string
+          description: IP address from where the request originated.
+          format: ipv4
+          example: 192.168.7.26
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer token authentication using JWT. Include the token in the Authorization header as 'Bearer <your_token>'.
+x-stoplight:
+  id: o7al2fnfvhxlr
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

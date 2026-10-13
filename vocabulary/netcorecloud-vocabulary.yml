@@ -1,0 +1,422 @@
+generated: '2026-10-13'
+method: derived
+generator: derive-vocabulary.py
+source:
+- openapi/netcorecloud-attributes-api-openapi.yml
+- openapi/netcorecloud-campaigns-api-openapi.yml
+- openapi/netcorecloud-contacts-api-openapi.yml
+- openapi/netcorecloud-email-api-v5-openapi.yml
+- openapi/netcorecloud-email-api-v6-openapi.yml
+vocabulary:
+  name: Netcore Cloud Domain Vocabulary
+  description: 'Terms declared by Netcore Cloud''s own API contract: its resource groups, objects and enumerations, with the contract''s definitions.
+    Derived, not authored.'
+  version: '2026-10-13'
+  terms:
+  - term: Subaccount API
+    definition: Subaccount management
+    tags:
+    - Resource Group
+    source: openapi/netcorecloud-email-api-v5-openapi.yml
+  - term: Engine — Cache
+    definition: Cache refresh endpoints for immediate config propagation.
+    tags:
+    - Resource Group
+    source: openapi/netcorecloud-orbit-router-openapi.yml
+  - term: Report
+    definition: DLR consolidated report
+    tags:
+    - Resource Group
+    source: openapi/netcorecloud-sms-api-openapi.yml
+  - term: ValidationFailureResponse
+    definition: 'Object declared by the contract with fields: request_id, description, errors, status, code.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-attributes-api-openapi.yml#/components/schemas/ValidationFailureResponse
+  - term: ServerErrorsResponse
+    definition: 'Object declared by the contract with fields: request_id, description, status, code.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-attributes-api-openapi.yml#/components/schemas/ServerErrorsResponse
+  - term: UnauthorizedAccessResponse
+    definition: 'Object declared by the contract with fields: request_id, description, code, status.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-attributes-api-openapi.yml#/components/schemas/UnauthorizedAccessResponse
+  - term: FailureSchema
+    definition: 'Object declared by the contract with fields: request_id, description, code, status, errors.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-attributes-api-openapi.yml#/components/schemas/FailureSchema
+  - term: SuccessSearchSchemaForCounts
+    definition: 'Object declared by the contract with fields: code, status, description, count, request_id.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-attributes-api-openapi.yml#/components/schemas/SuccessSearchSchemaForCounts
+  - term: GoogleAnalytics
+    definition: Google Analytics Tracking.
+    tags:
+    - Object
+    source: openapi/netcorecloud-campaigns-api-openapi.yml#/components/schemas/GoogleAnalytics
+  - term: ConversionTracking
+    definition: Conversion details for the campaign. In Development
+    tags:
+    - Object
+    source: openapi/netcorecloud-campaigns-api-openapi.yml#/components/schemas/ConversionTracking
+  - term: FrequencyCapping
+    definition: This is used to manage how often a campaign is sent to the same user. Limit the number of times a user can receive the campaign
+      within a specified time frame. Details of sub-parameter is provided below.
+    tags:
+    - Object
+    source: openapi/netcorecloud-campaigns-api-openapi.yml#/components/schemas/FrequencyCapping
+  - term: AudienceDetails
+    definition: Details of the audience for the campaign. Section to specify Audience Details to be included or excluded for the campaign via
+      Contact Master, List IDs, Segment IDs or UDT ID. Note - This is not a mandatory block as long as the campaign is in "draft" state.
+    tags:
+    - Object
+    source: openapi/netcorecloud-campaigns-api-openapi.yml#/components/schemas/AudienceDetails
+  - term: CampaignSpecific
+    definition: Channel Specific details for the campaign.
+    tags:
+    - Object
+    source: openapi/netcorecloud-campaigns-api-openapi.yml#/components/schemas/CampaignSpecific
+  - term: ContentDetails
+    definition: Content details for the campaign. Note - This is not a mandatory block as long as the campaign is in "draft" state
+    tags:
+    - Object
+    source: openapi/netcorecloud-campaigns-api-openapi.yml#/components/schemas/ContentDetails
+  - term: ScheduleDetails
+    definition: Schedule details for the campaign. Not a Mandatory parameter till campaign is in Draft State.
+    tags:
+    - Object
+    source: openapi/netcorecloud-campaigns-api-openapi.yml#/components/schemas/ScheduleDetails
+  - term: FilterBlock
+    definition: 'Object declared by the contract with fields: filtering_criteria_operator, filtering_criteria.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-campaigns-api-openapi.yml#/components/schemas/FilterBlock
+  - term: OutputBlock
+    definition: 'Object declared by the contract with fields: get_count, sorting, pagination, fields.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-campaigns-api-openapi.yml#/components/schemas/OutputBlock
+  - term: TestCampaign
+    definition: 'Object declared by the contract with fields: campaign_id, channel, test_user_details.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-campaigns-api-openapi.yml#/components/schemas/TestCampaign
+  - term: ApiKeyCreated
+    definition: 'Object declared by the contract with fields: id, name, key, type, created_at.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/ApiKeyCreated
+  - term: BackendErrorResponse
+    definition: 'Object declared by the contract with fields: error, field.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/BackendErrorResponse
+  - term: Provider
+    definition: 'Object declared by the contract with fields: id, provider_name, protocol_type, enabled, created_at.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/Provider
+  - term: ProviderCreate
+    definition: 'Object declared by the contract with fields: provider_name, protocol_type, enabled.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/ProviderCreate
+  - term: Route
+    definition: 'Object declared by the contract with fields: id, provider_id, route_name, host, port, username, password, api_key, status, protocol_type,
+      worker_size, buffer_size. (3 more)'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/Route
+  - term: RouteCreate
+    definition: 'Object declared by the contract with fields: provider_id, route_name, host, port, username, password, api_key, status, protocol_type,
+      worker_size, buffer_size, is_default. (1 more)'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/RouteCreate
+  - term: RuleRouteAssignment
+    definition: 'Object declared by the contract with fields: id, provider_name, route_id, route_name, weight, enabled.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/RuleRouteAssignment
+  - term: Rule
+    definition: 'Object declared by the contract with fields: id, client_id, rule_name, tag, priority, expression, enabled, rule_routes, created_at.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/Rule
+  - term: RuleCreate
+    definition: 'Object declared by the contract with fields: rule_name, expression, tag, priority, enabled, rule_routes.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/RuleCreate
+  - term: ClientSummary
+    definition: 'Object declared by the contract with fields: client_id, clientname, status.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/ClientSummary
+  - term: UserProfile
+    definition: 'Object declared by the contract with fields: id, username, email, full_name, role, client_id, two_factor_enabled.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/UserProfile
+  - term: UserCreate
+    definition: 'Object declared by the contract with fields: username, email, password, role, allowed_subclient_ids.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/UserCreate
+  - term: DashboardStats
+    definition: 'Object declared by the contract with fields: totalRoutes, enabledRoutes, totalRules, activeRules, totalProviders, totalUsers.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/DashboardStats
+  - term: IpWhitelist
+    definition: 'Object declared by the contract with fields: enabled, ips.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/IpWhitelist
+  - term: MetricsResponse
+    definition: 'Object declared by the contract with fields: total_requests, success_requests, failed_requests, in_flight, uptime_seconds.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/MetricsResponse
+  - term: SmtpConfig
+    definition: 'Object declared by the contract with fields: default_from_email, default_from_name, bounce_email, max_retries, retry_interval_seconds.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/SmtpConfig
+  - term: ApiKeySummary
+    definition: 'Object declared by the contract with fields: id, name, preview, type, created_at.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/ApiKeySummary
+  - term: AuditLogEntry
+    definition: 'Object declared by the contract with fields: id, client_id, user_id, username, action, resource_type, resource_name, ip_address,
+      created_at.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/AuditLogEntry
+  - term: AuditLogPage
+    definition: 'Object declared by the contract with fields: logs, total, page, limit.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/AuditLogPage
+  - term: IncomingAuth
+    definition: 'Object declared by the contract with fields: id, client_id, protocol_type, username, allowed_ips, allowed_domains.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/IncomingAuth
+  - term: LoginRequest
+    definition: 'Object declared by the contract with fields: account_name, username, email, password.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/LoginRequest
+  - term: LoginResponse
+    definition: 'Object declared by the contract with fields: token, refresh_token, refresh_expires_at, client_id, clients, is_parent, user.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/LoginResponse
+  - term: TwoFactorRequiredResponse
+    definition: 'Object declared by the contract with fields: two_factor_required, user_id, client_id.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/TwoFactorRequiredResponse
+  - term: EmailAddress
+    definition: 'Object declared by the contract with fields: email, name.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/EmailAddress
+  - term: SendGridPersonalization
+    definition: 'Object declared by the contract with fields: to, cc, bcc, subject.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/SendGridPersonalization
+  - term: NetcoreContent
+    definition: 'Object declared by the contract with fields: type, value.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/NetcoreContent
+  - term: NetcorePayload
+    definition: 'Object declared by the contract with fields: personalizations, from, subject, content, tags, settings.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/NetcorePayload
+  - term: EngineSuccessResponse
+    definition: 'Object declared by the contract with fields: success, req_id, message.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/EngineSuccessResponse
+  - term: EngineErrorResponse
+    definition: 'Object declared by the contract with fields: success, error, error_code, req_id.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/EngineErrorResponse
+  - term: SendGridContent
+    definition: 'Object declared by the contract with fields: type, value.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/SendGridContent
+  - term: SendGridAttachment
+    definition: 'Object declared by the contract with fields: content, type, filename, disposition.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/SendGridAttachment
+  - term: SendGridPayload
+    definition: 'Object declared by the contract with fields: personalizations, from, subject, content, attachments, reply_to, categories.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/SendGridPayload
+  - term: TwoFactorSetupResponse
+    definition: 'Object declared by the contract with fields: secret, provisioning_uri, qr_code.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/TwoFactorSetupResponse
+  - term: SignupRequest
+    definition: 'Object declared by the contract with fields: accountName, fullName, email, password.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/SignupRequest
+  - term: TestSendRequest
+    definition: 'Object declared by the contract with fields: from, to, api_key, host.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/TestSendRequest
+  - term: TestSendResponse
+    definition: 'Object declared by the contract with fields: provider, status_code, response.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/TestSendResponse
+  - term: IncomingAuthUpsert
+    definition: 'Object declared by the contract with fields: protocol_type, username, password, api_key, api_key_id, allowed_ips, allowed_domains.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/IncomingAuthUpsert
+  - term: TwoFactorVerifyRequest
+    definition: 'Object declared by the contract with fields: user_id, client_id, code, setup.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/TwoFactorVerifyRequest
+  - term: TwoFactorSetupConfirmResponse
+    definition: 'Object declared by the contract with fields: success, backup_codes.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/TwoFactorSetupConfirmResponse
+  - term: DLRReportItem
+    definition: 'Object declared by the contract with fields: mobile_no, request_id, sender_id, dlt_template_id, feed_name, message, operator,
+      circle, requested_on, last_activity, status, sms_count. (3 more)'
+    tags:
+    - Object
+    source: openapi/netcorecloud-sms-api-openapi.yml#/components/schemas/DLRReportItem
+  - term: DLRReportResponse
+    definition: 'Object declared by the contract with fields: status, message, scroll_id, data.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-sms-api-openapi.yml#/components/schemas/DLRReportResponse
+  - term: DLRErrorResponse
+    definition: 'Object declared by the contract with fields: status, message.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-sms-api-openapi.yml#/components/schemas/DLRErrorResponse
+  - term: JsonSingleApiV2Request
+    definition: 'Object declared by the contract with fields: feedid, username, password, jobname, short, tz, time, mobile, messages, message,
+      senderid, entityid. (14 more)'
+    tags:
+    - Object
+    source: openapi/netcorecloud-sms-api-openapi.yml#/components/schemas/JsonSingleApiV2Request
+  - term: CreateFlowSuccessResponse
+    definition: 'Object declared by the contract with fields: status, message, data.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-whatsapp-api-openapi.yml#/components/schemas/CreateFlowSuccessResponse
+  - term: CreateTemplateSuccessResponse
+    definition: 'Object declared by the contract with fields: status, message, data.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-whatsapp-api-openapi.yml#/components/schemas/CreateTemplateSuccessResponse
+  - term: DeleteFlowSuccessResponse
+    definition: 'Object declared by the contract with fields: status, message, data.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-whatsapp-api-openapi.yml#/components/schemas/DeleteFlowSuccessResponse
+  - term: DeleteTemplateSuccessResponse
+    definition: 'Object declared by the contract with fields: success.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-whatsapp-api-openapi.yml#/components/schemas/DeleteTemplateSuccessResponse
+  - term: DeprecateFlowSuccessResponse
+    definition: 'Object declared by the contract with fields: status, message, data.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-whatsapp-api-openapi.yml#/components/schemas/DeprecateFlowSuccessResponse
+  - term: EditFlowSuccessResponse
+    definition: 'Object declared by the contract with fields: status, message, data.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-whatsapp-api-openapi.yml#/components/schemas/EditFlowSuccessResponse
+  - term: EditTemplateSuccessResponse
+    definition: 'Object declared by the contract with fields: status, message, data.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-whatsapp-api-openapi.yml#/components/schemas/EditTemplateSuccessResponse
+  - term: FlowListSuccessResponse
+    definition: 'Object declared by the contract with fields: status, message, data, paging.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-whatsapp-api-openapi.yml#/components/schemas/FlowListSuccessResponse
+  - term: TemplateListSuccessResponse
+    definition: 'Object declared by the contract with fields: status, message, data.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-whatsapp-api-openapi.yml#/components/schemas/TemplateListSuccessResponse
+  - term: FlowPreviewSuccessResponse
+    definition: 'Object declared by the contract with fields: status, message, data.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-whatsapp-api-openapi.yml#/components/schemas/FlowPreviewSuccessResponse
+  - term: PaymentStatusResponse
+    definition: Contains payment status response details.
+    tags:
+    - Object
+    source: openapi/netcorecloud-whatsapp-api-openapi.yml#/components/schemas/PaymentStatusResponse
+  - term: WebhookInfo
+    definition: 'Object declared by the contract with fields: name, urlEndpoint, failureAlertEmail, status, type, sourceKey.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-whatsapp-api-openapi.yml#/components/schemas/WebhookInfo
+  - term: BlocklistManagementRequest
+    definition: Defines the payload for blocklisting or whitelisting recipients.
+    tags:
+    - Object
+    source: openapi/netcorecloud-whatsapp-api-openapi.yml#/components/schemas/BlocklistManagementRequest
+  - term: ConsentRecipient
+    definition: Represents a single recipient’s consent or blocklist details.
+    tags:
+    - Object
+    source: openapi/netcorecloud-whatsapp-api-openapi.yml#/components/schemas/ConsentRecipient
+  - term: ConsentResponse
+    definition: Represents the standard success response for consent or blocklist actions.
+    tags:
+    - Object
+    source: openapi/netcorecloud-whatsapp-api-openapi.yml#/components/schemas/ConsentResponse
+  - term: ConsentManagementRequest
+    definition: Defines the payload for managing user consent actions.
+    tags:
+    - Object
+    source: openapi/netcorecloud-whatsapp-api-openapi.yml#/components/schemas/ConsentManagementRequest
+  - term: ManageWebhookRequest
+    definition: 'Object declared by the contract with fields: type, webhook_name, status.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-whatsapp-api-openapi.yml#/components/schemas/ManageWebhookRequest
+  - term: WebhookOperationResponse
+    definition: 'Object declared by the contract with fields: status, message, data.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-whatsapp-api-openapi.yml#/components/schemas/WebhookOperationResponse
+  - term: PreviewTemplateSuccessResponse
+    definition: 'Object declared by the contract with fields: status, message, preview_data.'
+    tags:
+    - Object
+    source: openapi/netcorecloud-whatsapp-api-openapi.yml#/components/schemas/PreviewTemplateSuccessResponse

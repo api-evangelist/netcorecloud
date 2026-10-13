@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/netcorecloud/main/json-schema/netcorecloud-filter-block-schema.json",
+  "title": "FilterBlock",
+  "x-generated": "2026-10-13",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/netcorecloud-campaigns-api-openapi.yml#/components/schemas/FilterBlock",
+  "type": "object",
+  "properties": {
+    "filtering_criteria_operator": {
+      "type": "string",
+      "description": "Allowed : and, or"
+    },
+    "filtering_criteria": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "condition_operator": {
+            "type": "string",
+            "description": "Allowed : and, or"
+          },
+          "condition_details": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "description": "Field Name "
+                },
+                "field_category": {
+                  "type": "string",
+                  "description": "Allowed : Channel Name. Fields which are epcific to channel need this key to be present to be searched successfully."
+                },
+                "operation": {
+                  "type": "string",
+                  "description": "Allowed : \"equals\" | \"not_equals\" | \"greater_than\" | \"less_than\" | \"greater_than_or_equal_to\" | \"less_than_or_equal_to\" | \"between\" | \"in\" | \"not_in\" | \"contains\" | \"does_not_contain\" | \"starts_with\" | \"ends_with\" | \"is_null\" | \"is_not_null\" | \"matches_regex\""
+                },
+                "value": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "field",
+                "operation",
+                "value"
+              ]
+            }
+          }
+        },
+        "required": [
+          "condition_operator",
+          "condition_details"
+        ]
+      }
+    }
+  },
+  "required": [
+    "filtering_criteria_operator",
+    "filtering_criteria"
+  ]
+}

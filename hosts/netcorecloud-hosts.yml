@@ -1,0 +1,167 @@
+generated: '2026-10-13'
+method: derived
+source: the pre-flight dossier, apis.yml pointers, spec servers, well-known, vendors -- nothing fetched here
+generator: derive-hosts.py
+summary:
+  hosts: 13
+  own: 8
+  other_domain: 5
+  platform: 0
+  roles:
+  - api
+  - docs
+  - identity
+  - other
+  - portal
+  - website
+hosts:
+- host: api.netcorecloud.com
+  found_by:
+  - contract-discovery
+  types: []
+  serves: []
+  registrable_domain: netcorecloud.com
+  role: api
+  relation: own
+- host: cedocs.netcorecloud.com
+  found_by:
+  - pointer
+  - probed
+  - site-links
+  - contract-discovery
+  - well-known
+  types:
+  - Documentation
+  serves: []
+  registrable_domain: netcorecloud.com
+  role: docs
+  relation: own
+- host: cpaaswa.netcorecloud.net
+  found_by:
+  - apis[]
+  types: []
+  serves:
+  - api
+  registrable_domain: netcorecloud.net
+  role: other
+  relation: other-domain
+- host: developer.netcorecloud.com
+  found_by:
+  - pointer
+  - apis[]
+  - probed
+  - site-links
+  - namespace-probe
+  - contract-discovery
+  - well-known
+  types:
+  - DeveloperPortal
+  serves:
+  - docs
+  title: Overview
+  status: 200
+  registrable_domain: netcorecloud.com
+  role: portal
+  relation: own
+- host: emailapi.netcorecloud.net
+  found_by:
+  - apis[]
+  types: []
+  serves:
+  - api
+  registrable_domain: netcorecloud.net
+  role: other
+  relation: other-domain
+- host: emaildocs.netcorecloud.com
+  found_by:
+  - pointer
+  - apis[]
+  types:
+  - Documentation
+  - APIReference
+  serves:
+  - docs
+  registrable_domain: netcorecloud.com
+  role: docs
+  relation: own
+- host: netcore.ai
+  found_by:
+  - pointer
+  - docs-index
+  types:
+  - Compliance
+  - TermsOfService
+  - Security
+  - PrivacyPolicy
+  - Newsroom
+  - Login
+  - Leadership
+  - Blog
+  serves:
+  - docs
+  registrable_domain: netcore.ai
+  role: identity
+  relation: other-domain
+- host: netcoreapi-main-prod-us.netcorein.com
+  found_by:
+  - apis[]
+  types: []
+  serves:
+  - api
+  registrable_domain: netcorein.com
+  role: other
+  relation: other-domain
+- host: netcorecloud.com
+  found_by:
+  - pointer
+  - probed
+  - contract-discovery
+  - well-known
+  - vendor-detect
+  types:
+  - Website
+  serves:
+  - cdn
+  vendor: cloudflare
+  registrable_domain: netcorecloud.com
+  role: website
+  relation: own
+- host: orbitus.netcorecloud.com
+  found_by:
+  - apis[]
+  types: []
+  serves:
+  - api
+  registrable_domain: netcorecloud.com
+  role: other
+  relation: own
+- host: smsapi.netcorecloud.net
+  found_by:
+  - apis[]
+  types: []
+  serves:
+  - api
+  registrable_domain: netcorecloud.net
+  role: other
+  relation: other-domain
+- host: soipapi.netcorecloud.com
+  found_by:
+  - apis[]
+  types: []
+  serves:
+  - api
+  registrable_domain: netcorecloud.com
+  role: other
+  relation: own
+- host: trust.netcorecloud.com
+  found_by:
+  - probed
+  - site-links
+  - contract-discovery
+  - well-known
+  types: []
+  serves: []
+  platform: app.safebase.io
+  registrable_domain: netcorecloud.com
+  role: other
+  relation: own

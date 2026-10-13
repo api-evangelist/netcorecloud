@@ -1,0 +1,363 @@
+openapi: 3.2.0
+info:
+  title: WHATSAPP Webhook Management API
+  version: '1.0'
+  description: Comprehensive collection of WhatsApp APIs that allow users to interact with WhatsApp Flows, Templates, Message Sending, Conversations, Consent Management, Webhooks, Payments, and Media associated with a specific WABA (WhatsApp Business Account).
+  license:
+    name: Proprietary
+    identifier: proprietary
+servers:
+- url: https://cpaaswa.netcorecloud.net/api
+  description: WhatsApp APIs Server
+- url: https://cpaaswa.netcorecloud.net
+  description: WhatsApp Root Server
+security:
+- bearerAuth: []
+tags:
+- name: Webhook Management
+paths:
+  /v3/metainfo/webhook/list_webhook:
+    get:
+      summary: List Webhooks
+      tags:
+      - Webhook Management
+      operationId: listWebhooks
+      description: 'Use this API to retrieve all configured webhooks based on type.
+
+
+        **Webhook Types**
+
+        - **incoming** – For chatbot and incoming message handling.
+
+        - **event** – For delivery event notifications like sent, read, or failed.
+
+
+        The response includes webhook name, URL, status, alert email, and type.'
+      parameters:
+      - name: type
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - incoming
+          - event
+        description: Enter the webhook type to retrieve.
+        example: incoming
+      responses:
+        '200':
+          description: "**Success Response**\n\nWebhooks retrieved successfully.\n\n```json\n[\n  {\n    \"name\": \"ChatBot_Webhook\",\n    \"urlEndpoint\": \"https://api.example.com/webhook/incoming\",\n    \"failureAlertEmail\": \"admin@example.com\",\n    \"status\": \"enabled\",\n    \"type\": \"incoming\",\n    \"sourceKey\": \"chatbot_service\"\n  }\n]\n```\n"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WebhookInfo'
+        '400':
+          description: "**Bad Request**\n\nThe request body or parameters are invalid.\n\n```json\n{\n  \"status\": \"failure\",\n  \"message\": \"Invalid webhook type. Must be 'incoming' or 'event'\"\n}\n```\n"
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - status
+                - message
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - failure
+                    - error
+                    description: Defines the response as a failure or error.
+                    example: failure
+                  message:
+                    type: string
+                    description: Explains the reason for the error.
+                    example: Webhook not found
+                  details:
+                    type: object
+                    description: Optional additional information about the error.
+                    additionalProperties: true
+        '401':
+          description: "**Unauthorized**\n\nMissing or invalid Bearer token.\n\n```json\n{\n  \"status\": \"failure\",\n  \"message\": \"Invalid Bearer token\"\n}\n```\n"
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1v3~1metainfo~1webhook~1list_webhook/get/responses/400/content/application~1json/schema'
+        '500':
+          description: "**Internal Server Error**\n\nA server error occurred. Try again later.\n\n```json\n{\n  \"status\": \"failure\",\n  \"message\": \"Internal server error\"\n}\n```\n"
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1v3~1metainfo~1webhook~1list_webhook/get/responses/400/content/application~1json/schema'
+  /v3/metainfo/webhook/update_webhook:
+    post:
+      summary: Update Webhook Configuration
+      tags:
+      - Webhook Management
+      operationId: updateWebhook
+      description: 'Use this API to create or update webhook configurations.
+
+        Set the webhook URL, custom headers, and alert email settings.
+
+
+        **Limits**
+
+        - Up to **3 incoming** and **5 event** webhooks.'
+      parameters:
+      - name: Content-Type
+        in: header
+        required: true
+        description: Set to `application/json` for all requests with JSON bodies.
+        schema:
+          type: string
+          example: application/json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateWebhookRequest'
+            examples:
+              IncomingWebhook:
+                summary: Incoming Webhook
+                description: Create or update a webhook to receive customer messages.
+                value:
+                  type: incoming
+                  name: ChatBot_Webhook
+                  url: https://api.example.com/webhook/incoming
+                  source: ChatBot_Service
+                  headers: '{"Content-Type": "application/json"}'
+              EventWebhook:
+                summary: Event Webhook
+                description: Create or update a webhook to receive delivery events.
+                value:
+                  type: event
+                  name: Delivery_Events
+                  url: https://api.example.com/webhook/events
+                  source: Analytics_Service
+                  headers: '{"X-API-Key": "your_api_key"}'
+      responses:
+        '200':
+          description: "**Success Response**\n\nWebhook configuration updated successfully.\n\n```json\n{\n  \"status\": \"success\",\n  \"message\": \"Webhook updated successfully.\",\n  \"data\": {\n    \"webhook_name\": \"ChatBot_Webhook\",\n    \"type\": \"incoming\"\n  }\n}\n```\n"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookOperationResponse'
+        '400':
+          $ref: '#/paths/~1v3~1metainfo~1webhook~1list_webhook/get/responses/400'
+        '401':
+          $ref: '#/paths/~1v3~1metainfo~1webhook~1list_webhook/get/responses/401'
+        '500':
+          description: "**Webhook Limit Exceeded**\n\nThe maximum number of webhooks for this type has been reached.\n\n```json\n{\n  \"status\": \"failure\",\n  \"message\": \"Max allowed incoming events exceeded\"\n}\n```\n"
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1v3~1metainfo~1webhook~1list_webhook/get/responses/400/content/application~1json/schema'
+  /v2/metainfo/webhook/manage_webhook:
+    post:
+      summary: Manage Webhook Status
+      tags:
+      - Webhook Management
+      operationId: manageWebhook
+      description: 'Use this API to enable or disable webhook endpoints without changing their configuration.
+
+
+        **Status Options**
+
+        - **enable** – Activate webhook to start receiving events.
+
+        - **disable** – Temporarily pause webhook delivery.
+
+
+        **Typical Use Cases**
+
+        - Disable webhooks during maintenance.
+
+        - Re-enable after testing or scaling down load.'
+      parameters:
+      - $ref: '#/paths/~1v3~1metainfo~1webhook~1update_webhook/post/parameters/0'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManageWebhookRequest'
+            examples:
+              EnableIncomingWebhook:
+                summary: Enable Webhook
+                description: Turn on an incoming message webhook.
+                value:
+                  type: incoming
+                  webhook_name: ChatBot_Webhook
+                  status: enable
+              DisableEventWebhook:
+                summary: Disable Webhook
+                description: Turn off an event webhook temporarily.
+                value:
+                  type: event
+                  webhook_name: Delivery_Events
+                  status: disable
+      responses:
+        '200':
+          description: "**Success Response**\n\nWebhook status updated successfully.\n\n```json\n{\n  \"status\": \"success\",\n  \"message\": \"Webhook status updated successfully.\",\n  \"data\": {\n    \"webhook_name\": \"ChatBot_Webhook\",\n    \"status\": \"enabled\"\n  }\n}\n```\n"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookOperationResponse'
+        '400':
+          $ref: '#/paths/~1v3~1metainfo~1webhook~1list_webhook/get/responses/400'
+        '401':
+          $ref: '#/paths/~1v3~1metainfo~1webhook~1list_webhook/get/responses/401'
+        '404':
+          description: "**Webhook Not Found**\n\nThe specified webhook does not exist.\n\n```json\n{\n  \"status\": \"failure\",\n  \"message\": \"Webhook not found\"\n}\n```\n"
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1v3~1metainfo~1webhook~1list_webhook/get/responses/400/content/application~1json/schema'
+        '500':
+          $ref: '#/paths/~1v3~1metainfo~1webhook~1list_webhook/get/responses/500'
+components:
+  schemas:
+    WebhookInfo:
+      type: object
+      required:
+      - name
+      - urlEndpoint
+      - status
+      - type
+      properties:
+        name:
+          type: string
+          description: Webhook display name.
+          example: test chatbot
+        urlEndpoint:
+          type: string
+          format: uri
+          description: Webhook destination URL.
+          example: https://echouat.netcorecloud.com/api/v1/bots/webhook
+        failureAlertEmail:
+          type: string
+          format: email
+          description: Email address for webhook failure alerts.
+          example: admin@example.com
+        status:
+          type: string
+          enum:
+          - enabled
+          - disabled
+          description: Current webhook state.
+          example: enabled
+        type:
+          type: string
+          enum:
+          - incoming
+          - event
+          description: Indicates whether the webhook is for incoming messages or events.
+          example: incoming
+        sourceKey:
+          type: string
+          description: Optional identifier for the source or service associated with this webhook.
+          example: cpaas_360
+    WebhookOperationResponse:
+      type: object
+      required:
+      - status
+      - message
+      properties:
+        status:
+          type: string
+          enum:
+          - success
+          - failure
+          description: Indicates if the operation was successful.
+          example: success
+        message:
+          type: string
+          description: Message describing the operation result.
+          example: Webhook updated successfully.
+        data:
+          type: object
+          description: Includes webhook operation details.
+          properties:
+            webhook_name:
+              type: string
+              example: ChatBot_Webhook
+            type:
+              type: string
+              example: incoming
+            status:
+              type: string
+              example: enabled
+    ManageWebhookRequest:
+      type: object
+      required:
+      - type
+      - webhook_name
+      - status
+      properties:
+        type:
+          type: string
+          enum:
+          - incoming
+          - event
+          description: Select the webhook type you want to enable or disable.
+          example: incoming
+        webhook_name:
+          type: string
+          description: Enter the name of the webhook you want to manage.
+          example: ChatBot_Webhook
+        status:
+          type: string
+          enum:
+          - enable
+          - disable
+          description: Set the new status for the webhook.
+          example: enable
+    UpdateWebhookRequest:
+      type: object
+      required:
+      - type
+      - name
+      - url
+      - headers
+      properties:
+        type:
+          type: string
+          enum:
+          - incoming
+          - event
+          description: Select whether the webhook is for incoming messages or event delivery.
+          example: incoming
+        name:
+          type: string
+          description: Enter a unique name for the webhook.
+          maxLength: 50
+          example: ChatBot_Webhook
+        url:
+          type: string
+          format: uri
+          description: Enter the destination URL to receive webhook payloads.
+          example: https://api.example.com/webhook/incoming
+        source:
+          type: string
+          description: Optionally specify the source or service that owns the webhook.
+          maxLength: 100
+          example: ChatBot_Service
+        headers:
+          type: string
+          description: Provide custom headers in JSON format for webhook requests.
+          example: '{"Content-Type": "application/json"}'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer token authentication using JWT. Include the token in the Authorization header as 'Bearer <your_token>'.
+x-stoplight:
+  id: o7al2fnfvhxlr
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

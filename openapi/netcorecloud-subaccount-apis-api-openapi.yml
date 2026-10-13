@@ -1,0 +1,564 @@
+openapi: 3.2.0
+info:
+  title: Email API V6 Subaccount APIs API
+  description: ''
+  version: 1.0.0
+servers:
+- url: https://emailapi.netcorecloud.net/v6
+  description: For Non EU region
+- url: https://apieu.netcorecloud.net/v6
+  description: For EU region
+security: []
+tags:
+- name: Subaccount APIs
+paths:
+  /subaccounts:
+    post:
+      summary: Create Subaccount
+      description: '**Creates a subaccount under your master account.** Subaccounts function like regular Email API accounts but are credit-controlled by the master account. By default, subaccounts have "unlimited" credit access from the master. To restrict usage, set `credit_type` to `one_time_credit` and allocate credits manually or on a recurring schedule. A confirmation email is sent to the provided address. If no password is set, the confirmation link also serves as a password setup link.'
+      operationId: create-subaccount
+      tags:
+      - Subaccount APIs
+      parameters:
+      - name: Authorization
+        in: header
+        description: API key for authentication. Navigate to Netcore WhatsApp Dashboard > Settings > API Key.
+        required: true
+        example: Bearer <<API KEY>>
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: The username for the subaccount. Must be unique under the master account
+                email:
+                  type: string
+                  description: The email address associated with the subaccount
+                password:
+                  type: string
+                  description: The password for the subaccount
+                credit_type:
+                  type: string
+                  description: The credit allocation type. Can be either unlimited or one_time_credit. Default is one_time_credit
+                  enum:
+                  - unlimited
+                  - one_time_credit
+              required:
+              - username
+              - email
+              - password
+            examples:
+              create-subaccount-example:
+                summary: Create Subaccount Example
+                value:
+                  username: subaccount1
+                  email: subaccount1@example.com
+                  password: securepassword123
+                  credit_type: one_time_credit
+      responses:
+        '200':
+          description: Subaccount created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  api_key:
+                    type: string
+              example:
+                message: Subaccount created successfully.
+                api_key: your_subaccount_api_key
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: Invalid Parameters
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: You cannot use this feature
+      security:
+      - bearer: []
+    get:
+      summary: List Subaccounts
+      description: '**Retrieves a list of all subaccounts with optional filters**'
+      operationId: list-subaccounts
+      tags:
+      - Subaccount APIs
+      parameters:
+      - name: username
+        in: query
+        description: Filter subaccounts by username
+        required: false
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: The number of records to return. Default is 10. Max is 1000
+        required: false
+        schema:
+          type: integer
+          maximum: 1000
+      - name: offset
+        in: query
+        description: The number of records to skip. Default is 0
+        required: false
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Successful response with list of subaccounts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    username:
+                      type: string
+                    email:
+                      type: string
+                    disabled:
+                      type: integer
+                    credit_type:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                        credits:
+                          type: integer
+              example:
+              - username: subaccount1
+                email: subaccount1@example.com
+                disabled: 0
+                credit_type:
+                  type: one_time_credit
+                  credits: 1000
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: Master account does not exist.
+      security:
+      - bearer: []
+  /subaccounts/{username}:
+    delete:
+      summary: Delete Subaccount
+      operationId: delete-subaccounts-username
+      description: '**Lets you delete a subaccount**'
+      tags:
+      - Subaccount APIs
+      parameters:
+      - name: username
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                required:
+                - error
+              example:
+                error: Subaccount does not exists
+          headers: {}
+      security:
+      - bearer: []
+    patch:
+      tags:
+      - Subaccount APIs
+      summary: Update a Subaccount
+      description: '**Lets you enable or disable a subaccount**'
+      operationId: patch-subaccounts-username
+      parameters:
+      - name: username
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                disabled:
+                  type: boolean
+                  description: Whether or not this subuser is disabled. True means disabled, False means enabled.
+                  default: false
+              x-examples:
+                example-1:
+                  disabled: false
+            examples:
+              Example 1:
+                value:
+                  disabled: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                x-examples:
+                  Example 1:
+                    message: Subaccount enabled successfully.
+              examples:
+                Example 1:
+                  value:
+                    message: Subaccount enabled successfully.
+                Example 2:
+                  value:
+                    message: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                x-examples:
+                  Example 1:
+                    error: Subaccount already enabled.
+              examples:
+                Example 1:
+                  value:
+                    error: Subaccount already enabled.
+      security:
+      - bearerAuth: []
+  /subaccounts/credits/{username}:
+    get:
+      summary: Get Credits
+      deprecated: false
+      description: ''
+      tags:
+      - Subaccount APIs
+      parameters:
+      - name: username
+        in: path
+        description: ''
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  creditDetails:
+                    $ref: '#/paths/~1subaccounts~1credits~1modify/post/responses/200/content/application~1json/schema/properties/creditDetails'
+                required:
+                - creditDetails
+              examples:
+                '1':
+                  summary: Recurring Credit
+                  value:
+                    creditDetails:
+                      username: test090
+                      credit_type: One-time
+                      credit_assigned: 0
+                      balance: 10000
+                      recurring:
+                        frequency: daily
+                        start_date: 01-02-2021
+                        end_date: 01-31-2021
+                        recurring_credit: '100'
+                '2':
+                  summary: One TIme
+                  value:
+                    creditDetails:
+                      username: testbounce
+                      credit_type: One-time
+                      credit_assigned: 1000
+                      balance: 5000
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: string
+                required:
+                - error
+              example:
+                error:
+                - 'Subaccount not exists '
+          headers: {}
+      security:
+      - bearer: []
+      operationId: getSubaccountsCreditsByUsername
+      x-operation-id-source: derived
+  /subaccounts/credits/modify:
+    post:
+      summary: Add/Remove Credits
+      deprecated: false
+      description: ''
+      tags:
+      - Subaccount APIs
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                action:
+                  type: string
+                  enum:
+                  - add
+                  - remove
+                credit:
+                  type: integer
+                  minimum: 1
+              required:
+              - username
+              - action
+              - credit
+            example:
+              username: accountsub1
+              action: remove
+              credit: 56329713
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  creditDetails:
+                    type: object
+                    properties:
+                      username:
+                        type: string
+                      credit_type:
+                        type: string
+                        enum:
+                        - One-time
+                        - Unlimited
+                      credit_assigned:
+                        type: integer
+                      balance:
+                        type: integer
+                      recurring:
+                        type: object
+                        properties:
+                          frequency:
+                            type: string
+                          start_date:
+                            type: string
+                            format: date
+                          end_date:
+                            type: string
+                            format: date
+                          recurring_credit:
+                            type: string
+                        required:
+                        - frequency
+                        - start_date
+                        - end_date
+                        - recurring_credit
+                    required:
+                    - username
+                    - credit_type
+                    - credit_assigned
+                    - balance
+                    - recurring
+                required:
+                - message
+                - creditDetails
+              example: "{\n  \"message\": \"Credits updated successfully\",\n  \"creditDetails\": {\n    \"username\": \"string\",\n    \"credit_type\": \"One-time\", \n    \"credit_assigned\": number\n    \"balance\": number | null,\n    \"recurring\": {\n      \"frequency\": \"string\",\n      \"start_date\": \"MM-DD-YYYY\",\n      \"end_date\": \"MM-DD-YYYY\",\n      \"recurring_credit\": \"string\"\n    }\n  }\n}"
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: string
+                required:
+                - errors
+              example:
+                errors:
+                - Credit supplied should be greater than 0
+          headers: {}
+      security:
+      - bearer: []
+      operationId: postSubaccountsCreditsModify
+      x-operation-id-source: derived
+  /subaccounts/addrecurringcredit:
+    post:
+      summary: Set Recurring Credit
+      deprecated: false
+      description: ''
+      tags:
+      - Subaccount APIs
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                status:
+                  type: string
+                  enum:
+                  - enable
+                  - disable
+                recurring_credit:
+                  type: integer
+                frequency:
+                  type: string
+                  enum:
+                  - daily
+                  - weekly
+                  - monthly
+                start_date:
+                  type: string
+                  format: date
+                end_date:
+                  type: string
+                  format: date
+              required:
+              - username
+              - status
+              - recurring_credit
+              - frequency
+              - start_date
+              - end_date
+            example:
+              username: test0901
+              status: enable
+              recurring_credit: 10
+              frequency: daily
+              start_date: '2025-09-08'
+              end_date: '2025-09-15'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  creditDetails:
+                    $ref: '#/paths/~1subaccounts~1credits~1modify/post/responses/200/content/application~1json/schema/properties/creditDetails'
+                required:
+                - message
+                - creditDetails
+              example:
+                creditDetails:
+                  username: test0901
+                  credit_type: One-time
+                  credit_assigned: 10
+                  balance: 10
+                  recurring:
+                    frequency: daily
+                    start_date: 09-08-2025
+                    end_date: 09-15-2025
+                    recurring_credit: '10'
+                message: Recurring details updated successfully.
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: string
+                required:
+                - error
+              example:
+                error:
+                - 'Parameter status is not supplied properly . Required values for status is enable or disable '
+          headers: {}
+      security:
+      - bearer: []
+      operationId: postSubaccountsAddrecurringcredit
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

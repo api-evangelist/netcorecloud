@@ -1,0 +1,693 @@
+openapi: 3.2.0
+info:
+  title: Email API V6 Suppression APIs API
+  description: ''
+  version: 1.0.0
+servers:
+- url: https://emailapi.netcorecloud.net/v6
+  description: For Non EU region
+- url: https://apieu.netcorecloud.net/v6
+  description: For EU region
+security: []
+tags:
+- name: Suppression APIs
+paths:
+  /suppressions/global/domain:
+    post:
+      summary: Add Domains to Suppression List
+      deprecated: false
+      description: 'Adds one or more domains to the suppression list. Once added, any email addresses belonging to these domains will be blocked from receiving further communications from your account. This is typically used to suppress domains that bounce frequently, are spam traps, or belong to users who have requested to never receive emails from your brand.
+
+        For example, Suppressing **example.com** will block emails to user@example.com.
+
+        The system automatically removes the `www.` prefix if present.'
+      operationId: add-domains-to-suppression
+      tags:
+      - Suppression APIs
+      parameters:
+      - name: on-behalf-of
+        in: header
+        description: Use this header when making requests on behalf of a subaccount. Required only when using a master account's API key.
+        required: false
+        schema:
+          type: string
+          example: subaccount_username
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - domains
+              properties:
+                domains:
+                  type: array
+                  minItems: 1
+                  maxItems: 1000
+                  description: 'List of domains to suppress. Must be valid domain strings (e.g., example.com). Limit 1 to 1000. The system strips `www.` prefix automatically.
+
+                    '
+                  items:
+                    type: string
+                    format: hostname
+                    example: example.com
+            examples:
+              Valid Request:
+                summary: Add 2 domains to suppression list
+                value:
+                  domains:
+                  - example.com
+                  - test.com
+      responses:
+        '201':
+          description: Domains successfully added to suppression list.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - domains
+                properties:
+                  domains:
+                    type: array
+                    minItems: 1
+                    maxItems: 1000
+                    items:
+                      type: string
+                      format: hostname
+                      example: example.com
+              examples:
+                Success:
+                  summary: Domains added
+                  value:
+                    domains:
+                    - example.com
+                    - test.com
+          headers: {}
+        '400':
+          description: Invalid request – typically due to missing or malformed domain list.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                properties:
+                  error:
+                    type: string
+                    example: Domain list should be in range of 1 to 1000
+              examples:
+                Out of Range:
+                  summary: More than allowed domains
+                  value:
+                    error: Domain list should be in range of 1 to 1000
+      security:
+      - bearer: []
+    get:
+      summary: Retrieve Domain(s) in the Suppression List
+      deprecated: false
+      description: This API retrieves a list of domain(s) currently added to the suppression list for your account. Suppressed domains are automatically excluded from email delivery to prevent sending to recipients from restricted or blocked domains. The time period can be defined by using the start_time and end_time paramater.
+      operationId: get-suppression-domain
+      tags:
+      - Suppression APIs
+      parameters:
+      - name: start_time
+        in: query
+        description: Refers start of the time range in unix timestamp when an unsubscribe email was created (inclusive).
+        required: false
+        schema:
+          type: string
+          format: date
+          example: '2023-01-01'
+      - name: end_time
+        in: query
+        description: Refers end of the time range in unix timestamp when an unsubscribe email was created (inclusive).
+        required: false
+        schema:
+          type: string
+          format: date
+          example: '2023-02-06'
+      - name: offset
+        in: query
+        description: The point in the list of results to begin displaying global suppressions.
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+      - name: limit
+        in: query
+        description: The number of results to display on each page.
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 1000
+          default: 1000
+      - name: on-behalf-of
+        in: header
+        description: Use this header when making requests on behalf of a subaccount. Required only when using a master account's API key.
+        required: false
+        schema:
+          type: string
+          example: subaccount_username
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/paths/~1suppressions~1global~1domain~1%7Bdomain%7D/get/responses/200/content/application~1json/schema'
+              example:
+              - domain: example.com
+                created: '2024-03-20 10:00:00'
+                modified: '2024-03-20 10:00:00'
+                status: 5
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                required:
+                - error
+              example:
+                error: Start Date should be in required format (yyyy-mm-dd)
+          headers: {}
+      security:
+      - bearer: []
+    delete:
+      summary: Remove Domains from Suppression List
+      deprecated: false
+      description: 'Removes one or more domains from your suppression list. Once removed, email addresses under these domains will be whitelisted and can start receiving communication again.
+
+        This is useful when a domain was mistakenly suppressed or is now eligible to receive emails.
+
+        For example Removing **example.com** allows emails to user@example.com again.'
+      operationId: remove-domains-from-suppression
+      tags:
+      - Suppression APIs
+      parameters:
+      - name: on-behalf-of
+        in: header
+        description: 'Use this header when making requests on behalf of a subaccount. Required only when using a master account''s API key.
+
+          '
+        required: false
+        example: subaccount_username
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - domains
+              properties:
+                domains:
+                  type: array
+                  minItems: 1
+                  maxItems: 1000
+                  description: 'List of domains to be removed from the suppression list. Each domain must be valid (e.g., example.com). Limit 1 to 1000.
+
+                    '
+                  items:
+                    type: string
+                    format: hostname
+                    example: example.com
+            examples:
+              Valid Request:
+                summary: Remove 2 domains from suppression list
+                value:
+                  domains:
+                  - example.com
+                  - test.com
+      responses:
+        '204':
+          description: Domains successfully removed from suppression list. No content returned.
+          headers: {}
+        '400':
+          description: Bad Request – Invalid or missing domain list.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                properties:
+                  error:
+                    type: string
+                    example: Domain list should be in range of 1 to 1000
+              examples:
+                Out of Range:
+                  summary: Too many or no domains
+                  value:
+                    error: Domain list should be in range of 1 to 1000
+      security:
+      - bearer: []
+  /suppressions/global/email:
+    post:
+      summary: Add Email(s) to Suppression List
+      deprecated: false
+      description: 'This endpoint allows you to suppress one or more email addresses and block any future delivery attempts to those addresses from your account. Suppressing email addresses is useful for managing bounces, spam complaints, or opt-out requests to ensure compliant and clean email delivery. For example: Suppressing `youremailid@gmail.com` will block all future delivery attempts to that address.'
+      operationId: add-suppression-email
+      tags:
+      - Suppression APIs
+      parameters:
+      - name: on-behalf-of
+        in: header
+        description: '*(Optional)* Use this header when making API calls on behalf of a subaccount. Required only if you’re using a master account’s API key.
+
+          '
+        required: false
+        example: subaccount_username
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - recipient_emails
+              properties:
+                recipient_emails:
+                  type: array
+                  minItems: 1
+                  maxItems: 1000
+                  description: 'List of email addresses to be suppressed. Must be in valid email format (e.g., user@example.com).  Limit: 1–1000 entries.
+
+                    '
+                  items:
+                    type: string
+                    format: email
+                    example: user@example.com
+            examples:
+              Valid Request:
+                summary: Suppress multiple email addresses
+                value:
+                  recipient_emails:
+                  - user@example.com
+                  - test@example.com
+      responses:
+        '201':
+          description: Email(s) successfully added to suppression list.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - recipient_emails
+                properties:
+                  recipient_emails:
+                    type: array
+                    minItems: 1
+                    maxItems: 1000
+                    items:
+                      type: string
+                      format: email
+                      example: user@example.com
+              examples:
+                Success:
+                  summary: Emails added to suppression list
+                  value:
+                    recipient_emails:
+                    - user@example.com
+                    - test@example.com
+          headers: {}
+        '400':
+          description: Bad Request – Invalid or missing email list.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                properties:
+                  error:
+                    type: string
+                    example: Email list should be between 1 to 1000
+              examples:
+                Invalid Input:
+                  summary: Empty or excessive email list
+                  value:
+                    error: Email list should be between 1 to 1000
+          headers: {}
+      security:
+      - bearer: []
+    delete:
+      summary: Remove Email(s) from Suppression List
+      deprecated: false
+      description: 'This endpoint allows you to remove one or more email addresses from your suppression list. Once removed, these addresses will be eligible to receive emails again from your account.
+
+        This operation is useful if an address was suppressed due to a temporary issue (like a bounce) or has since opted back in to receive communications.
+
+        Note: While you can remove suppressed addresses, it''s good practice to continue suppressing recipients who have explicitly opted out or shown no engagement.'
+      operationId: delete-suppression-email
+      tags:
+      - Suppression APIs
+      parameters:
+      - name: on-behalf-of
+        in: header
+        description: Optional header used when making API calls with a master account’s API key. It allows actions to be performed on behalf of a specific subaccount by specifying the subaccount’s username.
+        required: false
+        example: subaccount_username
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - email
+              properties:
+                email:
+                  type: array
+                  description: 'A list of email addresses to be removed from the suppression list. The list must contain between 1 and 1000 valid email addresses.
+
+                    '
+                  minItems: 1
+                  maxItems: 1000
+                  items:
+                    type: string
+                    format: email
+                    example: test@example.com
+            examples:
+              Valid Request:
+                summary: Remove multiple emails
+                value:
+                  email:
+                  - user@example.com
+                  - test@example.com
+      responses:
+        '204':
+          description: Email(s) successfully removed from suppression list. No response body is returned.
+          headers: {}
+        '400':
+          description: Bad Request – Invalid email list (e.g., none provided or exceeds limit).
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                properties:
+                  error:
+                    type: string
+              examples:
+                Invalid List:
+                  summary: Too few or too many emails
+                  value:
+                    error: Email list should be between 1 to 1000
+      security:
+      - bearer: []
+    get:
+      summary: List Suppressed Emails
+      deprecated: false
+      description: Retrieves a paginated list of domains currently added to the suppression list. You can apply optional filters such as start and end date, and use pagination parameters to control result size and navigation. This is useful for auditing or managing domains that are blocked from receiving emails.
+      operationId: get-suppressed-emails
+      tags:
+      - Suppression APIs
+      parameters:
+      - name: start_time
+        in: query
+        description: Optional filter to return domains suppressed on or after this date. Format is YYYY-MM-DD. It is applicable for modified date only.
+        required: false
+        schema:
+          type: string
+          format: date
+          example: '2022-02-10'
+      - name: end_time
+        in: query
+        description: Optional filter to return domains suppressed on or before this date. Must be equal to or later than `start_time`. Format is YYYY-MM-DD. It is applicable for modified date only.
+        required: false
+        schema:
+          type: string
+          format: date
+          example: '2022-03-10'
+      - name: offset
+        in: query
+        description: 'Number of records to skip for pagination. Minimum: 0. Default: 0.'
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          example: 5
+      - name: limit
+        in: query
+        description: 'Number of records to return in the response. Range: 1–1000. Default: 1000.'
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 1000
+          example: 10
+      - name: on-behalf-of
+        in: header
+        description: '*(Optional)* Use this header when making API calls on behalf of a subaccount. Required only if you’re using a master account’s API key.'
+        required: false
+        schema:
+          type: string
+          example: subaccount_username
+      responses:
+        '200':
+          description: List of suppressed domains retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                    created:
+                      type: string
+                      format: date-time
+                    modified:
+                      type: string
+                      format: date-time
+                    status:
+                      type: integer
+                  required:
+                  - email
+                  - created
+                  - modified
+                  - status
+              examples:
+                Success:
+                  summary: Example response
+                  value:
+                  - email: user@example.com
+                    created: '2024-03-20 10:00:00'
+                    modified: '2024-03-20 10:00:00'
+                    status: 5
+        '400':
+          description: Bad Request – Likely due to invalid query parameters (e.g., limit out of range).
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                properties:
+                  error:
+                    type: string
+                    example: Limit value should be between 1 to 1000
+              examples:
+                Invalid Limit:
+                  summary: Limit out of range
+                  value:
+                    error: Limit value should be between 1 to 1000
+      security:
+      - bearer: []
+  /suppressions/global/email/{email}:
+    get:
+      summary: Get Email Suppression Status
+      deprecated: false
+      description: 'This API checks if a specific email address is currently present in your suppression list. Suppressed addresses are excluded from all future email deliveries via the platform.
+
+        The response provides suppression metadata including the email’s suppression status code, the time it was added, and the last modified timestamp. Use this endpoint to validate if an email is blocked from receiving communications and take corrective actions if needed.'
+      operationId: get-email-suppression-status
+      tags:
+      - Suppression APIs
+      parameters:
+      - name: email
+        in: path
+        description: 'The email address you want to check for suppression status. Must be a valid email format (e.g., user@example.com).
+
+          '
+        required: true
+        example: user@example.com
+        schema:
+          type: string
+          format: email
+      - name: on-behalf-of
+        in: header
+        description: '*(Optional)* Use this header when making API calls on behalf of a subaccount. Required only if you’re using a master account’s API key.
+
+          '
+        required: false
+        example: subaccount_username
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Suppression status retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - email
+                - created
+                - modified
+                - status
+                properties:
+                  email:
+                    type: string
+                    format: email
+                  created:
+                    type: string
+                    format: date-time
+                  modified:
+                    type: string
+                    format: date-time
+                  status:
+                    type: integer
+                    description: 'Suppression status code indicating the type of block.<br> **Example:** `5` = globally suppressed.
+
+                      '
+              examples:
+                Success:
+                  summary: Suppressed email details
+                  value:
+                    email: user@example.com
+                    created: '2024-03-20 10:00:00'
+                    modified: '2024-03-20 10:00:00'
+                    status: 5
+        '400':
+          description: Bad Request - Invalid email format or missing email parameter.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                properties:
+                  error:
+                    type: string
+              examples:
+                Invalid Email:
+                  summary: Invalid email error
+                  value:
+                    error: Please provide valid email
+      security:
+      - bearer: []
+  /suppressions/global/domain/{domain}:
+    get:
+      summary: Search for a domain in global suppression list
+      deprecated: false
+      description: This endpoint allows you to check if a domain exists in the Suppression list. The API returns the date when the domain was first added to the suppression list along with modified date and status.
+      operationId: get-suppressions-global-domain
+      tags:
+      - Suppression APIs
+      parameters:
+      - name: domain
+        in: path
+        description: The domain that you want to search for in the global suppression list.
+        required: true
+        example: example.com
+        schema:
+          type: string
+          examples:
+          - example.com
+      - name: on-behalf-of
+        in: header
+        description: Use this header when making requests on behalf of a subaccount. Required only when using a master account's API key.
+        required: false
+        schema:
+          type: string
+          example: subaccount_username
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                title: suppression_response
+                properties:
+                  domain:
+                    type: string
+                    examples:
+                    - example.com
+                  created:
+                    type: string
+                    format: date-time
+                  modified:
+                    type: string
+                    examples:
+                    - '2024-03-20 12:00:00'
+                    format: date-time
+                  status:
+                    type: integer
+                x-examples:
+                  example-1:
+                    email: abc@gmail.com
+                    created: '2022-02-01 12:21:22'
+                    modified: '2022-02-01 12:21:22'
+                    status: Unsubsribed
+                required:
+                - domain
+                - created
+                - modified
+                - status
+              example:
+                domain: testsac.com
+                created: '2025-05-07 16:09:01'
+                modified: '2025-05-07 16:20:34'
+                status: 5
+          headers: {}
+        '400':
+          description: Bad Request - Invalid email format or missing email parameter.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                required:
+                - error
+              example:
+                error: Please provide valid domain
+          headers: {}
+      security:
+      - bearer: []
+components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

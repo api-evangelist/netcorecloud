@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/netcorecloud/main/json-schema/netcorecloud-output-block-schema.json",
+  "title": "OutputBlock",
+  "x-generated": "2026-10-13",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/netcorecloud-campaigns-api-openapi.yml#/components/schemas/OutputBlock",
+  "type": "object",
+  "properties": {
+    "get_count": {
+      "type": "boolean",
+      "description": "Get count of the results."
+    },
+    "sorting": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string",
+            "description": "Field to be sorted with"
+          },
+          "direction": {
+            "type": "string",
+            "description": "Allowed: asc, desc"
+          }
+        }
+      },
+      "description": "Should not be present if get_count is True."
+    },
+    "pagination": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "description": "The page number"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Number of results per page"
+        }
+      },
+      "description": "Should not be present if get_count is True. Break search results into segments or pages."
+    },
+    "fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Should not be present if get_count is True. The fields which should be present in the output. Allowed Values : campaign_id, channel, campaign_name, campaign_state, campaign_type, tags, google_analytics, conversion_tracking, audience_details, content_details, frequency_capping, schedule_details, campaign_specific_details"
+    }
+  },
+  "required": [
+    "get_count"
+  ]
+}

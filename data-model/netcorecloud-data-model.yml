@@ -1,0 +1,310 @@
+generated: '2026-10-13'
+method: derived
+generator: derive-data-model.py
+source:
+- openapi/netcorecloud-attributes-api-openapi.yml
+- openapi/netcorecloud-campaigns-api-openapi.yml
+- openapi/netcorecloud-contacts-api-openapi.yml
+- openapi/netcorecloud-email-api-v5-openapi.yml
+- openapi/netcorecloud-email-api-v6-openapi.yml
+- openapi/netcorecloud-exports-api-openapi.yml
+- openapi/netcorecloud-orbit-router-openapi.yml
+- openapi/netcorecloud-rcs-api-openapi.yml
+- openapi/netcorecloud-sms-api-openapi.yml
+- openapi/netcorecloud-templates-api-openapi.yml
+- openapi/netcorecloud-trigger-api-openapi.yml
+- openapi/netcorecloud-whatsapp-api-openapi.yml
+notation: has_one = property $ref; has_many = array of $ref; belongs_to = <entity>_id field
+summary:
+  entities: 86
+  entities_in_spec: 86
+  relationships: 24
+entities:
+- name: ApiKeyCreated
+  fields: 5
+- name: ApiKeySummary
+  fields: 5
+- name: AudienceDetails
+  fields: 2
+  description: Details of the audience for the campaign. Section to specify Audience Details to be included or excluded
+    for the campaign via Contact Master, List IDs, Segment IDs or UDT ID. Note - This is not a mand
+- name: AuditLogEntry
+  fields: 9
+- name: AuditLogPage
+  fields: 4
+- name: BackendErrorResponse
+  fields: 2
+- name: BlocklistManagementRequest
+  fields: 2
+  description: Defines the payload for blocklisting or whitelisting recipients.
+- name: CampaignSpecific
+  fields: 20
+  description: Channel Specific details for the campaign.
+- name: ClientSummary
+  fields: 3
+- name: ConsentManagementRequest
+  fields: 2
+  description: Defines the payload for managing user consent actions.
+- name: ConsentRecipient
+  fields: 4
+  description: Represents a single recipient’s consent or blocklist details.
+- name: ConsentResponse
+  fields: 3
+  description: Represents the standard success response for consent or blocklist actions.
+- name: ContentDetails
+  fields: 1
+  description: Content details for the campaign. Note - This is not a mandatory block as long as the campaign is
+    in "draft" state
+- name: ConversionCustomData
+  fields: 9
+  description: Additional event-specific data
+- name: ConversionEvent
+  fields: 6
+- name: ConversionEventRequest
+  fields: 1
+- name: ConversionResponse
+  fields: 3
+- name: ConversionTracking
+  fields: 5
+  description: Conversion details for the campaign. In Development
+- name: ConversionUserData
+  fields: 2
+  description: User identification data (at least one field required)
+- name: CreateFlowSuccessResponse
+  fields: 3
+- name: CreateTemplateSuccessResponse
+  fields: 3
+- name: DLRErrorResponse
+  fields: 2
+- name: DLRReportItem
+  fields: 15
+- name: DLRReportResponse
+  fields: 4
+- name: DashboardStats
+  fields: 6
+- name: DeleteFlowSuccessResponse
+  fields: 3
+- name: DeleteTemplateSuccessResponse
+  fields: 1
+- name: DeprecateFlowSuccessResponse
+  fields: 3
+- name: EditFlowSuccessResponse
+  fields: 3
+- name: EditTemplateSuccessResponse
+  fields: 3
+- name: EmailAddress
+  fields: 2
+- name: EngineErrorResponse
+  fields: 4
+- name: EngineSuccessResponse
+  fields: 3
+- name: FailureSchema
+  fields: 5
+- name: FilterBlock
+  fields: 2
+- name: FlowListSuccessResponse
+  fields: 4
+- name: FlowPreviewSuccessResponse
+  fields: 3
+- name: FrequencyCapping
+  fields: 1
+  description: This is used to manage how often a campaign is sent to the same user. Limit the number of times a
+    user can receive the campaign within a specified time frame. Details of sub-parameter is provided belo
+- name: GoogleAnalytics
+  fields: 7
+  description: Google Analytics Tracking.
+- name: IncomingAuth
+  fields: 6
+- name: IncomingAuthUpsert
+  fields: 7
+- name: IpWhitelist
+  fields: 2
+- name: JsonSingleApiV2Request
+  fields: 26
+- name: LoginRequest
+  fields: 4
+- name: LoginResponse
+  fields: 7
+- name: ManageWebhookRequest
+  fields: 3
+- name: MetricsResponse
+  fields: 5
+- name: NetcoreContent
+  fields: 2
+- name: NetcorePayload
+  fields: 6
+- name: OutputBlock
+  fields: 4
+- name: PaymentStatusResponse
+  fields: 3
+  description: Contains payment status response details.
+- name: PreviewTemplateSuccessResponse
+  fields: 3
+- name: Provider
+  fields: 5
+- name: ProviderCreate
+  fields: 3
+- name: PublishFlowSuccessResponse
+  fields: 3
+- name: RefundRequest
+  fields: 4
+  description: Defines the payload required to initiate a refund.
+- name: RefundResponse
+  fields: 3
+  description: Contains the refund initiation response details.
+- name: Route
+  fields: 15
+- name: RouteCreate
+  fields: 13
+- name: Rule
+  fields: 9
+- name: RuleCreate
+  fields: 6
+- name: RuleRouteAssignment
+  fields: 6
+- name: ScheduleDetails
+  fields: 2
+  description: Schedule details for the campaign. Not a Mandatory parameter till campaign is in Draft State.
+- name: SendGridAttachment
+  fields: 4
+- name: SendGridContent
+  fields: 2
+- name: SendGridPayload
+  fields: 7
+- name: SendGridPersonalization
+  fields: 4
+- name: ServerErrorsResponse
+  fields: 4
+- name: SignupRequest
+  fields: 4
+- name: SmtpConfig
+  fields: 5
+- name: SuccessSearchSchemaForCounts
+  fields: 5
+- name: TemplateListSuccessResponse
+  fields: 3
+- name: TestCampaign
+  fields: 3
+- name: TestSendRequest
+  fields: 4
+- name: TestSendResponse
+  fields: 3
+- name: TwoFactorRequiredResponse
+  fields: 3
+- name: TwoFactorSetupConfirmResponse
+  fields: 2
+- name: TwoFactorSetupResponse
+  fields: 3
+- name: TwoFactorVerifyRequest
+  fields: 4
+- name: UnauthorizedAccessResponse
+  fields: 4
+- name: UpdateWebhookRequest
+  fields: 5
+- name: UserCreate
+  fields: 5
+- name: UserProfile
+  fields: 7
+- name: ValidationFailureResponse
+  fields: 5
+- name: WebhookInfo
+  fields: 6
+- name: WebhookOperationResponse
+  fields: 3
+relationships:
+- from: Route
+  to: Provider
+  type: belongs_to
+  via: provider_id
+- from: RouteCreate
+  to: Provider
+  type: belongs_to
+  via: provider_id
+- from: RuleRouteAssignment
+  to: Route
+  type: belongs_to
+  via: route_id
+- from: Rule
+  to: RuleRouteAssignment
+  type: has_many
+  via: rule_routes
+- from: AuditLogPage
+  to: AuditLogEntry
+  type: has_many
+  via: logs
+- from: LoginResponse
+  to: ClientSummary
+  type: has_many
+  via: clients
+- from: LoginResponse
+  to: UserProfile
+  type: has_one
+  via: user
+- from: SendGridPersonalization
+  to: EmailAddress
+  type: has_many
+  via: to
+- from: SendGridPersonalization
+  to: EmailAddress
+  type: has_many
+  via: cc
+- from: SendGridPersonalization
+  to: EmailAddress
+  type: has_many
+  via: bcc
+- from: NetcorePayload
+  to: SendGridPersonalization
+  type: has_many
+  via: personalizations
+- from: NetcorePayload
+  to: EmailAddress
+  type: has_one
+  via: from
+- from: NetcorePayload
+  to: NetcoreContent
+  type: has_many
+  via: content
+- from: SendGridPayload
+  to: SendGridPersonalization
+  type: has_many
+  via: personalizations
+- from: SendGridPayload
+  to: EmailAddress
+  type: has_one
+  via: from
+- from: SendGridPayload
+  to: SendGridContent
+  type: has_many
+  via: content
+- from: SendGridPayload
+  to: SendGridAttachment
+  type: has_many
+  via: attachments
+- from: SendGridPayload
+  to: EmailAddress
+  type: has_one
+  via: reply_to
+- from: DLRReportResponse
+  to: DLRReportItem
+  type: has_many
+  via: data
+- from: BlocklistManagementRequest
+  to: ConsentRecipient
+  type: has_many
+  via: recipients
+- from: ConsentManagementRequest
+  to: ConsentRecipient
+  type: has_many
+  via: recipients
+- from: ConversionEventRequest
+  to: ConversionEvent
+  type: has_many
+  via: data
+- from: ConversionEvent
+  to: ConversionUserData
+  type: has_one
+  via: user_data
+- from: ConversionEvent
+  to: ConversionCustomData
+  type: has_one
+  via: custom_data

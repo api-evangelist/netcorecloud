@@ -1,0 +1,645 @@
+openapi: 3.2.0
+info:
+  title: WhatsApp Payments API
+  version: '1.0'
+  description: Comprehensive collection of WhatsApp APIs that allow users to interact with WhatsApp Flows, Templates, Message Sending, Conversations, Consent Management, Webhooks, Payments, and Media associated with a specific WABA (WhatsApp Business Account).
+  license:
+    name: Proprietary
+    identifier: proprietary
+servers:
+- url: https://cpaaswa.netcorecloud.net/api
+  description: WhatsApp APIs Server
+- url: https://cpaaswa.netcorecloud.net
+  description: WhatsApp Root Server
+security:
+- bearerAuth: []
+tags:
+- name: WhatsApp Payments
+paths:
+  /v2/payments/configuration/oauth_link:
+    post:
+      operationId: createOAuthLink
+      summary: Generate OAuth Link for Payment Configuration
+      description: 'Generate an OAuth link for payment gateway configuration. This endpoint creates an authorization URL
+
+        that redirects to the payment gateway''s OAuth flow, allowing businesses to connect their payment
+
+        accounts and configure payment settings.'
+      tags:
+      - WhatsApp Payments
+      parameters:
+      - $ref: '#/paths/~1v2~1payments~1configuration/post/parameters/0'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Request payload for generating OAuth link
+              properties:
+                configuration_name:
+                  type: string
+                  description: Unique name for the payment configuration. This will be used to identify and manage the payment gateway setup.
+                  example: ravi
+                redirect_url:
+                  type: string
+                  format: uri
+                  description: The URL where users will be redirected after completing the OAuth authorization flow. This must be a valid HTTPS URL registered with the payment gateway.
+                  example: https://example.pepipostravi.com/oauth
+              required:
+              - configuration_name
+              - redirect_url
+            examples:
+              oauth_link_request:
+                summary: Generate OAuth link for payment configuration
+                value:
+                  configuration_name: ravi
+                  redirect_url: https://example.pepipostravi.com/oauth
+      responses:
+        '200':
+          description: OAuth link generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Response containing OAuth link information
+                properties:
+                  status:
+                    type: string
+                    description: Overall status of the API call
+                    example: success
+                  message:
+                    type: string
+                    description: Human-readable message about the operation
+                    example: OAuth link generated successfully
+                  data:
+                    type: object
+                    description: OAuth link data details
+                    properties:
+                      oauth_url:
+                        type: string
+                        format: uri
+                        description: The OAuth authorization URL that should be opened in a browser to complete the payment gateway configuration
+                        example: https://oauth.payment.gateway.com/authorize?client_id=xxx&redirect_uri=https://example.pepipostravi.com/oauth&response_type=code&state=xxx
+                      configuration_name:
+                        type: string
+                        description: The configuration name used in the request
+                        example: ravi
+                    required:
+                    - oauth_url
+                    - configuration_name
+                required:
+                - status
+                - message
+                - data
+              examples:
+                success:
+                  summary: Successful OAuth link generation
+                  value:
+                    status: success
+                    message: OAuth link generated successfully
+                    data:
+                      oauth_url: https://oauth.payment.gateway.com/authorize?client_id=xxx&redirect_uri=https://example.pepipostravi.com/oauth&response_type=code&state=xxx
+                      configuration_name: ravi
+        '400':
+          $ref: '#/paths/~1v2~1payments~1configuration/post/responses/400'
+        4XX:
+          $ref: '#/paths/~1v2~1payments~1configuration/post/responses/4XX'
+  /v2/payments/configuration:
+    post:
+      operationId: createPaymentConfiguration
+      summary: Create Payment Configuration
+      description: 'Create a new payment gateway configuration for WhatsApp payments. This endpoint allows businesses to
+
+        set up payment providers (such as PayU, RazorPay, etc.) with OAuth-based authentication and
+
+        required merchant details for processing payments through WhatsApp.'
+      tags:
+      - WhatsApp Payments
+      parameters:
+      - name: Content-Type
+        in: header
+        required: true
+        schema:
+          type: string
+          enum:
+          - application/json
+        description: Defines the content type of the request body. Must be application/json.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Request payload for creating a payment gateway configuration
+              properties:
+                configuration_name:
+                  type: string
+                  description: Unique name for the payment configuration. This identifier will be used to reference the configuration in payment operations.
+                  example: ravi_test2
+                provider_name:
+                  type: string
+                  description: Name of the payment gateway provider (e.g., PayU, RazorPay, etc.)
+                  example: PayU
+                redirect_url:
+                  type: string
+                  format: uri
+                  description: The callback URL where users will be redirected after completing OAuth authentication with the payment provider. Must be a valid HTTPS URL.
+                  example: https://exampleravi.com/oauth
+                merchant_category_code:
+                  type: string
+                  description: Merchant Category Code (MCC) for the business. Used to classify the type of business and transactions.
+                  example: '0000'
+                purpose_code:
+                  type: string
+                  description: Purpose code indicating the nature of the payment transaction as per regulatory requirements.
+                  example: '00'
+                merchant_vpa:
+                  type: string
+                  description: Merchant VPA for UPI payments.
+                  example: rohanagarwalaxis@sksk
+              required:
+              - configuration_name
+              - provider_name
+              - merchant_category_code
+              - purpose_code
+            examples:
+              payu_configuration:
+                summary: Create PayU payment configuration
+                value:
+                  configuration_name: ravi_test2
+                  provider_name: PayU
+                  redirect_url: https://exampleravi.com/oauth
+                  merchant_category_code: '0000'
+                  purpose_code: '00'
+              upi_configuration:
+                summary: Create UPI payment configuration
+                value:
+                  configuration_name: ravi_test2
+                  provider_name: PayU
+                  merchant_category_code: '0000'
+                  purpose_code: '00'
+                  merchant_vpa: rohanagarwalaxis@sksk
+      responses:
+        '200':
+          description: Payment configuration created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Response containing payment configuration information
+                properties:
+                  status:
+                    type: string
+                    description: Overall status of the API call
+                    example: success
+                  message:
+                    type: string
+                    description: Human-readable message about the operation
+                    example: Payment configuration created successfully
+                  data:
+                    type: object
+                    description: Payment configuration data details
+                    properties:
+                      configuration_name:
+                        type: string
+                        description: The configuration name used in the request
+                        example: ravi_test2
+                      provider_name:
+                        type: string
+                        description: Name of the payment gateway provider
+                        example: PayU
+                      redirect_url:
+                        type: string
+                        format: uri
+                        description: The redirect URL configured for OAuth callback
+                        example: https://exampleravi.com/oauth
+                      merchant_category_code:
+                        type: string
+                        description: Merchant Category Code configured for the payment gateway
+                        example: '0000'
+                      purpose_code:
+                        type: string
+                        description: Purpose code configured for the payment gateway
+                        example: '00'
+                      status:
+                        type: string
+                        description: Current status of the payment configuration
+                        enum:
+                        - active
+                        - pending
+                        - inactive
+                        example: active
+                    required:
+                    - configuration_name
+                    - provider_name
+                    - redirect_url
+                    - merchant_category_code
+                    - purpose_code
+                    - status
+                required:
+                - status
+                - message
+                - data
+              examples:
+                success:
+                  summary: Successful configuration creation
+                  value:
+                    status: success
+                    message: Payment configuration created successfully
+                    data:
+                      configuration_name: ravi_test2
+                      provider_name: PayU
+                      redirect_url: https://exampleravi.com/oauth
+                      merchant_category_code: '0000'
+                      purpose_code: '00'
+                      status: active
+                upi_configuration:
+                  summary: Create UPI payment configuration
+                  value:
+                    status: success
+                    message: Payment configuration created successfully
+                    data:
+                      configuration_name: ravi_test2
+                      provider_name: PayU
+                      redirect_url: https://exampleravi.com/oauth
+                      merchant_category_code: '0000'
+                      purpose_code: '00'
+                      merchant_vpa: rohanagarwalaxis@sksk
+        '400':
+          description: The request is invalid or malformed.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_message:
+                    type: string
+                    example: Invalid Request
+              examples:
+                invalid_request:
+                  summary: Bad request example
+                  value:
+                    error_message: Invalid Request
+        4XX:
+          description: A generic error occurred while processing the request.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_message:
+                    type: string
+                    example: Message
+              examples:
+                generic:
+                  summary: Generic error
+                  value:
+                    error_message: Message
+  /v2/payments/status/{payment_configuration}/{reference_id}:
+    parameters:
+    - name: payment_configuration
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Name of the configured payment setup.
+      example: vishal_test_10_10
+    - name: reference_id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Unique ID of the payment transaction to retrieve the status.
+      example: '901003'
+    get:
+      operationId: getPaymentStatus
+      summary: Get Payment Status
+      description: 'Use this API to retrieve the current status of a payment transaction.
+
+
+        - Get real-time updates for completed, pending, or failed payments
+
+        - Notify customers about payment status via preferred channels
+
+        - Verify payment completion before confirming orders
+
+        - Cross-check payments to prevent fraudulent activity'
+      tags:
+      - WhatsApp Payments
+      responses:
+        '200':
+          description: Payment status retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentStatusResponse'
+              examples:
+                success:
+                  summary: Successful payment status retrieval
+                  value:
+                    status: success
+                    message: Payment status retrieved successfully.
+                    data:
+                      reference_id: '901003'
+                      payment_config_id: vishal_test_10_10
+                      status: completed
+                      amount:
+                        currency: INR
+                        value: '100'
+                      timestamp: '2024-11-19T10:00:00Z'
+        '400':
+          $ref: '#/paths/~1v2~1payments~1configuration/post/responses/400'
+        '404':
+          description: Payment configuration or reference ID not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/paths/~1v2~1payments~1refund~1payments_refund/post/responses/404/content/application~1json/schema/properties/error'
+              examples:
+                payment_config_invalid:
+                  summary: Invalid payment configuration
+                  value:
+                    error:
+                      message: (#134009) Payment configuration ID is invalid
+                      type: OAuthException
+                      code: 134009
+                      error_data:
+                        messaging_product: whatsapp
+                        details: payment_configuration_id is invalid
+                      fbtrace_id: AdzNtmTqcFTSkfsCmuE3A_M
+        4XX:
+          $ref: '#/paths/~1v2~1payments~1configuration/post/responses/4XX'
+  /v2/payments/refund/payments_refund:
+    post:
+      operationId: processRefund
+      summary: Process Payment Refund
+      description: Use this API to initiate a refund for a completed transaction through supported payment gateways such as RazorPay.
+      tags:
+      - WhatsApp Payments
+      parameters:
+      - $ref: '#/paths/~1v2~1payments~1configuration/post/parameters/0'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefundRequest'
+            examples:
+              standard_refund:
+                summary: Standard refund request
+                value:
+                  reference_id: '100'
+                  speed: normal
+                  payment_config_id: vishal_test_10_10
+                  amount:
+                    currency: INR
+                    value: 100
+                    offset: 100
+      responses:
+        '200':
+          description: Refund initiated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefundResponse'
+              examples:
+                success:
+                  summary: Successful refund initiation
+                  value:
+                    status: success
+                    message: Refund initiated successfully.
+                    data:
+                      refund_id: '12345'
+                      reference_id: '901003'
+                      amount_refunded:
+                        currency: INR
+                        value: '100'
+                      speed: normal
+                      timestamp: '2024-11-19T10:00:00Z'
+        '400':
+          $ref: '#/paths/~1v2~1payments~1configuration/post/responses/400'
+        '404':
+          description: Refund request not found or encountered a processing error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    description: Contains error details from Meta/WhatsApp.
+                    properties:
+                      message:
+                        type: string
+                        description: Error message from Meta.
+                      type:
+                        type: string
+                        description: Type of error.
+                        example: OAuthException
+                      code:
+                        type: integer
+                        description: Numeric error code from Meta.
+                      error_data:
+                        type: object
+                        properties:
+                          messaging_product:
+                            type: string
+                            example: whatsapp
+                          details:
+                            type: string
+                            description: Additional error details.
+                      fbtrace_id:
+                        type: string
+                        description: Facebook trace ID for debugging.
+                    required:
+                    - message
+                    - type
+                    - code
+              examples:
+                generic_error:
+                  summary: Refund processing error
+                  value:
+                    error:
+                      message: (#135000) Generic user error
+                      type: OAuthException
+                      code: 135000
+                      error_data:
+                        messaging_product: whatsapp
+                        details: internal_server_error
+                      fbtrace_id: AJdZwOdIy8RQqhsnda5DW0l
+        4XX:
+          $ref: '#/paths/~1v2~1payments~1configuration/post/responses/4XX'
+components:
+  schemas:
+    RefundRequest:
+      type: object
+      description: Defines the payload required to initiate a refund.
+      properties:
+        reference_id:
+          type: string
+          description: Unique identifier for the refund request.
+          example: '100'
+        speed:
+          type: string
+          description: Determines refund processing speed.
+          enum:
+          - normal
+          - instant
+          example: normal
+        payment_config_id:
+          type: string
+          description: Unique ID of the payment configuration used for the refund.
+          example: vishal_test_10_10
+        amount:
+          type: object
+          description: Defines refund amount details including offset.
+          properties:
+            currency:
+              type: string
+              description: Currency used for the refund (ISO 4217).
+              example: INR
+            value:
+              type: integer
+              description: Numeric value of the refund.
+              example: 100
+            offset:
+              type: integer
+              description: Value of any applied offset.
+              example: 100
+          required:
+          - currency
+          - value
+          - offset
+      required:
+      - reference_id
+      - speed
+      - payment_config_id
+      - amount
+    PaymentStatusResponse:
+      type: object
+      description: Contains payment status response details.
+      properties:
+        status:
+          type: string
+          description: Status of the API call.
+          example: success
+        message:
+          type: string
+          description: Description of the response result.
+          example: Payment status retrieved successfully.
+        data:
+          type: object
+          description: Provides details about the payment status.
+          properties:
+            reference_id:
+              type: string
+              description: Unique identifier for the payment transaction.
+              example: '901003'
+            payment_config_id:
+              type: string
+              description: Payment configuration ID used for the transaction.
+              example: vishal_test_10_10
+            status:
+              type: string
+              description: Current payment status.
+              enum:
+              - completed
+              - pending
+              - failed
+              - cancelled
+              example: completed
+            amount:
+              type: object
+              description: Defines the amount details including currency and value.
+              properties:
+                currency:
+                  type: string
+                  description: Currency code in ISO 4217 format.
+                  example: INR
+                value:
+                  type: string
+                  description: Amount value as a string for precision.
+                  example: '100'
+              required:
+              - currency
+              - value
+            timestamp:
+              type: string
+              format: date-time
+              description: Date and time when the payment status was last updated.
+              example: '2024-11-19T10:00:00Z'
+          required:
+          - reference_id
+          - payment_config_id
+          - status
+          - amount
+          - timestamp
+      required:
+      - status
+      - message
+      - data
+    RefundResponse:
+      type: object
+      description: Contains the refund initiation response details.
+      properties:
+        status:
+          type: string
+          description: Status of the API call.
+          example: success
+        message:
+          type: string
+          description: Description of the response result.
+          example: Refund initiated successfully.
+        data:
+          type: object
+          description: Provides information about the processed refund.
+          properties:
+            refund_id:
+              type: string
+              description: Unique ID of the refund transaction.
+              example: '12345'
+            reference_id:
+              type: string
+              description: Payment reference ID linked to the refund.
+              example: '901003'
+            amount_refunded:
+              $ref: '#/components/schemas/PaymentStatusResponse/properties/data/properties/amount'
+            speed:
+              type: string
+              description: Refund processing speed used.
+              enum:
+              - normal
+              - instant
+              example: normal
+            timestamp:
+              type: string
+              format: date-time
+              description: Date and time when the refund was processed.
+              example: '2024-11-19T10:00:00Z'
+          required:
+          - refund_id
+          - reference_id
+          - amount_refunded
+          - speed
+          - timestamp
+      required:
+      - status
+      - message
+      - data
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer token authentication using JWT. Include the token in the Authorization header as 'Bearer <your_token>'.
+x-stoplight:
+  id: o7al2fnfvhxlr
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

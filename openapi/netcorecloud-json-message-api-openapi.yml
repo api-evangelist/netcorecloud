@@ -1,0 +1,273 @@
+openapi: 3.2.0
+info:
+  title: SMS JSON Message API
+  version: '1.0'
+  description: 'Comprehensive SMS API that allows businesses to send single or bulk SMS messages to customers.
+
+    **API Categories:**
+
+    - **Send Message**: SingleMsgApi — send SMS via GET or POST
+
+    - **JSON Message**: JsonSingleApiV2 — send SMS via JSON body with optional AES-256 GCM encryption
+
+    - **CSV Message**: Send bulk SMS using CSV-formatted data via UploadCsvFile
+
+    - **Report**: DLR (Delivery Receipt) consolidated report with scroll-based pagination'
+  license:
+    name: Proprietary
+    identifier: proprietary
+servers:
+- url: https://smsapi.netcorecloud.net/BulkSms
+  description: SMS API Server
+tags:
+- name: JSON Message
+paths:
+  /v2/JsonSingleApi:
+    post:
+      tags:
+      - JSON Message
+      summary: Send single SMS (JSON)
+      operationId: jsonSingleApiV2Post
+      security: []
+      description: 'Send a single SMS to one or more recipients via JSON request body.
+
+
+        **Key Features:**
+
+        - JSON request/response format
+
+        - Optional AES-256 GCM encryption for in-transit security (set `X-SSL: 2` header)
+
+        - Supports synchronous or asynchronous processing
+
+        - DLT/TRAI compliant messaging
+
+
+        **Encryption Mode (X-SSL=2):**
+
+        When encryption is enabled, the entire request body is AES-256 GCM encrypted.
+
+        IV and AES key can be provided in headers (`X-SSLIV`, `X-AES-KEY`) or fetched from DB using `feedid`.
+
+        The `feedid` query parameter is required when using encryption.
+
+
+        **JSON via query parameter:**
+
+        Alternatively, the JSON payload can be passed as the `json` query parameter instead of in the request body.'
+      parameters:
+      - name: feedid
+        in: query
+        required: false
+        description: Account/Feed ID. Required when using X-SSL=2 (encrypted body). Used to fetch IV/AES key from DB when not provided in headers.
+        schema:
+          type: string
+          example: '392095'
+      - name: json
+        in: query
+        required: false
+        description: Alternative way to pass JSON body as query parameter
+        schema:
+          type: string
+      - name: X-SSL
+        in: header
+        required: false
+        description: Set to 2 for AES-256 GCM encrypted body. Requires feedid in query.
+        schema:
+          type: string
+          enum:
+          - '1'
+          - '2'
+      - name: X-SSLIV
+        in: header
+        required: false
+        description: IV for AES decryption (else fetched from DB by feedid)
+        schema:
+          type: string
+      - name: X-AES-KEY
+        in: header
+        required: false
+        description: AES key for decryption (else fetched from DB by feedid)
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JsonSingleApiV2Request'
+            example:
+              feedid: '392095'
+              username: '9137964367'
+              password: your_password
+              mobile: 9870524533,9956808517
+              messages: Your OTP is 456789
+              senderid: MYAPP
+      responses:
+        '200':
+          description: The request was processed successfully.
+          content:
+            application/json:
+              examples:
+                Success:
+                  summary: SMS submitted successfully
+                  value:
+                    req_id: '12345678'
+                    status: success
+                    submittedAt: '2026-03-16T10:30:00Z'
+                Error:
+                  summary: Submission failed
+                  value:
+                    req_id: '-1'
+                    status: error
+                    submittedAt: '2026-03-16T10:30:00Z'
+                    errors:
+                    - code: '-1'
+                      desc: Empty request body not allowed
+        '400':
+          description: The request is invalid due to malformed input or missing data.
+          content:
+            application/json:
+              examples:
+                BadRequest:
+                  summary: Invalid request
+                  value:
+                    req_id: '-1'
+                    status: error
+                    submittedAt: '2026-03-16T10:30:00Z'
+                    errors:
+                    - code: '-1'
+                      desc: Empty request body not allowed
+        '500':
+          description: The request failed due to an unexpected server-side issue.
+          content:
+            application/json:
+              examples:
+                ServerError:
+                  summary: Server error
+                  value:
+                    req_id: '-1'
+                    status: error
+                    submittedAt: '2026-03-16T10:30:00Z'
+                    errors:
+                    - code: '500'
+                      desc: Internal Server Error
+components:
+  schemas:
+    JsonSingleApiV2Request:
+      type: object
+      required:
+      - mobile
+      - messages
+      properties:
+        feedid:
+          type: string
+          description: Account/Feed ID used for authentication and required for encryption key retrieval.
+          example: '392095'
+        username:
+          type: string
+          description: Username or registered mobile number for authentication.
+        password:
+          type: string
+          format: password
+          description: Password associated with the username.
+        jobname:
+          type: string
+          maxLength: 50
+          description: Custom name assigned to the message batch for tracking.
+        short:
+          type: string
+          description: 'URL shortener flag: 0 = off (default), 1 = on'
+          default: '0'
+        tz:
+          type: string
+          description: Timezone for scheduled time (e.g. GMT+05:30)
+        time:
+          type: string
+          description: Future publish time (yyyymmddhhmm or yyyy-MM-dd HH:mm)
+        mobile:
+          type: string
+          description: Comma-separated mobile numbers
+          example: 9870524533,9956808517
+        messages:
+          type: string
+          description: 'SMS message content (alias: message)'
+          example: Your OTP is 456789
+        message:
+          type: string
+          description: SMS message content to be sent.
+        senderid:
+          type: string
+          description: Sender ID
+        entityid:
+          type: string
+          description: DLT entity ID
+        templateid:
+          type: string
+          description: DLT template ID
+        async:
+          type: string
+          enum:
+          - '0'
+          - '1'
+          default: '0'
+          description: 0 = sync (default), 1 = async
+        dlt_template_type:
+          type: string
+          description: DLT template type
+        jobid:
+          type: string
+          description: Job ID
+        mtype:
+          type: string
+          description: Message type (1 = text)
+        url:
+          type: string
+          description: WAP URL for WAP push
+        udh:
+          type: string
+          description: UDH for binary messages
+        hexflag:
+          type: string
+          description: Hex flag for encoded messages
+        response_type:
+          type: string
+          enum:
+          - json
+          - xml
+          description: Response format
+        DepId:
+          type: string
+          description: Department ID
+        AppID:
+          type: string
+          description: Application ID
+        ssl:
+          type: string
+          description: Encryption mode (when in JSON body)
+        ssliv:
+          type: string
+          description: IV (when message encrypted in JSON)
+        aesKey:
+          type: string
+          description: AES key (when message encrypted in JSON)
+  securitySchemes:
+    headerAuth:
+      type: apiKey
+      in: header
+      name: username
+      description: 'Authentication requires two headers (for Report APIs):
+
+        - `username` — the API username
+
+        - `password` — the API password
+
+
+        Both are validated against the external Auth API.
+
+        '
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

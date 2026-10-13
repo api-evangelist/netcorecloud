@@ -1,0 +1,236 @@
+openapi: 3.2.0
+info:
+  title: Orbit Router Dashboard & Audit API
+  version: 1.0.0
+  description: Complete API specification for the Orbit Router email routing platform.
+  contact:
+    name: Orbit Engineering
+  license:
+    name: Proprietary
+servers:
+- url: https://orbitus.netcorecloud.com
+  description: Production — Orbit Engine (HTTP Relay)
+- url: https://orbitus.netcorecloud.com/apiorbit
+  description: Production — Orbit Backend (Config & Management)
+security: []
+tags:
+- name: Dashboard & Audit
+paths:
+  /dashboard/stats:
+    get:
+      operationId: getDashboardStats
+      tags:
+      - Dashboard & Audit
+      summary: Dashboard statistics
+      description: Aggregate statistics for the current client.
+      security:
+      - BackendJWT: []
+      parameters:
+      - $ref: '#/components/parameters/ClientIdHeader'
+      responses:
+        '200':
+          description: Dashboard stats.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardStats'
+  /audit-logs:
+    get:
+      operationId: listAuditLogs
+      tags:
+      - Dashboard & Audit
+      summary: Query audit logs
+      description: Admin-only. Supports filtering and pagination.
+      security:
+      - BackendJWT: []
+      parameters:
+      - name: page
+        in: query
+        schema:
+          type: integer
+          default: 1
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          default: 50
+          maximum: 100
+      - name: action
+        in: query
+        schema:
+          type: string
+          enum:
+          - login
+          - logout
+          - create
+          - update
+          - delete
+      - name: resource_type
+        in: query
+        schema:
+          type: string
+          enum:
+          - user
+          - route
+          - rule
+          - provider
+      - name: username
+        in: query
+        schema:
+          type: string
+      - name: resource_name
+        in: query
+        schema:
+          type: string
+      - name: user_id
+        in: query
+        schema:
+          type: integer
+      - name: from_date
+        in: query
+        schema:
+          type: string
+          format: date
+        description: ISO date, e.g. `2026-03-01`.
+      - name: to_date
+        in: query
+        schema:
+          type: string
+          format: date
+      - name: search
+        in: query
+        schema:
+          type: string
+        description: Free-text search in details.
+      responses:
+        '200':
+          description: Paginated audit logs.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditLogPage'
+  /audit-logs/resource-names:
+    get:
+      operationId: listAuditResourceNames
+      tags:
+      - Dashboard & Audit
+      summary: List distinct resource names
+      description: Returns distinct resource names for filter dropdowns.
+      security:
+      - BackendJWT: []
+      responses:
+        '200':
+          description: List of resource names.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                example:
+                - netcore_primary
+                - sendgrid_backup
+                - OTP Rule
+components:
+  parameters:
+    ClientIdHeader:
+      name: X-Client-ID
+      in: header
+      required: false
+      schema:
+        type: integer
+      description: Switch client context (multi-tenant).
+  schemas:
+    AuditLogPage:
+      type: object
+      properties:
+        logs:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogEntry'
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+    DashboardStats:
+      type: object
+      properties:
+        totalRoutes:
+          type: integer
+        enabledRoutes:
+          type: integer
+        totalRules:
+          type: integer
+        activeRules:
+          type: integer
+        totalProviders:
+          type: integer
+        totalUsers:
+          type: integer
+    AuditLogEntry:
+      type: object
+      properties:
+        id:
+          type: integer
+        client_id:
+          type: integer
+        user_id:
+          type: integer
+        username:
+          type: string
+        action:
+          type: string
+          enum:
+          - login
+          - logout
+          - create
+          - update
+          - delete
+        resource_type:
+          type: string
+          enum:
+          - user
+          - route
+          - rule
+          - provider
+        resource_name:
+          type: string
+        ip_address:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+  securitySchemes:
+    BackendJWT:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'JWT token obtained from `POST /auth/login`. Access token lifetime: 15 minutes.
+
+        Claims: `user_id`, `client_id`, `role`, `jti`, `exp`, `iat`.
+
+        '
+    EngineApiKeyBearer:
+      type: http
+      scheme: bearer
+      description: 'Engine API key via `Authorization: Bearer <api_key>` (priority 1).'
+    EngineApiKeyHeader:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: Engine API key via `X-API-Key` header (priority 2).
+    EngineApiKeyFallback:
+      type: apiKey
+      in: header
+      name: api_key
+      description: Engine API key via `api_key` header (priority 3, fallback).
+x-readme:
+  explorer-enabled: true
+  proxy-enabled: true
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

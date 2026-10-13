@@ -1,0 +1,558 @@
+openapi: 3.2.0
+info:
+  title: Email API V6 API Management API
+  description: ''
+  version: 1.0.0
+servers:
+- url: https://emailapi.netcorecloud.net/v6
+  description: For Non EU region
+- url: https://apieu.netcorecloud.net/v6
+  description: For EU region
+security: []
+tags:
+- name: API Management
+paths:
+  /api_keys/{api_key_id}:
+    delete:
+      summary: Delete API Key using API Key ID
+      deprecated: false
+      description: This endpoint allows you to revoke an existing API Key using an API key id (api_key_id).
+      operationId: delete-api_keys-api_key_id
+      tags:
+      - API Management
+      parameters:
+      - name: api_key_id
+        in: path
+        description: ''
+        required: true
+        example: ''
+        schema:
+          type: string
+      - name: on-behalf-of
+        in: header
+        description: The On Behalf Of header allows you to make API calls from a parent account on behalf of the parent's customer accounts
+        required: true
+        example: ''
+        schema:
+          type: string
+          default: Bearer <<API KEY>>
+          examples:
+          - 'Authorization: Bearer <<API KEY>>'
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  error:
+                    $ref: '#/paths/~1webhooks/get/responses/400/content/application~1json/schema'
+                required:
+                - error
+              example:
+                error:
+                - field: ''
+                  message: Please provide valid api key id
+          headers: {}
+      security:
+      - bearer: []
+    get:
+      summary: Retrieve API using API Key ID
+      deprecated: false
+      description: This endpoint returns the name,scopes and the IP address associated with a particular API key id (api_key_id).
+      operationId: get-api_keys-api_key_id
+      tags:
+      - API Management
+      parameters:
+      - name: api_key_id
+        in: path
+        description: ''
+        required: true
+        example: ''
+        schema:
+          type: string
+      - name: on-behalf-of
+        in: header
+        description: The On Behalf Of header allows you to make API calls from a parent account on behalf of the parent's customer accounts
+        required: false
+        example: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  scopes:
+                    type: array
+                    items:
+                      type: string
+                  ip_address:
+                    type: array
+                    items:
+                      type: string
+                x-examples:
+                  Example 1:
+                    name: string
+                    scopes:
+                    - string
+                    ip_address:
+                    - string
+              example:
+                name: Production API Key
+                scopes:
+                - email.send
+                - stats
+                ip_address:
+                - 192.168.1.1/32
+                - 10.0.0.0/24
+          headers: {}
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: '#/paths/~1webhooks/get/responses/400/content/application~1json/schema'
+              example:
+                error:
+                - message: invalid api_key id
+                  field: ''
+          headers: {}
+      security:
+      - bearer: []
+    put:
+      summary: Update API Key using API Key ID
+      deprecated: false
+      description: This endpoint allows you to update the allowed scopes and IP address associated with an API key using the API key id (api_key_id)
+      operationId: put-api_keys-api_key_id
+      tags:
+      - API Management
+      parameters:
+      - name: api_key_id
+        in: path
+        description: ''
+        required: true
+        example: ''
+        schema:
+          type: string
+      - name: on-behalf-of
+        in: header
+        description: The On Behalf Of header allows you to make API calls from a parent account on behalf of the parent's customer accounts
+        required: true
+        example: ''
+        schema:
+          type: string
+          default: Bearer <<API KEY>>
+          examples:
+          - 'Authorization: Bearer <<API KEY>>'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                scopes:
+                  type: array
+                  items:
+                    type: string
+                ip_address:
+                  type: array
+                  items:
+                    type: string
+              x-examples:
+                Example 1:
+                  name: test.webhookq_key12
+                  scopes:
+                  - domain.write
+                  - template.read
+                  ip_address:
+                  - 159.65.179.25
+            examples:
+              '2':
+                value:
+                  name: Production_Key
+                  scopes:
+                  - email.send
+                  - domain.read
+                  - domain.write
+                  - suppression.write
+                  - template.read
+                  - template.write
+                  - tags.write
+                  - subaccount.read
+                  - subaccount.write
+                  - events
+                  - logs
+                  - stats
+                summary: Example 2
+              Example 1:
+                value:
+                  name: Production_Key
+                  ip_address:
+                  - 159.65.189.148/32
+                summary: Example 1
+      responses:
+        '200':
+          description: 'OK                                                                                  '
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  api_key_id:
+                    type: integer
+                  name:
+                    type: string
+                  scopes:
+                    type: array
+                    items:
+                      type: string
+                  ip_address:
+                    type: array
+                    items:
+                      type: string
+                x-examples:
+                  Example 1:
+                    api_key_id: 12043
+                    name: test.webhookq_key12
+                    scopes:
+                    - Domain Read/Write
+                    - Template Read
+                    ip_address:
+                    - 159.65.179.25/32
+              example:
+                api_key: d41d8cd98f00b204e9800998ecf8427e
+                api_key_id: 1
+                name: Production_Key
+                scopes:
+                - email.send
+                - domain.read
+                - domain.write
+                - suppression.write
+                - template.read
+                - template.write
+                - tags.write
+                - subaccount.read
+                - subaccount.write
+                - events
+                - logs
+                - stats
+                ip_address:
+                - 159.65.189.148/32
+          headers: {}
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: '#/paths/~1webhooks/get/responses/400/content/application~1json/schema'
+              example:
+                errors:
+                - field: ''
+                  message: one or more scopes are invalid
+          headers: {}
+      security:
+      - bearer: []
+  /api_keys:
+    get:
+      summary: Retrieve All API keys
+      deprecated: false
+      description: This endpoint returns all the API key ids along with their names that are configured.
+      operationId: get-api_keys
+      tags:
+      - API Management
+      parameters:
+      - name: limit
+        in: query
+        description: Specifies the number of results to be returned by the API
+        required: false
+        schema:
+          type: integer
+          maximum: 1000
+          default: 10
+          format: int32
+          minimum: 1
+      - name: offset
+        in: query
+        description: Specifies the offset
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          format: int32
+      - name: on-behalf-of
+        in: header
+        description: The On Behalf Of header allows you to make API calls from a parent account on behalf of the parent's customer accounts
+        required: false
+        example: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    api_key_id:
+                      type: integer
+                    name:
+                      type: string
+                  required:
+                  - api_key_id
+                  - name
+              example:
+              - api_key_id: 1
+                name: Production API Key
+              - api_key_id: 2
+                name: Development API Key
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  error:
+                    $ref: '#/paths/~1webhooks/get/responses/400/content/application~1json/schema'
+                required:
+                - error
+              example:
+                error:
+                - message: Please provide valid offset
+                  field: ''
+          headers: {}
+      security:
+      - bearer: []
+    post:
+      summary: Create API key
+      deprecated: false
+      description: 'This endpoint allows you to create an API key with relevant permissions as per users need.
+
+        The scopes that need to included in the API need to be passed in the API call as comma seperated values.
+
+
+        Following are the supported scopes -
+
+
+        * "email.send"
+
+        * "domain.read"
+
+        * "domain.write"
+
+        * "suppression.write"
+
+        * "template.read"
+
+        * "template.write"
+
+        * "tags.write"
+
+        * "subaccount.read"
+
+        * "subaccount.write"
+
+        * "events"
+
+        * "logs"
+
+        * "stats"
+
+        * "apikey.read"
+
+        * "apikey.write"
+
+        * "webhook.read"
+
+        * "webhook.write"'
+      operationId: post-api_keys
+      tags:
+      - API Management
+      parameters:
+      - name: on-behalf-of
+        in: header
+        description: The On Behalf Of header allows you to make API calls from a parent account on behalf of the parent's customer accounts
+        required: false
+        example: ''
+        schema:
+          type: string
+          examples:
+          - 'on-behalf-of: <name of the subaccount>'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                scopes:
+                  type: array
+                  items:
+                    type: string
+                ip_address:
+                  type: array
+                  items:
+                    type: string
+              x-examples:
+                Example 1:
+                  name: tesfghookq_key12
+                  scopes:
+                  - email.send
+                  - domain.read
+                  - domain.write
+                  - suppression.write
+                  - template.read
+                  - template.write
+                  - tags.write
+                  - subaccount.read
+                  - subaccount.write
+                  - events
+                  - logs
+                  - stats
+                  - apikey.read
+                  - apikey.write
+                  - webhook.read
+                  - webhook.write
+                  ip_address:
+                  - 159.65.189.148
+            examples:
+              Example 1:
+                value:
+                  name: Production_Key
+                  scopes:
+                  - email.send
+                  - domain.read
+                  - domain.write
+                  - suppression.write
+                  - template.read
+                  - template.write
+                  - tags.write
+                  - subaccount.read
+                  - subaccount.write
+                  - events
+                  - logs
+                  - stats
+                  ip_address:
+                  - 159.65.189.148/32
+                summary: Example 1
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  api_key:
+                    type: string
+                  api_key_id:
+                    type: integer
+                  name:
+                    type: string
+                  scopes:
+                    type: array
+                    items:
+                      type: string
+                  ip_address:
+                    type: array
+                    items:
+                      type: string
+                x-examples:
+                  Example 1:
+                    api_key: 9999b6219e096f9d01b7bc2643f410a1
+                    api_key_id: 12041
+                    name: tesfghookq_key12
+                    scopes:
+                    - Send Email
+                    - Domain Read
+                    - Domain Read/Write
+                    - Suppression Read/Write
+                    - Template Read
+                    - Template Read/Write
+                    - Tags Read/Write
+                    - Subaccount Read
+                    - Subaccount Read/Write
+                    - Events
+                    - Logs
+                    - Stats
+                    - ApiKey Read
+                    - ApiKey Read/Write
+                    - Webhook Read
+                    - Webhook Read/Write
+                    ip_address:
+                    - 159.65.189.148/32
+              example:
+                api_key: d41d8cd98f00b204e9800998ecf8427e
+                api_key_id: 1
+                name: Production_Key
+                scopes:
+                - email.send
+                - domain.read
+                - domain.write
+                - suppression.write
+                - template.read
+                - template.write
+                - tags.write
+                - subaccount.read
+                - subaccount.write
+                - events
+                - logs
+                - stats
+                ip_address:
+                - 159.65.189.148/32
+          headers: {}
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: '#/paths/~1webhooks/get/responses/400/content/application~1json/schema'
+              example:
+                errors:
+                - field: string
+                  message: string
+          headers: {}
+      security:
+      - bearer: []
+components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

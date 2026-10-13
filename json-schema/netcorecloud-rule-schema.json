@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/netcorecloud/main/json-schema/netcorecloud-rule-schema.json",
+  "title": "Rule",
+  "x-generated": "2026-10-13",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/Rule",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer"
+    },
+    "client_id": {
+      "type": "integer"
+    },
+    "rule_name": {
+      "type": "string"
+    },
+    "tag": {
+      "type": "string"
+    },
+    "priority": {
+      "type": "integer",
+      "description": "Lower number = higher priority."
+    },
+    "expression": {
+      "type": "string",
+      "description": "Expression evaluated by `expr.Compile()`. Available variables:\n`from_address`, `from_domain`, `from_local`, `to_address`, `to_domain`,\n`to_local`, `headers`, `remote_ip`, `helo`, `size`.\nHelper functions: `StartsWith()`, `EndsWith()`, `Contains()`, `Matches()`,\n`ToLower()`, `ToUpper()`, `Trim()`.\n"
+    },
+    "enabled": {
+      "type": "boolean"
+    },
+    "rule_routes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/RuleRouteAssignment"
+      }
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "$defs": {
+    "RuleRouteAssignment": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "provider_name": {
+          "type": "string",
+          "readOnly": true
+        },
+        "route_id": {
+          "type": "integer"
+        },
+        "route_name": {
+          "type": "string",
+          "readOnly": true
+        },
+        "weight": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Distribution weight."
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        }
+      }
+    }
+  }
+}

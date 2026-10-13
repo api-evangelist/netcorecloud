@@ -1,0 +1,2499 @@
+# x-archived-from: netcorecloud-orbit-router-openapi.yml
+# x-archived-on: 2026-10-13
+openapi: 3.1.0
+info:
+  title: Orbit Router
+  version: 1.0.0
+  description: "Complete API specification for the Orbit Router email routing platform.\n\
+    \n**Orbit Router** is a high-performance email routing system that receives emails\
+    \ via SMTP\nand HTTP API, then intelligently routes them to multiple email service\
+    \ providers based on\nconfigurable rules, weighted distribution, and client-specific\
+    \ routing policies.\n\nThis specification is organized into two tag groups:\n\
+    - **Orbit Engine** — HTTP Relay API for sending emails through the routing engine\
+    \ (fasthttp).\n- **Orbit Backend** — Configuration & Management API for administering\
+    \ providers, routes,\n  rules, users, and settings (gorilla/mux).\n"
+  contact:
+    name: Orbit Engineering
+  license:
+    name: Proprietary
+servers:
+- url: https://orbitus.netcorecloud.com
+  description: Production — Orbit Engine (HTTP Relay)
+- url: https://orbitus.netcorecloud.com/apiorbit
+  description: Production — Orbit Backend (Config & Management)
+tags:
+- name: Engine — Cache
+  description: Cache refresh endpoints for immediate config propagation.
+security: []
+components:
+  responses:
+    CacheRefreshSuccess:
+      description: Cache cleared successfully.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: ok
+              cache:
+                type: string
+                example: rules
+              message:
+                type: string
+                example: rules cache cleared
+    EngineBadRequest:
+      description: Invalid request (empty body, invalid JSON, payload validation,
+        transform error).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EngineErrorResponse'
+    EngineAuthFailed:
+      description: API key missing or invalid.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EngineErrorResponse'
+    EngineForbidden:
+      description: IP or domain restriction violation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EngineErrorResponse'
+    EnginePayloadTooLarge:
+      description: Payload exceeds `max_request_body_size_mb`.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EngineErrorResponse'
+    EngineInternalError:
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EngineErrorResponse'
+    EngineProviderError:
+      description: Upstream provider returned an error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EngineErrorResponse'
+    EngineProviderTimeout:
+      description: Upstream provider did not respond in time.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EngineErrorResponse'
+  securitySchemes:
+    BackendJWT:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'JWT token obtained from `POST /auth/login`. Access token lifetime:
+        15 minutes.
+
+        Claims: `user_id`, `client_id`, `role`, `jti`, `exp`, `iat`.
+
+        '
+    EngineApiKeyBearer:
+      type: http
+      scheme: bearer
+      description: 'Engine API key via `Authorization: Bearer <api_key>` (priority
+        1).'
+    EngineApiKeyHeader:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: Engine API key via `X-API-Key` header (priority 2).
+    EngineApiKeyFallback:
+      type: apiKey
+      in: header
+      name: api_key
+      description: Engine API key via `api_key` header (priority 3, fallback).
+  schemas:
+    ApiKeyCreated:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        key:
+          type: string
+          description: Full plaintext API key (shown once).
+        type:
+          type: string
+          enum:
+          - http
+          - smtp
+        created_at:
+          type: string
+          format: date-time
+    BackendErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        field:
+          type: string
+          description: Optional field that caused the error.
+    Provider:
+      type: object
+      properties:
+        id:
+          type: integer
+        provider_name:
+          type: string
+        protocol_type:
+          type: string
+          enum:
+          - smtp
+          - http
+        enabled:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+    ProviderCreate:
+      type: object
+      required:
+      - provider_name
+      - protocol_type
+      properties:
+        provider_name:
+          type: string
+        protocol_type:
+          type: string
+          enum:
+          - smtp
+          - http
+        enabled:
+          type: boolean
+          default: true
+    Route:
+      type: object
+      properties:
+        id:
+          type: integer
+        provider_id:
+          type: integer
+        route_name:
+          type: string
+        host:
+          type: string
+        port:
+          type: integer
+          description: SMTP port; null for HTTP routes.
+        username:
+          type: string
+          description: SMTP username (masked on read).
+        password:
+          type: string
+          description: Masked value.
+        api_key:
+          type: string
+          description: Masked value.
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+        protocol_type:
+          type: string
+          enum:
+          - smtp
+          - http
+        worker_size:
+          type: integer
+        buffer_size:
+          type: integer
+        is_default:
+          type: boolean
+        tls_mode:
+          type: string
+          enum:
+          - starttls
+          - tls
+          - none
+        created_at:
+          type: string
+          format: date-time
+    RouteCreate:
+      type: object
+      required:
+      - provider_id
+      - route_name
+      - host
+      properties:
+        provider_id:
+          type: integer
+          description: Must exist in `providers` table.
+        route_name:
+          type: string
+        host:
+          type: string
+          description: SMTP hostname or full HTTP URL.
+        port:
+          type: integer
+          description: SMTP port (not used for HTTP).
+        username:
+          type: string
+          description: SMTP username.
+        password:
+          type: string
+          format: password
+          description: AES-256 encrypted at rest.
+        api_key:
+          type: string
+          description: HTTP provider API key; AES-256 encrypted at rest.
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+          default: active
+        protocol_type:
+          type: string
+          enum:
+          - smtp
+          - http
+        worker_size:
+          type: integer
+          default: 5
+        buffer_size:
+          type: integer
+          default: 1000
+        is_default:
+          type: boolean
+          description: Only one default per client.
+        tls_mode:
+          type: string
+          enum:
+          - starttls
+          - tls
+          - none
+    RuleRouteAssignment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        provider_name:
+          type: string
+          readOnly: true
+        route_id:
+          type: integer
+        route_name:
+          type: string
+          readOnly: true
+        weight:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description: Distribution weight.
+        enabled:
+          type: boolean
+          default: true
+    Rule:
+      type: object
+      properties:
+        id:
+          type: integer
+        client_id:
+          type: integer
+        rule_name:
+          type: string
+        tag:
+          type: string
+        priority:
+          type: integer
+          description: Lower number = higher priority.
+        expression:
+          type: string
+          description: 'Expression evaluated by `expr.Compile()`. Available variables:
+
+            `from_address`, `from_domain`, `from_local`, `to_address`, `to_domain`,
+
+            `to_local`, `headers`, `remote_ip`, `helo`, `size`.
+
+            Helper functions: `StartsWith()`, `EndsWith()`, `Contains()`, `Matches()`,
+
+            `ToLower()`, `ToUpper()`, `Trim()`.
+
+            '
+        enabled:
+          type: boolean
+        rule_routes:
+          type: array
+          items:
+            $ref: '#/components/schemas/RuleRouteAssignment'
+        created_at:
+          type: string
+          format: date-time
+    RuleCreate:
+      type: object
+      required:
+      - rule_name
+      - expression
+      - priority
+      - enabled
+      properties:
+        rule_name:
+          type: string
+        expression:
+          type: string
+          description: Must compile with `expr.Compile()`.
+        tag:
+          type: string
+          default: default
+        priority:
+          type: integer
+          description: Lower number = higher priority.
+        enabled:
+          type: boolean
+        rule_routes:
+          type: array
+          items:
+            type: object
+            required:
+            - route_id
+            - weight
+            properties:
+              route_id:
+                type: integer
+                description: Must exist for the current client.
+              weight:
+                type: integer
+                minimum: 0
+                maximum: 100
+              enabled:
+                type: boolean
+                default: true
+    ClientSummary:
+      type: object
+      properties:
+        client_id:
+          type: integer
+        clientname:
+          type: string
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        full_name:
+          type: string
+        role:
+          type: string
+          enum:
+          - admin
+          - viewer
+        client_id:
+          type: integer
+        two_factor_enabled:
+          type: boolean
+    UserCreate:
+      type: object
+      required:
+      - username
+      - email
+      - password
+      - role
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        role:
+          type: string
+          enum:
+          - admin
+          - viewer
+        allowed_subclient_ids:
+          type: array
+          items:
+            type: integer
+          description: Sub-client IDs this user may access.
+    DashboardStats:
+      type: object
+      properties:
+        totalRoutes:
+          type: integer
+        enabledRoutes:
+          type: integer
+        totalRules:
+          type: integer
+        activeRules:
+          type: integer
+        totalProviders:
+          type: integer
+        totalUsers:
+          type: integer
+    IpWhitelist:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        ips:
+          type: string
+          description: Comma-separated IP addresses.
+    MetricsResponse:
+      type: object
+      properties:
+        total_requests:
+          type: integer
+          example: 15230
+        success_requests:
+          type: integer
+          example: 14980
+        failed_requests:
+          type: integer
+          example: 250
+        in_flight:
+          type: integer
+          example: 3
+        uptime_seconds:
+          type: integer
+          example: 86400
+    SmtpConfig:
+      type: object
+      properties:
+        default_from_email:
+          type: string
+          format: email
+        default_from_name:
+          type: string
+        bounce_email:
+          type: string
+          format: email
+        max_retries:
+          type: string
+        retry_interval_seconds:
+          type: string
+    ApiKeySummary:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        preview:
+          type: string
+          description: Masked key preview.
+        type:
+          type: string
+          enum:
+          - http
+          - smtp
+        created_at:
+          type: string
+          format: date-time
+    AuditLogEntry:
+      type: object
+      properties:
+        id:
+          type: integer
+        client_id:
+          type: integer
+        user_id:
+          type: integer
+        username:
+          type: string
+        action:
+          type: string
+          enum:
+          - login
+          - logout
+          - create
+          - update
+          - delete
+        resource_type:
+          type: string
+          enum:
+          - user
+          - route
+          - rule
+          - provider
+        resource_name:
+          type: string
+        ip_address:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+    AuditLogPage:
+      type: object
+      properties:
+        logs:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogEntry'
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+    IncomingAuth:
+      type: object
+      properties:
+        id:
+          type: integer
+        client_id:
+          type: integer
+        protocol_type:
+          type: string
+          enum:
+          - smtp
+          - https
+        username:
+          type: string
+        allowed_ips:
+          type: string
+          description: Comma-separated IPs or `*` for wildcard.
+        allowed_domains:
+          type: string
+          description: Comma-separated domains or `*` for wildcard.
+    LoginRequest:
+      type: object
+      required:
+      - account_name
+      - password
+      properties:
+        account_name:
+          type: string
+          description: Client/workspace name from `client_details.clientname`.
+        username:
+          type: string
+          description: Username (provide either `username` or `email`).
+        email:
+          type: string
+          format: email
+          description: Alternative to `username`.
+        password:
+          type: string
+          format: password
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT access token (15-minute lifetime).
+        refresh_token:
+          type: string
+          description: Refresh token (7-day lifetime).
+        refresh_expires_at:
+          type: string
+          format: date-time
+        client_id:
+          type: integer
+        clients:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClientSummary'
+        is_parent:
+          type: boolean
+        user:
+          $ref: '#/components/schemas/UserProfile'
+    TwoFactorRequiredResponse:
+      type: object
+      properties:
+        two_factor_required:
+          type: boolean
+          example: true
+        user_id:
+          type: integer
+        client_id:
+          type: integer
+    EmailAddress:
+      type: object
+      required:
+      - email
+      properties:
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+    SendGridPersonalization:
+      type: object
+      required:
+      - to
+      properties:
+        to:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmailAddress'
+          minItems: 1
+        cc:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmailAddress'
+        bcc:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmailAddress'
+        subject:
+          type: string
+          description: Overrides top-level subject for this personalization.
+    NetcoreContent:
+      type: object
+      required:
+      - type
+      - value
+      properties:
+        type:
+          type: string
+          enum:
+          - html
+          - plain
+          description: '`html` maps to `text/html`, `plain` maps to `text/plain`.'
+        value:
+          type: string
+    NetcorePayload:
+      type: object
+      required:
+      - personalizations
+      - from
+      properties:
+        personalizations:
+          type: array
+          items:
+            $ref: '#/components/schemas/SendGridPersonalization'
+          minItems: 1
+        from:
+          $ref: '#/components/schemas/EmailAddress'
+        subject:
+          type: string
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/NetcoreContent'
+        tags:
+          type: array
+          items:
+            type: string
+          description: Equivalent to SendGrid `categories`.
+        settings:
+          type: object
+          properties:
+            open_track:
+              type: boolean
+            click_track:
+              type: boolean
+    EngineSuccessResponse:
+      type: object
+      properties:
+        success:
+          type: string
+          example: ok
+        req_id:
+          type: string
+          description: 'Unique request ID: `{rand6}-{clusterID}-{providerID}-{timestamp}-{sequence}-{clientID}-{routeID}`.
+
+            '
+          example: f85l13-1-2-260310161455-000-2-11
+        message:
+          type: string
+          example: Message relayed successfully
+    EngineErrorResponse:
+      type: object
+      properties:
+        success:
+          type: string
+          example: error
+        error:
+          type: string
+        error_code:
+          type: string
+          enum:
+          - empty_body
+          - payload_too_large
+          - invalid_json
+          - invalid_payload
+          - transform_failed
+          - marshal_failed
+          - auth_failed
+          - auth_error
+          - ip_not_allowed
+          - domain_not_allowed
+          - rule_eval_failed
+          - route_not_found
+          - internal_error
+          - provider_error
+          - provider_timeout
+        req_id:
+          type: string
+    SendGridContent:
+      type: object
+      required:
+      - type
+      - value
+      properties:
+        type:
+          type: string
+          enum:
+          - text/plain
+          - text/html
+        value:
+          type: string
+    SendGridAttachment:
+      type: object
+      required:
+      - content
+      - filename
+      properties:
+        content:
+          type: string
+          description: Base64-encoded file content.
+        type:
+          type: string
+          description: MIME type.
+        filename:
+          type: string
+        disposition:
+          type: string
+          enum:
+          - attachment
+          - inline
+          default: attachment
+    SendGridPayload:
+      type: object
+      required:
+      - personalizations
+      - from
+      properties:
+        personalizations:
+          type: array
+          items:
+            $ref: '#/components/schemas/SendGridPersonalization'
+          minItems: 1
+        from:
+          $ref: '#/components/schemas/EmailAddress'
+        subject:
+          type: string
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/SendGridContent'
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/SendGridAttachment'
+        reply_to:
+          $ref: '#/components/schemas/EmailAddress'
+        categories:
+          type: array
+          items:
+            type: string
+    TwoFactorSetupResponse:
+      type: object
+      properties:
+        secret:
+          type: string
+          description: TOTP secret key.
+          example: JBSWY3DPEHPK3PXP
+        provisioning_uri:
+          type: string
+          description: OTP auth URI for authenticator apps.
+        qr_code:
+          type: string
+          description: Base64-encoded QR code image (data URI).
+    SignupRequest:
+      type: object
+      required:
+      - accountName
+      - fullName
+      - email
+      - password
+      properties:
+        accountName:
+          type: string
+          description: Unique account name.
+        fullName:
+          type: string
+        email:
+          type: string
+          format: email
+          description: Unique across all users (case-insensitive).
+        password:
+          type: string
+          format: password
+    TestSendRequest:
+      type: object
+      required:
+      - from
+      - to
+      - api_key
+      - host
+      properties:
+        from:
+          type: string
+          format: email
+        to:
+          type: string
+          format: email
+        api_key:
+          type: string
+          description: Provider API key (sent directly to provider).
+        host:
+          type: string
+          format: uri
+          description: 'Provider endpoint URL. Provider detection:
+
+            `pepipost.com` → Netcore, `sendgrid.com` → SendGrid, other → 400.
+
+            '
+    TestSendResponse:
+      type: object
+      properties:
+        provider:
+          type: string
+          example: netcore
+        status_code:
+          type: string
+          example: '202'
+        response:
+          type: string
+          description: Raw provider response body.
+    IncomingAuthUpsert:
+      type: object
+      required:
+      - protocol_type
+      properties:
+        protocol_type:
+          type: string
+          enum:
+          - smtp
+          - https
+        username:
+          type: string
+          description: SMTP username.
+        password:
+          type: string
+          format: password
+          description: SHA-256 hashed before storage.
+        api_key:
+          type: string
+          description: For HTTP; hashed before storage.
+        api_key_id:
+          type: integer
+          description: Reference to `api_keys.id`.
+        allowed_ips:
+          type: string
+          description: Comma-separated IPs or `*`.
+        allowed_domains:
+          type: string
+          description: Comma-separated domains or `*`.
+    TwoFactorVerifyRequest:
+      type: object
+      required:
+      - user_id
+      - client_id
+      - code
+      properties:
+        user_id:
+          type: integer
+        client_id:
+          type: integer
+        code:
+          type: string
+          description: 6-digit TOTP code.
+          pattern: ^\d{6}$
+        setup:
+          type: boolean
+          default: false
+          description: Set to `true` during initial 2FA setup confirmation.
+    TwoFactorSetupConfirmResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        backup_codes:
+          type: array
+          items:
+            type: string
+          description: One-time backup codes; store securely.
+  parameters:
+    ClientIdHeader:
+      name: X-Client-ID
+      in: header
+      required: false
+      schema:
+        type: integer
+      description: Switch client context (multi-tenant).
+    ResourceId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+      description: Resource ID.
+x-readme:
+  explorer-enabled: true
+  proxy-enabled: true
+paths:
+  /v1/cache/refresh/all:
+    post:
+      operationId: cacheRefreshAll
+      tags:
+      - Engine — Cache
+      summary: Refresh all caches
+      description: Clears all caches (rules, routes, auth, distribution) at once.
+      security: []
+      responses:
+        '200':
+          $ref: '#/components/responses/CacheRefreshSuccess'
+  /v1/cache/refresh/auth:
+    post:
+      operationId: cacheRefreshAuth
+      tags:
+      - Engine — Cache
+      summary: Refresh auth cache
+      description: Clears auth cache (API key, SMTP user).
+      security: []
+      responses:
+        '200':
+          $ref: '#/components/responses/CacheRefreshSuccess'
+  /v1/cache/refresh/routes:
+    post:
+      operationId: cacheRefreshRoutes
+      tags:
+      - Engine — Cache
+      summary: Refresh routes cache
+      description: Clears route and distribution caches.
+      security: []
+      responses:
+        '200':
+          $ref: '#/components/responses/CacheRefreshSuccess'
+  /v1/cache/refresh/rules:
+    post:
+      operationId: cacheRefreshRules
+      tags:
+      - Engine — Cache
+      summary: Refresh rules cache
+      description: Clears client rules and global rules caches. Changes take effect
+        immediately.
+      security: []
+      responses:
+        '200':
+          $ref: '#/components/responses/CacheRefreshSuccess'
+  /auth/password:
+    put:
+      operationId: changePassword
+      tags:
+      - Auth
+      summary: Change own password
+      security:
+      - BackendJWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - new_password
+              properties:
+                new_password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: Password changed.
+        '401':
+          description: Unauthorized.
+  /auth/check-account:
+    get:
+      operationId: checkAccount
+      tags:
+      - Auth
+      summary: Check if account exists
+      security: []
+      parameters:
+      - name: name
+        in: query
+        required: true
+        schema:
+          type: string
+        description: Account name to check.
+      responses:
+        '200':
+          description: Account existence result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  exists:
+                    type: boolean
+  /config/api-keys:
+    post:
+      operationId: createApiKey
+      tags:
+      - Configuration
+      summary: Create an API key
+      description: 'Returns the full plaintext API key **once**. The backend stores
+        only the SHA-256 hash.
+
+        Store your key securely immediately.
+
+        '
+      security:
+      - BackendJWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - name
+              - type
+              properties:
+                name:
+                  type: string
+                type:
+                  type: string
+                  enum:
+                  - http
+                  - smtp
+      responses:
+        '201':
+          description: API key created (includes full plaintext key).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiKeyCreated'
+    get:
+      operationId: listApiKeys
+      tags:
+      - Configuration
+      summary: List API keys
+      description: Returns masked key previews only.
+      security:
+      - BackendJWT: []
+      responses:
+        '200':
+          description: List of API keys (masked).
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiKeySummary'
+  /providers:
+    post:
+      operationId: createProvider
+      tags:
+      - Providers
+      summary: Create a provider
+      security:
+      - BackendJWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProviderCreate'
+      responses:
+        '201':
+          description: Provider created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Provider'
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackendErrorResponse'
+    get:
+      operationId: listProviders
+      tags:
+      - Providers
+      summary: List all providers
+      security:
+      - BackendJWT: []
+      responses:
+        '200':
+          description: List of providers.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Provider'
+  /routes:
+    post:
+      operationId: createRoute
+      tags:
+      - Routes
+      summary: Create a route
+      description: Passwords and API keys are AES-256 encrypted at rest.
+      security:
+      - BackendJWT: []
+      parameters:
+      - $ref: '#/components/parameters/ClientIdHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RouteCreate'
+      responses:
+        '201':
+          description: Route created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Route'
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackendErrorResponse'
+    get:
+      operationId: listRoutes
+      tags:
+      - Routes
+      summary: List all routes
+      description: Lists routes for the current client. Passwords are masked; API
+        keys are decrypted and masked.
+      security:
+      - BackendJWT: []
+      parameters:
+      - $ref: '#/components/parameters/ClientIdHeader'
+      responses:
+        '200':
+          description: List of routes.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Route'
+  /rules:
+    post:
+      operationId: createRule
+      tags:
+      - Rules
+      summary: Create a rule
+      description: Creates a new rule with route assignments. Expression is validated
+        at creation time.
+      security:
+      - BackendJWT: []
+      parameters:
+      - $ref: '#/components/parameters/ClientIdHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RuleCreate'
+      responses:
+        '201':
+          description: Rule created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rule'
+        '400':
+          description: Validation error (invalid expression, missing fields).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackendErrorResponse'
+    get:
+      operationId: listRules
+      tags:
+      - Rules
+      summary: List all rules
+      description: Lists rules for the current client, including associated route
+        assignments with weights.
+      security:
+      - BackendJWT: []
+      parameters:
+      - $ref: '#/components/parameters/ClientIdHeader'
+      responses:
+        '200':
+          description: List of rules.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Rule'
+  /clients:
+    post:
+      operationId: createSubClient
+      tags:
+      - Clients
+      summary: Create a sub-client
+      security:
+      - BackendJWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - clientname
+              properties:
+                clientname:
+                  type: string
+                status:
+                  type: string
+                  enum:
+                  - active
+                  - inactive
+                  default: active
+      responses:
+        '201':
+          description: Sub-client created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientSummary'
+    get:
+      operationId: listSubClients
+      tags:
+      - Clients
+      summary: List sub-clients
+      description: Lists sub-clients of the current client.
+      security:
+      - BackendJWT: []
+      responses:
+        '200':
+          description: List of sub-clients.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClientSummary'
+  /users:
+    post:
+      operationId: createUser
+      tags:
+      - Users
+      summary: Create a user
+      description: Requires admin role.
+      security:
+      - BackendJWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+      responses:
+        '201':
+          description: User created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackendErrorResponse'
+    get:
+      operationId: listUsers
+      tags:
+      - Users
+      summary: List users
+      description: Lists all users for the current client. Requires admin role.
+      security:
+      - BackendJWT: []
+      responses:
+        '200':
+          description: List of users.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserProfile'
+  /config/api-keys/{id}:
+    parameters:
+    - $ref: '#/components/parameters/ResourceId'
+    delete:
+      operationId: deleteApiKey
+      tags:
+      - Configuration
+      summary: Delete an API key
+      security:
+      - BackendJWT: []
+      responses:
+        '204':
+          description: API key deleted.
+        '404':
+          description: API key not found.
+  /providers/{id}:
+    parameters:
+    - $ref: '#/components/parameters/ResourceId'
+    delete:
+      operationId: deleteProvider
+      tags:
+      - Providers
+      summary: Delete a provider
+      description: Blocked if any route references the provider.
+      security:
+      - BackendJWT: []
+      responses:
+        '204':
+          description: Provider deleted.
+        '400':
+          description: Provider has associated routes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackendErrorResponse'
+        '404':
+          description: Provider not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackendErrorResponse'
+    put:
+      operationId: updateProvider
+      tags:
+      - Providers
+      summary: Update a provider
+      description: Partial update supported.
+      security:
+      - BackendJWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProviderCreate'
+      responses:
+        '200':
+          description: Provider updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Provider'
+        '404':
+          description: Provider not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackendErrorResponse'
+  /routes/{id}:
+    parameters:
+    - $ref: '#/components/parameters/ResourceId'
+    delete:
+      operationId: deleteRoute
+      tags:
+      - Routes
+      summary: Delete a route
+      description: Blocked if referenced by `rule_routes`.
+      security:
+      - BackendJWT: []
+      parameters:
+      - $ref: '#/components/parameters/ClientIdHeader'
+      responses:
+        '200':
+          description: Route deleted.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: route deleted
+        '400':
+          description: Route has associated rules.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackendErrorResponse'
+        '404':
+          description: Route not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackendErrorResponse'
+    put:
+      operationId: updateRoute
+      tags:
+      - Routes
+      summary: Update a route
+      description: Partial update supported.
+      security:
+      - BackendJWT: []
+      parameters:
+      - $ref: '#/components/parameters/ClientIdHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RouteCreate'
+      responses:
+        '200':
+          description: Route updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Route'
+        '404':
+          description: Route not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackendErrorResponse'
+  /rules/{id}:
+    parameters:
+    - $ref: '#/components/parameters/ResourceId'
+    delete:
+      operationId: deleteRule
+      tags:
+      - Rules
+      summary: Delete a rule
+      description: Deletes a rule and all its route/provider associations.
+      security:
+      - BackendJWT: []
+      parameters:
+      - $ref: '#/components/parameters/ClientIdHeader'
+      responses:
+        '200':
+          description: Rule deleted.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: rule deleted
+        '404':
+          description: Rule not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackendErrorResponse'
+    put:
+      operationId: updateRule
+      tags:
+      - Rules
+      summary: Update a rule
+      description: 'Update a rule. If `rule_routes` is provided, existing route mappings
+        are **replaced entirely**.
+
+        '
+      security:
+      - BackendJWT: []
+      parameters:
+      - $ref: '#/components/parameters/ClientIdHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RuleCreate'
+      responses:
+        '200':
+          description: Rule updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rule'
+        '404':
+          description: Rule not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackendErrorResponse'
+  /users/{id}:
+    parameters:
+    - $ref: '#/components/parameters/ResourceId'
+    delete:
+      operationId: deleteUser
+      tags:
+      - Users
+      summary: Delete a user
+      description: Cannot delete self. Requires admin role.
+      security:
+      - BackendJWT: []
+      responses:
+        '204':
+          description: User deleted.
+        '400':
+          description: Cannot delete own account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackendErrorResponse'
+        '404':
+          description: User not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackendErrorResponse'
+    put:
+      operationId: updateUser
+      tags:
+      - Users
+      summary: Update a user
+      description: Partial update. Requires admin role.
+      security:
+      - BackendJWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+      responses:
+        '200':
+          description: User updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        '404':
+          description: User not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackendErrorResponse'
+  /auth/2fa/disable:
+    post:
+      operationId: disable2FA
+      tags:
+      - Auth
+      summary: Disable two-factor authentication
+      security:
+      - BackendJWT: []
+      responses:
+        '200':
+          description: 2FA disabled.
+  /auth/forgot-password:
+    post:
+      operationId: forgotPassword
+      tags:
+      - Auth
+      summary: Request password reset
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - accountName
+              - email
+              properties:
+                accountName:
+                  type: string
+                email:
+                  type: string
+                  format: email
+      responses:
+        '200':
+          description: Reset token generated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+  /dashboard/stats:
+    get:
+      operationId: getDashboardStats
+      tags:
+      - Dashboard & Audit
+      summary: Dashboard statistics
+      description: Aggregate statistics for the current client.
+      security:
+      - BackendJWT: []
+      parameters:
+      - $ref: '#/components/parameters/ClientIdHeader'
+      responses:
+        '200':
+          description: Dashboard stats.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardStats'
+  /config/ip-whitelist:
+    get:
+      operationId: getIpWhitelist
+      tags:
+      - Configuration
+      summary: Get IP whitelist
+      security:
+      - BackendJWT: []
+      responses:
+        '200':
+          description: IP whitelist configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IpWhitelist'
+    put:
+      operationId: updateIpWhitelist
+      tags:
+      - Configuration
+      summary: Update IP whitelist
+      security:
+      - BackendJWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IpWhitelist'
+      responses:
+        '200':
+          description: IP whitelist updated.
+  /metrics:
+    get:
+      operationId: getMetrics
+      tags:
+      - Engine — Health
+      summary: Server metrics
+      description: Returns server-wide counters including total requests, successes,
+        failures, in-flight, and uptime.
+      security: []
+      responses:
+        '200':
+          description: Current server metrics.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MetricsResponse'
+  /auth/profile:
+    get:
+      operationId: getProfile
+      tags:
+      - Auth
+      summary: Get authenticated user profile
+      security:
+      - BackendJWT: []
+      responses:
+        '200':
+          description: User profile.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+  /config/smtp:
+    get:
+      operationId: getSmtpConfig
+      tags:
+      - Configuration
+      summary: Get SMTP configuration
+      security:
+      - BackendJWT: []
+      responses:
+        '200':
+          description: SMTP configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SmtpConfig'
+    put:
+      operationId: updateSmtpConfig
+      tags:
+      - Configuration
+      summary: Update SMTP configuration
+      security:
+      - BackendJWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SmtpConfig'
+      responses:
+        '200':
+          description: SMTP configuration updated.
+  /health:
+    get:
+      operationId: healthCheck
+      tags:
+      - Engine — Health
+      summary: Health check
+      description: Returns server health status. Use for load-balancer health checks.
+      security: []
+      responses:
+        '200':
+          description: Server is healthy.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+  /healthz:
+    get:
+      operationId: healthCheckZ
+      tags:
+      - Engine — Health
+      summary: Health check (alternate)
+      description: Alternate health endpoint; identical to `/health`.
+      security: []
+      responses:
+        '200':
+          description: Server is healthy.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+  /audit-logs:
+    get:
+      operationId: listAuditLogs
+      tags:
+      - Dashboard & Audit
+      summary: Query audit logs
+      description: Admin-only. Supports filtering and pagination.
+      security:
+      - BackendJWT: []
+      parameters:
+      - name: page
+        in: query
+        schema:
+          type: integer
+          default: 1
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          default: 50
+          maximum: 100
+      - name: action
+        in: query
+        schema:
+          type: string
+          enum:
+          - login
+          - logout
+          - create
+          - update
+          - delete
+      - name: resource_type
+        in: query
+        schema:
+          type: string
+          enum:
+          - user
+          - route
+          - rule
+          - provider
+      - name: username
+        in: query
+        schema:
+          type: string
+      - name: resource_name
+        in: query
+        schema:
+          type: string
+      - name: user_id
+        in: query
+        schema:
+          type: integer
+      - name: from_date
+        in: query
+        schema:
+          type: string
+          format: date
+        description: ISO date, e.g. `2026-03-01`.
+      - name: to_date
+        in: query
+        schema:
+          type: string
+          format: date
+      - name: search
+        in: query
+        schema:
+          type: string
+        description: Free-text search in details.
+      responses:
+        '200':
+          description: Paginated audit logs.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditLogPage'
+  /audit-logs/resource-names:
+    get:
+      operationId: listAuditResourceNames
+      tags:
+      - Dashboard & Audit
+      summary: List distinct resource names
+      description: Returns distinct resource names for filter dropdowns.
+      security:
+      - BackendJWT: []
+      responses:
+        '200':
+          description: List of resource names.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                example:
+                - netcore_primary
+                - sendgrid_backup
+                - OTP Rule
+  /config/incoming-auth:
+    get:
+      operationId: listIncomingAuth
+      tags:
+      - Configuration
+      summary: List incoming auth entries
+      description: Lists incoming auth entries for the current client.
+      security:
+      - BackendJWT: []
+      responses:
+        '200':
+          description: Incoming auth entries.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IncomingAuth'
+    put:
+      operationId: upsertIncomingAuth
+      tags:
+      - Configuration
+      summary: Create or update incoming auth
+      security:
+      - BackendJWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IncomingAuthUpsert'
+      responses:
+        '200':
+          description: Incoming auth created or updated.
+  /clients/switchable:
+    get:
+      operationId: listSwitchableClients
+      tags:
+      - Clients
+      summary: List clients the user can switch to
+      security:
+      - BackendJWT: []
+      responses:
+        '200':
+          description: Switchable client list.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClientSummary'
+  /auth/login:
+    post:
+      operationId: login
+      tags:
+      - Auth
+      summary: Login
+      description: 'Authenticate a user. Returns JWT access token and refresh token.
+
+        Rate limited to 5 attempts per IP per 5 minutes.
+
+        '
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful (or 2FA required).
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/LoginResponse'
+                - $ref: '#/components/schemas/TwoFactorRequiredResponse'
+        '400':
+          description: Missing required fields.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackendErrorResponse'
+        '401':
+          description: Invalid credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackendErrorResponse'
+        '429':
+          description: Rate limited.
+          headers:
+            Retry-After:
+              description: Seconds to wait before retrying.
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackendErrorResponse'
+  /auth/logout:
+    post:
+      operationId: logout
+      tags:
+      - Auth
+      summary: Logout (revoke token)
+      security:
+      - BackendJWT: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refresh_token:
+                  type: string
+                  description: Optional; also revokes the refresh token.
+      responses:
+        '200':
+          description: Logged out successfully.
+  /auth/refresh:
+    post:
+      operationId: refreshToken
+      tags:
+      - Auth
+      summary: Refresh JWT token
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - refresh_token
+              properties:
+                refresh_token:
+                  type: string
+      responses:
+        '200':
+          description: New JWT and refresh token issued.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Invalid or expired refresh token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackendErrorResponse'
+  /config/api-keys/{id}/reset:
+    parameters:
+    - $ref: '#/components/parameters/ResourceId'
+    post:
+      operationId: resetApiKey
+      tags:
+      - Configuration
+      summary: Regenerate an API key
+      description: Generates a new key value; same ID and name. Returns the full plaintext
+        key once.
+      security:
+      - BackendJWT: []
+      responses:
+        '200':
+          description: Key regenerated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiKeyCreated'
+  /auth/reset-password:
+    post:
+      operationId: resetPassword
+      tags:
+      - Auth
+      summary: Reset password with token
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - token
+              - password
+              properties:
+                token:
+                  type: string
+                password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: Password reset successful.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+  /users/{id}/password:
+    parameters:
+    - $ref: '#/components/parameters/ResourceId'
+    put:
+      operationId: resetUserPassword
+      tags:
+      - Users
+      summary: Reset a user's password (admin action)
+      security:
+      - BackendJWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - new_password
+              properties:
+                new_password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: Password reset.
+        '404':
+          description: User not found.
+  /v1s/nsend/:
+    post:
+      operationId: sendEmailNetcore
+      tags:
+      - Engine — Send
+      summary: Send email (Netcore format)
+      description: 'Send an email using **Netcore v6** payload format. Identical flow
+        to `/v1s/ssend`
+
+        except the incoming type is `netcore`. Content type keys differ:
+
+        `text/html` → `html`, `text/plain` → `plain`, `categories` → `tags`.
+
+        '
+      security:
+      - EngineApiKeyBearer: []
+      - EngineApiKeyHeader: []
+      - EngineApiKeyFallback: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NetcorePayload'
+            example:
+              personalizations:
+              - to:
+                - email: recipient@example.com
+                  name: Recipient
+              from:
+                email: sender@example.com
+                name: Sender
+              subject: Test Email
+              content:
+              - type: html
+                value: <p>HTML body</p>
+              tags:
+              - transactional
+              settings:
+                open_track: true
+                click_track: true
+      responses:
+        '200':
+          description: Email relayed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EngineSuccessResponse'
+        '400':
+          $ref: '#/components/responses/EngineBadRequest'
+        '401':
+          $ref: '#/components/responses/EngineAuthFailed'
+        '403':
+          $ref: '#/components/responses/EngineForbidden'
+        '413':
+          $ref: '#/components/responses/EnginePayloadTooLarge'
+        '500':
+          $ref: '#/components/responses/EngineInternalError'
+        '502':
+          $ref: '#/components/responses/EngineProviderError'
+        '504':
+          $ref: '#/components/responses/EngineProviderTimeout'
+  /v1s/ssend:
+    post:
+      operationId: sendEmailSendGrid
+      tags:
+      - Engine — Send
+      summary: Send email (SendGrid format)
+      description: 'Send an email using **SendGrid v3** payload format. The engine
+        authenticates the request,
+
+        evaluates rules, selects a route via weighted distribution, optionally transforms
+        the
+
+        payload if the target provider uses a different format, and forwards to the
+        provider API.
+
+        '
+      security:
+      - EngineApiKeyBearer: []
+      - EngineApiKeyHeader: []
+      - EngineApiKeyFallback: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendGridPayload'
+            example:
+              personalizations:
+              - to:
+                - email: recipient@example.com
+                  name: Recipient
+                cc:
+                - email: cc@example.com
+                bcc:
+                - email: bcc@example.com
+              from:
+                email: sender@example.com
+                name: Sender
+              subject: Hello from Orbit Router
+              content:
+              - type: text/plain
+                value: Plain text body
+              - type: text/html
+                value: <p>HTML body</p>
+              attachments:
+              - content: base64encodedcontent
+                type: application/pdf
+                filename: document.pdf
+                disposition: attachment
+              reply_to:
+                email: reply@example.com
+              categories:
+              - transactional
+      responses:
+        '200':
+          description: Email relayed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EngineSuccessResponse'
+        '400':
+          description: Invalid request (empty body, invalid JSON, payload validation
+            failure, transform error).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EngineErrorResponse'
+              examples:
+                emptyBody:
+                  summary: Empty body
+                  value:
+                    success: error
+                    error: request body is empty
+                    error_code: empty_body
+                invalidJson:
+                  summary: Invalid JSON
+                  value:
+                    success: error
+                    error: invalid JSON
+                    error_code: invalid_json
+                invalidPayload:
+                  summary: Missing required fields
+                  value:
+                    success: error
+                    error: missing from address
+                    error_code: invalid_payload
+        '401':
+          description: Authentication failed — API key missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EngineErrorResponse'
+              example:
+                success: error
+                error: authentication failed
+                error_code: auth_failed
+        '403':
+          description: IP or domain restriction violation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EngineErrorResponse'
+              examples:
+                ipBlocked:
+                  summary: IP not allowed
+                  value:
+                    success: error
+                    error: IP not in allowed list
+                    error_code: ip_not_allowed
+                domainBlocked:
+                  summary: Domain not allowed
+                  value:
+                    success: error
+                    error: domain not in allowed list
+                    error_code: domain_not_allowed
+        '413':
+          description: Payload exceeds `max_request_body_size_mb`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EngineErrorResponse'
+        '500':
+          description: Internal server error (rule evaluation, route lookup, etc.).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EngineErrorResponse'
+        '502':
+          description: Provider returned an error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EngineErrorResponse'
+        '504':
+          description: Provider did not respond within the timeout.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EngineErrorResponse'
+  /auth/2fa/setup:
+    post:
+      operationId: setup2FA
+      tags:
+      - Auth
+      summary: Setup two-factor authentication
+      description: Generates a TOTP secret, QR code, and provisioning URI.
+      security:
+      - BackendJWT: []
+      responses:
+        '200':
+          description: 2FA setup data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TwoFactorSetupResponse'
+  /auth/signup:
+    post:
+      operationId: signup
+      tags:
+      - Auth
+      summary: Register new account
+      description: Creates a client and admin user. Returns JWT immediately.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignupRequest'
+      responses:
+        '200':
+          description: Account created; JWT returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+          description: Validation error (duplicate account name or email).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackendErrorResponse'
+  /v1s/test/send:
+    post:
+      operationId: testSendEmail
+      tags:
+      - Engine — Test
+      summary: Test mail (direct to provider)
+      description: 'Send a test email directly to a provider, **bypassing rules and
+        routing**.
+
+        For diagnostic use only. No API key authentication required.
+
+
+        Provider detection is based on the `host` URL:
+
+        - `pepipost.com` → Netcore format
+
+        - `sendgrid.com` → SendGrid format
+
+        - Other → `400 Bad Request`
+
+        '
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestSendRequest'
+      responses:
+        '200':
+          description: Test email sent; includes raw provider response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestSendResponse'
+        '400':
+          description: Unsupported provider host or missing fields.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EngineErrorResponse'
+  /clients/{id}:
+    parameters:
+    - $ref: '#/components/parameters/ResourceId'
+    put:
+      operationId: updateClient
+      tags:
+      - Clients
+      summary: Update client status
+      description: Admin only.
+      security:
+      - BackendJWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum:
+                  - active
+                  - inactive
+      responses:
+        '200':
+          description: Client updated.
+  /rules/validate:
+    post:
+      operationId: validateRuleExpression
+      tags:
+      - Rules
+      summary: Validate a rule expression
+      description: Validates a rule expression without saving. Uses `expr.Compile()`
+        to verify syntax.
+      security:
+      - BackendJWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - expression
+              properties:
+                expression:
+                  type: string
+                  description: Rule expression to validate.
+                  example: Contains(from_domain, "example.com") && size > 1024
+      responses:
+        '200':
+          description: Validation result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  valid:
+                    type: boolean
+                  error:
+                    type: string
+                    description: Present only when `valid` is `false`.
+              examples:
+                valid:
+                  value:
+                    valid: true
+                invalid:
+                  value:
+                    valid: false
+                    error: unexpected token EOF (1:42)
+  /auth/2fa/verify:
+    post:
+      operationId: verify2FA
+      tags:
+      - Auth
+      summary: Verify TOTP code
+      description: 'Verify a TOTP code. Used for both setup confirmation (`setup:
+        true`) and login
+
+        verification. When `setup: true`, returns backup codes. During login, returns
+        the
+
+        full login response.
+
+        '
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TwoFactorVerifyRequest'
+      responses:
+        '200':
+          description: Verification successful.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/TwoFactorSetupConfirmResponse'
+                - $ref: '#/components/schemas/LoginResponse'
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com,
+    merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

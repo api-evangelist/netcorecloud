@@ -1,0 +1,18 @@
+generated: '2026-10-13'
+method: searched
+probe: true
+source: https://netcore.ai/security/
+url: https://netcore.ai/security/
+certifications:
+- SOC 2
+- ISO 27001
+- HIPAA
+- GDPR
+evidence:
+- source: https://netcore.ai/security/
+  keywords:
+  - soc 2
+  - soc2
+  - iso 27001
+  - hipaa
+  - gdpr

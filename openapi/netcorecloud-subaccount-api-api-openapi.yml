@@ -1,0 +1,350 @@
+openapi: 3.2.0
+info:
+  title: Email API V5 Subaccount API
+  description: 'Current API version: v5.1
+
+
+    Our API provides functionalities for email sending, templating emails, managing sender domain, credit usage check and reports.
+
+
+    API endpoint URL for non-EU customers: https://emailapi.netcorecloud.net/
+
+
+    API endpoint for EU customers: https://apieu.netcorecloud.net/'
+  version: '5.1'
+servers:
+- url: https://emailapi.netcorecloud.net/v5.1
+  description: Non-EU customers
+- url: https://apieu.netcorecloud.net/v5.1
+  description: EU customers
+security:
+- ApiKeyAuth: []
+tags:
+- name: Subaccount API
+  description: Subaccount management
+paths:
+  /subaccounts/delete:
+    delete:
+      tags:
+      - Subaccount API
+      summary: Delete Subaccount
+      description: Permanently delete an email subaccount.
+      parameters:
+      - name: api_key
+        in: header
+        required: true
+        description: Add your master account API key.
+        schema:
+          type: string
+          example: x-api-key-123456789
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: Add subaccount username to delete.
+                  example: acme_marketing_team
+              required:
+              - username
+      responses:
+        '200':
+          description: Subaccount deleted successfully
+      operationId: deleteSubaccountsDelete
+      x-operation-id-source: derived
+  /subaccounts/getcreditddetails:
+    get:
+      tags:
+      - Subaccount API
+      summary: Get Credit Details
+      description: Fetch current credit balance and credit settings for a subaccount.
+      parameters:
+      - name: username
+        in: query
+        required: true
+        description: Add subaccount username to fetch credit details.
+        schema:
+          type: string
+          example: acme_marketing_team
+      - name: api_key
+        in: header
+        required: true
+        description: Add your master account API key.
+        schema:
+          type: string
+          example: x-api-key-123456789
+      responses:
+        '200':
+          description: Credit details returned
+      operationId: getSubaccountsGetcreditddetails
+      x-operation-id-source: derived
+  /subaccounts/getSubAccounts:
+    get:
+      tags:
+      - Subaccount API
+      summary: List Subaccounts
+      description: Retrieve all email subaccounts created under your master account.
+      parameters:
+      - name: api_key
+        in: header
+        required: true
+        description: Add your master account API key.
+        schema:
+          type: string
+          example: x-api-key-123456789
+      responses:
+        '200':
+          description: Subaccount list returned
+      operationId: getSubaccountsGetSubAccounts
+      x-operation-id-source: derived
+  /subaccounts:
+    patch:
+      tags:
+      - Subaccount API
+      summary: Enable or Disable Subaccount
+      description: Enable or disable email sending for a subaccount.
+      parameters:
+      - name: api_key
+        in: header
+        required: true
+        description: Add your master account API key.
+        schema:
+          type: string
+          example: x-api-key-123456789
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: Add subaccount to enable or disable.
+                  example: acme_marketing_team
+                disabled:
+                  type: boolean
+                  description: Set true to disable sending or false to enable sending.
+                  example: true
+              required:
+              - username
+              - disabled
+      responses:
+        '200':
+          description: Subaccount status updated
+      operationId: patchSubaccounts
+      x-operation-id-source: derived
+  /subaccounts/createSubaccount:
+    post:
+      tags:
+      - Subaccount API
+      summary: Create Subaccount
+      description: Create a new Email API subaccount under your master account.
+      parameters:
+      - name: api_key
+        in: header
+        required: true
+        description: Add your master account API key to authorize this request.
+        schema:
+          type: string
+          example: x-api-key-123456789
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: Add a unique username for the subaccount. Use this value in all future subaccount API calls.
+                  example: acme_marketing_team
+                email:
+                  type: string
+                  description: Add the subaccount owner email address where the activation link will be sent.
+                  example: owner@acme.com
+                setpassword:
+                  type: integer
+                  description: Set whether you want to define the password now — use 1 to set password here or 0 to let the user set it via email link.
+                  example: 1
+                password:
+                  type: string
+                  description: Add a password for the subaccount when setpassword = 1. Must meet password policy requirements.
+                  example: Acme@1234
+                credit_type:
+                  type: string
+                  description: Choose credit mode for this subaccount — unlimited or one_time_credit.
+                  example: one_time_credit
+              required:
+              - username
+              - email
+              - setpassword
+      responses:
+        '200':
+          description: Subaccount created successfully
+        '400':
+          description: Invalid request
+      operationId: postSubaccountsCreateSubaccount
+      x-operation-id-source: derived
+  /subaccounts/setrecurringcreditddetails:
+    post:
+      tags:
+      - Subaccount API
+      summary: Set Recurring Credits
+      description: Configure automatic recurring credit allocation for a subaccount.
+      parameters:
+      - name: api_key
+        in: header
+        required: true
+        description: Add your master account API key.
+        schema:
+          type: string
+          example: x-api-key-123456789
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: Add subaccount to receive recurring credits.
+                  example: acme_marketing_team
+                recurring_credit:
+                  type: integer
+                  description: Add the number of credits added each cycle.
+                  example: 10000
+                timeperiod:
+                  type: string
+                  description: Choose how often credits should be added — daily, weekly, or monthly.
+                  example: monthly
+                start_date:
+                  type: string
+                  description: Add the start date for recurring credits in YYYY-MM-DD format.
+                  example: '2026-03-01'
+                end_date:
+                  type: string
+                  description: Add the end date to stop recurring credits in YYYY-MM-DD format.
+                  example: '2026-12-31'
+                status:
+                  type: string
+                  description: Set recurring credit status — use enable to activate or disable to stop.
+                  example: enable
+              required:
+              - username
+              - recurring_credit
+              - timeperiod
+      responses:
+        '200':
+          description: Recurring credit rule saved
+      operationId: postSubaccountsSetrecurringcreditddetails
+      x-operation-id-source: derived
+  /subaccounts/setsubaccountcredit:
+    post:
+      tags:
+      - Subaccount API
+      summary: Add or Subtract Credits
+      description: Manually increase or decrease email credits for a subaccount.
+      parameters:
+      - name: api_key
+        in: header
+        required: true
+        description: Add your master account API key.
+        schema:
+          type: string
+          example: x-api-key-123456789
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: Add subaccount username whose credit balance you want to change.
+                  example: acme_marketing_team
+                action:
+                  type: string
+                  description: Choose credit action — use increase to add credits or decrease to deduct credits.
+                  example: increase
+                amount:
+                  type: integer
+                  description: Add the number of credits to increase or decrease.
+                  example: 5000
+              required:
+              - username
+              - action
+              - amount
+      responses:
+        '200':
+          description: Credits updated successfully
+      operationId: postSubaccountsSetsubaccountcredit
+      x-operation-id-source: derived
+  /subaccounts/updateSubaccount:
+    post:
+      tags:
+      - Subaccount API
+      summary: Update Subaccount
+      description: Update subaccount credentials or credit mode.
+      parameters:
+      - name: api_key
+        in: header
+        required: true
+        description: Add your master account API key.
+        schema:
+          type: string
+          example: x-api-key-123456789
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: Add the username of the subaccount you want to update.
+                  example: acme_marketing_team
+                new_email:
+                  type: string
+                  description: Add the new email address to replace the existing subaccount email.
+                  example: new-owner@acme.com
+                new_password:
+                  type: string
+                  description: Add a new password for the subaccount login.
+                  example: NewPass@123
+                confirm_password:
+                  type: string
+                  description: Re-enter the new password to confirm it matches.
+                  example: NewPass@123
+                credit_type:
+                  type: string
+                  description: Choose the new credit mode — unlimited or one_time_credit.
+                  example: unlimited
+              required:
+              - username
+      responses:
+        '200':
+          description: Subaccount updated successfully
+      operationId: postSubaccountsUpdateSubaccount
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: api_key
+      in: header
+      description: Your Email API Key. You can find this in your Email API account at Settings->Integrations.
+x-readme:
+  explorer-enabled: true
+  proxy-enabled: true
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

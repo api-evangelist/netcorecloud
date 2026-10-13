@@ -1,0 +1,1645 @@
+openapi: 3.2.0
+info:
+  title: Campaigns Campaign API
+  description: ''
+  version: 1.0.0
+servers:
+- url: https://netcoreapi-main-prod-us.netcorein.com/v5/
+  description: US
+- url: ' https://netcoreapi-main-prod-ind.netcorein.com/v5/'
+  description: IND
+- url: ' https://netcoreapi-main-prod-eu.netcorein.com/v5/'
+  description: EU
+security:
+- ApiKeyAuth: []
+tags:
+- name: Campaign
+paths:
+  /campaign/create:
+    post:
+      summary: Create Campaign
+      deprecated: false
+      description: 'The Create Campaign API is used to create and configure marketing campaigns across supported communication channels: **Email, APN (App Push Notifications), BPN (Browser Push Notifications), SMS, and WhatsApp**.'
+      tags:
+      - Campaign
+      parameters:
+      - name: api-key
+        in: header
+        description: Api Key to be used for authentication and authorization
+        required: true
+        example: a87136e33b5126b31b3135ce4e06a455
+        schema:
+          type: string
+          pattern: ^[a-f0-9]{32}$
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  description: click on the **+** icon to add objects
+                  properties:
+                    campaigns:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          channel:
+                            type: string
+                            description: 'The channel through which the campaign will be sent.**Note** Allowed values: Email, APN, BPN, SMS, WhatsApp.'
+                            example:
+                            - Email
+                            - APN
+                            - BPN
+                            - SMS
+                            - WhatsApp
+                          campaign_name:
+                            type: string
+                            description: Name of the campaign. As best practice please ensure to provide unique names for better readability. Allowed Characters - 0-9, a-z, A-Z, -, _, &, @. Maximum character limit is 100.
+                            example: Test_Create_Campaign
+                          campaign_state:
+                            type: string
+                            description: While creating a Campaign, campaign_state can have values - draft - When the campaign is still being worked on; schedule - Once all campaign is ready to be published
+                          campaign_type:
+                            type: string
+                            description: 'Type of the campaign.
+
+                              Note - amp, a/b split, split are in development
+
+                              Allowed values: regular, amp, a/b split, split'
+                          tags:
+                            type: string
+                            description: List of tags associated with the campaign. Optional additional tagging for tracking purpose
+                          google_analytics:
+                            $ref: '#/components/schemas/GoogleAnalytics'
+                            description: 'Google Analytics Tracking. '
+                          conversion_tracking:
+                            $ref: '#/components/schemas/ConversionTracking'
+                            description: 'Conversion details for the campaign. '
+                          deduplication:
+                            type: boolean
+                            description: 'Deduplication. Default value: False. For channels: Email, SMS, Whatsapp'
+                          audience_details:
+                            $ref: '#/components/schemas/AudienceDetails'
+                            description: Details of the audience for the campaign. Section to specify Audience Details to be included or excluded for the campaign via Contact Master, List IDs, Segment IDs or UDT ID
+                          frequency_capping:
+                            $ref: '#/components/schemas/FrequencyCapping'
+                            description: This is used to manage how often a campaign is sent to the same user. Limit the number of times a user can receive the campaign within a specified time frame. Details of sub-parameter is provided below.
+                          content_details:
+                            $ref: '#/components/schemas/ContentDetails'
+                            description: Content details for the campaign.
+                          schedule_details:
+                            $ref: '#/components/schemas/ScheduleDetails'
+                            description: Schedule details for the campaign.
+                          campaign_specific_details:
+                            $ref: '#/components/schemas/CampaignSpecific'
+                            description: Specific details for the campaign.
+                        required:
+                        - channel
+                        - campaign_name
+                        - campaign_state
+                        - campaign_type
+                        - tags
+                        - google_analytics
+                        - conversion_tracking
+                        - audience_details
+                        - frequency_capping
+                        - content_details
+                        - schedule_details
+                        - campaign_specific_details
+                  required:
+                  - campaigns
+                notify_callback:
+                  description: Notification and callback details. This block is manditory. The sub-blocks, notify and callback are optional. Use either one or both of these sub-blocks. However, one of them is mandatory.
+                  type: object
+                  properties:
+                    notify:
+                      type: object
+                      properties:
+                        email:
+                          type: string
+                          description: Email address for notifications.
+                          pattern: ^([a-z0-9_])([a-z0-9\+_\-]+)*(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,25}$
+                          example:
+                          - taaha.multani@netcorecloud.com
+                    callback:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          url:
+                            type: string
+                            description: Callback URL. Please make sure its HTTPS.
+                            example:
+                            - https://hkdk.events/*
+                            pattern: ^https:\/\/[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}(?:\/[^\s]{0,2036})?$
+                            minLength: 12
+                            maxLength: 2048
+                          method:
+                            type: string
+                            description: HTTP method for the callback. Only POST is allowed.
+                            example:
+                            - POST
+                          headers:
+                            type: object
+                            properties:
+                              key1:
+                                type: string
+                                pattern: ^[a-zA-Z0-9\s._\-@#&():,?/=+]{1,255}$
+                                minLength: 1
+                                maxLength: 255
+                              key2:
+                                type: string
+                                pattern: ^[a-zA-Z0-9\s._\-@#&():,?/=+]{1,255}$
+                                minLength: 1
+                                maxLength: 255
+                            description: 'To specify header details for the callback. For example key, value could be "Content-Type": "application/json" or                     "Authorization": "Bearer <token>"'
+                          body_params:
+                            type: object
+                            properties:
+                              key1:
+                                type: string
+                                pattern: ^[a-zA-Z0-9\s._\-@#&():,?/=+]{1,255}$
+                                minLength: 1
+                                maxLength: 255
+                              key2:
+                                type: string
+                                pattern: ^[a-zA-Z0-9\s._\-@#&():,?/=+]{1,255}$
+                                minLength: 1
+                                maxLength: 255
+                            description: 'To specify body details for the callback. For example key, value could be "message": "success"'
+                          query_params:
+                            type: object
+                            properties:
+                              key1:
+                                type: string
+                                pattern: ^[a-zA-Z0-9\s._\-@#&():,?/=+]{1,255}$
+                                minLength: 1
+                                maxLength: 255
+                              key2:
+                                type: string
+                                pattern: ^[a-zA-Z0-9\s._\-@#&():,?/=+]{1,255}$
+                                minLength: 1
+                                maxLength: 255
+                            description: 'To specify query param details for the callback. For example key, value could be "token": "AKEF54G"'
+              required:
+              - data
+              - notify_callback
+            example:
+              '1':
+                value:
+                  data:
+                    campaigns:
+                    - channel: email
+                      campaign_name: TM - Test 1
+                      campaign_state: schedule
+                      campaign_type: regular
+                      tags:
+                      - TM
+                      google_analytics:
+                        enable_ga_tracking: false
+                      conversion_tracking:
+                        enable_conversion_tracking: false
+                      audience_details:
+                        include_audience:
+                          contact_master: false
+                          data:
+                          - id:
+                            - 2
+                            name:
+                            - email_pod_list
+                            audience_type: list
+                        exclude_audience:
+                          data: []
+                      content_details:
+                        template_id: 12
+                      frequency_capping:
+                        enable_frequency_capping: false
+                      schedule_details:
+                        schedule_type: now
+                      campaign_specific_details:
+                        audience_limit: 10
+                        subject: Sample Sub
+                        domain_filter:
+                          enable_domain_filter: false
+                        sender_details:
+                          sender_name: taaha
+                          sender_email: taaha@m3m.in
+                  notify_callback:
+                    notify:
+                      email:
+                      - taaha.multani@netcorecloud.com
+                      - prashant.pawae@netcorecloud.com
+                    callback:
+                    - url: https://hkdk.events/hap8uawn6vg4ja
+                      method: POST
+                      headers:
+                        Content-Type: application/json
+                        Authorization: Bearer <token>
+                      body_params:
+                        key1: value1
+                        key2: value2
+                        key3: value3
+                      query_params:
+                        param1: value1
+                        param2: value2
+                    - url: https://client.com/callbackurl.php
+                      method: POST
+                      headers:
+                        Content-Type: application/json
+                        Authorization: Bearer <token>
+                      body_params:
+                        key1: value1
+                        key2: value2
+                        key3: value3
+                      query_params:
+                        param1: value1
+                        param2: value2
+                description: ''
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        campaign_id:
+                          type: integer
+                        campaign_name:
+                          type: string
+                        channel:
+                          type: string
+                  request_id:
+                    type: string
+                  description:
+                    type: string
+                    title: ''
+                  status:
+                    type: string
+                  code:
+                    type: string
+                required:
+                - data
+                - request_id
+                - description
+                - status
+                - code
+              example:
+                '1':
+                  summary: Create Email Success
+                  value:
+                    data:
+                    - campaign_id: 413
+                      campaign_name: TM - Test 1
+                      channel: email
+                    request_id: 0193af17-9c17-73be-b1f3-dc360eeb908d
+                    description: Campaign Created Successfully
+                    status: Success
+                    code: 200
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationFailureResponse'
+              example:
+                '2':
+                  summary: System Config Validation Failure
+                  value:
+                    request_id: 0193afe5-95c8-727a-8b23-5d1cf5735ed3
+                    description: System Configuration Validation Failure.
+                    status: Success
+                    code: 200
+                    errors:
+                    - field: data[0].frequency_capping.enable_frequency_capping
+                      message: Frequency capping is not enabled for this client
+                    - field: data[0].tags
+                      message: Tags are mandatory for this client
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                  description:
+                    type: string
+                  error:
+                    type: string
+                  code:
+                    type: integer
+                required:
+                - request_id
+                - description
+                - error
+                - code
+              example:
+                '3':
+                  summary: API Key invalid
+                  value:
+                    request_id: 01942bff-fb81-7a03-89d3-916e8097c48b
+                    description: Unauthorized
+                    status: Success
+                    code: 200
+          headers: {}
+        '405':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorsResponse'
+              example:
+                '4':
+                  summary: Method Not Allowed
+                  value:
+                    request_id: 0193af65-4d80-743a-a296-2805ecd590b4
+                    description: Method Not Allowed
+                    status: Success
+                    code: 200
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorsResponse'
+              example:
+                '5':
+                  summary: Database connection failure
+                  value:
+                    request_id: 0193af65-4d80-743a-a296-2805ecd590b4
+                    description: Internal Server Error
+                    status: Success
+                    code: 200
+          headers: {}
+      security:
+      - ApiKeyAuth: []
+      operationId: postCampaignCreate
+      x-operation-id-source: derived
+  /campaign/delete:
+    post:
+      summary: Delete Campaign
+      deprecated: false
+      description: Delete Campaign.
+      tags:
+      - Campaign
+      parameters:
+      - name: api-key
+        in: header
+        description: ''
+        required: true
+        example: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filtering_criteria_operator:
+                  type: string
+                  description: 'Allowed : and, or'
+                filtering_criteria:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      condition_operator:
+                        type: string
+                        description: 'Allowed : and, or'
+                      condition_details:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            field:
+                              type: string
+                              description: 'Field Name '
+                            field_category:
+                              type: string
+                              description: 'Allowed : Channel Name. Fields which are epcific to channel need this key to be present to be searched successfully.'
+                            operation:
+                              type: string
+                              description: 'Allowed : "equals" | "not_equals" | "greater_than" | "less_than" | "greater_than_or_equal_to" | "less_than_or_equal_to" | "between" | "in" | "not_in" | "contains" | "does_not_contain" | "starts_with" | "ends_with" | "is_null" | "is_not_null" | "matches_regex"'
+                            value:
+                              type: array
+                              items:
+                                type: string
+                          required:
+                          - field
+                          - operation
+                          - value
+                    required:
+                    - condition_operator
+                    - condition_details
+              required:
+              - filtering_criteria_operator
+              - filtering_criteria
+            example:
+              '1':
+                value:
+                  filtering_criteria_operator: or
+                  filtering_criteria:
+                  - condition_operator: and
+                    condition_details:
+                    - field: campaign_id
+                      operation: equals
+                      value:
+                      - 2
+                      - 4
+                description: ''
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+      security:
+      - ApiKeyAuth: []
+      operationId: postCampaignDelete
+      x-operation-id-source: derived
+  /campaign/duplicate:
+    post:
+      summary: Duplicate Campaign
+      deprecated: false
+      description: ''
+      tags:
+      - Campaign
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilterBlock'
+          headers: {}
+      security:
+      - ApiKeyAuth: []
+      operationId: postCampaignDuplicate
+      x-operation-id-source: derived
+  /campaign/search:
+    post:
+      summary: Search Campaign
+      deprecated: false
+      description: ''
+      tags:
+      - Campaign
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filtering_criteria_operator:
+                  type: string
+                  description: 'Allowed : and, or'
+                filtering_criteria:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      condition_operator:
+                        type: string
+                        description: 'Allowed : and, or'
+                      condition_details:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            field:
+                              type: string
+                              description: 'Field Name '
+                            field_category:
+                              type: string
+                              description: 'Allowed : Channel Name. Fields which are epcific to channel need this key to be present to be searched successfully.'
+                            operation:
+                              type: string
+                              description: 'Allowed : "equals" | "not_equals" | "greater_than" | "less_than" | "greater_than_or_equal_to" | "less_than_or_equal_to" | "between" | "in" | "not_in" | "contains" | "does_not_contain" | "starts_with" | "ends_with" | "is_null" | "is_not_null" | "matches_regex"'
+                            value:
+                              type: array
+                              items:
+                                type: string
+                          required:
+                          - field
+                          - operation
+                          - value
+                    required:
+                    - condition_operator
+                    - condition_details
+                output:
+                  $ref: '#/components/schemas/OutputBlock'
+              required:
+              - filtering_criteria_operator
+              - filtering_criteria
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+      security:
+      - ApiKeyAuth: []
+      operationId: postCampaignSearch
+      x-operation-id-source: derived
+  /campaign/suspend:
+    post:
+      summary: Suspend Campaign
+      deprecated: false
+      description: ''
+      tags:
+      - Campaign
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      channel:
+                        type: string
+                      campaign_ids:
+                        type: array
+                        items:
+                          type: string
+                    required:
+                    - channel
+                    - campaign_ids
+                required:
+                - data
+              example:
+                '1':
+                  summary: Success
+                  description: ''
+                  value:
+                    request_id: 0195850f-e980-7b02-a64c-2b2af03870ed
+                    description: Campaigns Suspended Successfully
+                    code: 200
+                    status: success
+                    data:
+                    - campaign_id: 3177
+                      channel: email
+                '2':
+                  summary: Validation Error
+                  description: ''
+                  value:
+                    request_id: 0195850e-1b5f-7a83-aa6e-ef6044367428
+                    description: 'Validation Failure: Error during suspend campaign. Please refer to https://developer.netcorecloud.com/docs/test-link-for-api'
+                    code: 400
+                    status: failed
+                    errors:
+                    - field: campaign_ids
+                      message: 'Failed. The following campaign_ids are invalid. Kindly provide the correct Campaign ID available on your panel: 11111'
+                    - field: campaign_ids
+                      message: 'Failed. The following campaign_ids do not have a valid status for deletion: 3176'
+          headers: {}
+      security:
+      - ApiKeyAuth: []
+      operationId: postCampaignSuspend
+      x-operation-id-source: derived
+  /campaign/test:
+    post:
+      summary: Test Campaign
+      deprecated: false
+      tags:
+      - Campaign
+      parameters:
+      - name: api-key
+        in: header
+        description: ''
+        required: true
+        example: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    campaigns:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/TestCampaign'
+                  required:
+                  - campaigns
+              required:
+              - data
+            example:
+              '1':
+                value:
+                  data:
+                    campaigns:
+                    - campaign_id: 490
+                      channel: email
+                      test_user_details:
+                        test_type: primary_key
+                        targets:
+                        - taaha.multani@netcorecloud.com
+                        - devtaaha@gmail.com
+                description: ''
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        campaign_id:
+                          type: integer
+                        channel:
+                          type: string
+                  request_id:
+                    type: string
+                  description:
+                    type: string
+                required:
+                - data
+                - request_id
+                - description
+              example:
+                '1':
+                  summary: Success
+                  value:
+                    data:
+                    - campaign_id: 490
+                      channel: email
+                    request_id: 01943a1b-25f8-7af7-973b-750c80abf6b6
+                    description: Test Campaign Successfully
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationFailureResponse'
+              example:
+                '2':
+                  summary: Multiple Campaigns sent
+                  value:
+                    request_id: 01943a2f-318e-7dee-a8f2-05944cf06c7b
+                    description: Test Campaign Validation Failure. Please refer to https://netcorecloud.stoplight.io/docs/netcore-campaign-v5-apis/p955mlprc0jdt-create-a-campaign
+                    errors:
+                    - field: data[0]
+                      message: Only one campaign can be tested at a time. Please send only one campaign inside the data block.
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorsResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorsResponse'
+          headers: {}
+      security:
+      - ApiKeyAuth: []
+      operationId: postCampaignTest
+      x-operation-id-source: derived
+  /campaign/update:
+    post:
+      summary: Update Campaign
+      deprecated: false
+      description: Update campaign documentation with example.
+      tags:
+      - Campaign
+      parameters:
+      - name: api-key
+        in: header
+        description: Api Key to be used for authentication and authorization
+        required: true
+        example: ''
+        schema:
+          type: string
+          pattern: ^[a-f0-9]{32}$
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    campaigns:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          campaign_id:
+                            type: string
+                            description: The campaign ID to be updated.
+                          channel:
+                            type: string
+                            description: 'When updating the campaign, channel cannot be changed. The channel through which the campaign will be sent. Note: BPN, SMS, whatsapp are in development. Allowed values: email, apn, bpn, sms, whatsapp'
+                          campaign_name:
+                            type: string
+                            description: Name of the campaign. As best practice please ensure to provide unique names for better readability. Allowed Characters - 0-9, a-z, A-Z, -, _, &, @. Maximum character limit is 100.
+                          campaign_state:
+                            type: string
+                            description: When updating the campaign, campaigns which are in scheduled state cannot be updated. They need to be suspended, then updated.
+                          campaign_type:
+                            type: string
+                            description: 'When updating a campaign, campaign_type cannot be changed. Type of the campaign.
+
+                              Note - amp, a/b split, split are in development
+
+                              Allowed values: regular, amp, a/b split, split'
+                          tags:
+                            type: string
+                            description: List of tags associated with the campaign. Optional additional tagging for tracking purpose
+                          google_analytics:
+                            $ref: '#/components/schemas/GoogleAnalytics'
+                            description: 'Google Analytics Tracking. '
+                          conversion_tracking:
+                            $ref: '#/components/schemas/ConversionTracking'
+                            description: 'Conversion details for the campaign. '
+                          deduplication:
+                            type: boolean
+                            description: 'Deduplication. Default value: False. For channels: Email, SMS, Whatsapp'
+                          audience_details:
+                            $ref: '#/components/schemas/AudienceDetails'
+                            description: Details of the audience for the campaign. Section to specify Audience Details to be included or excluded for the campaign via Contact Master, List IDs, Segment IDs or UDT ID
+                          frequency_capping:
+                            $ref: '#/components/schemas/FrequencyCapping'
+                            description: This is used to manage how often a campaign is sent to the same user. Limit the number of times a user can receive the campaign within a specified time frame. Details of sub-parameter is provided below.
+                          content_details:
+                            $ref: '#/components/schemas/ContentDetails'
+                            description: Content details for the campaign.
+                          schedule_details:
+                            $ref: '#/components/schemas/ScheduleDetails'
+                            description: Schedule details for the campaign.
+                          campaign_specific_details:
+                            $ref: '#/components/schemas/CampaignSpecific'
+                            description: Specific details for the campaign.
+                        required:
+                        - channel
+                        - campaign_name
+                        - campaign_state
+                        - campaign_type
+                        - tags
+                        - google_analytics
+                        - conversion_tracking
+                        - audience_details
+                        - frequency_capping
+                        - content_details
+                        - schedule_details
+                        - campaign_specific_details
+                        - campaign_id
+                  required:
+                  - campaigns
+                notify_callback:
+                  description: Notification and callback details. This block is manditory. The sub-blocks, notify and callback are optional. Use either one or both of these sub-blocks. However, one of them is mandatory.
+                  type: object
+                  properties:
+                    notify:
+                      type: object
+                      properties:
+                        email:
+                          type: string
+                          description: Email address for notifications.
+                          pattern: ^([a-z0-9_])([a-z0-9\+_\-]+)*(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,25}$
+                          example:
+                          - taaha.multani@netcorecloud.com
+                    callback:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          url:
+                            type: string
+                            description: Callback URL. Please make sure its HTTPS.
+                            example:
+                            - https://hkdk.events/*
+                            pattern: ^https:\/\/[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}(?:\/[^\s]{0,2036})?$
+                            minLength: 12
+                            maxLength: 2048
+                          method:
+                            type: string
+                            description: HTTP method for the callback. Only POST is allowed.
+                            example:
+                            - POST
+                          headers:
+                            type: object
+                            properties:
+                              key1:
+                                type: string
+                                pattern: ^[a-zA-Z0-9\s._\-@#&():,?/=+]{1,255}$
+                                minLength: 1
+                                maxLength: 255
+                              key2:
+                                type: string
+                                pattern: ^[a-zA-Z0-9\s._\-@#&():,?/=+]{1,255}$
+                                minLength: 1
+                                maxLength: 255
+                            description: 'To specify header details for the callback. For example key, value could be "Content-Type": "application/json" or                     "Authorization": "Bearer <token>"'
+                          body_params:
+                            type: object
+                            properties:
+                              key1:
+                                type: string
+                                pattern: ^[a-zA-Z0-9\s._\-@#&():,?/=+]{1,255}$
+                                minLength: 1
+                                maxLength: 255
+                              key2:
+                                type: string
+                                pattern: ^[a-zA-Z0-9\s._\-@#&():,?/=+]{1,255}$
+                                minLength: 1
+                                maxLength: 255
+                            description: 'To specify body details for the callback. For example key, value could be "message": "success"'
+                          query_params:
+                            type: object
+                            properties:
+                              key1:
+                                type: string
+                                pattern: ^[a-zA-Z0-9\s._\-@#&():,?/=+]{1,255}$
+                                minLength: 1
+                                maxLength: 255
+                              key2:
+                                type: string
+                                pattern: ^[a-zA-Z0-9\s._\-@#&():,?/=+]{1,255}$
+                                minLength: 1
+                                maxLength: 255
+                            description: 'To specify query param details for the callback. For example key, value could be "token": "AKEF54G"'
+              required:
+              - data
+              - notify_callback
+            example:
+              '1':
+                value:
+                  data:
+                    campaigns:
+                    - campaign_id: 533
+                      channel: email
+                      campaign_name: TM - Test 1 - Updated
+                      campaign_state: draft
+                      campaign_type: regular
+                      tags:
+                      - TM
+                      google_analytics:
+                        enable_ga_tracking: false
+                      conversion_tracking:
+                        enable_conversion_tracking: false
+                      audience_details:
+                        include_audience:
+                          contact_master: false
+                          data:
+                          - id:
+                            - 2
+                            name:
+                            - email_pod_list
+                            audience_type: list
+                        exclude_audience:
+                          data: []
+                      content_details:
+                        template_id: 12
+                      frequency_capping:
+                        enable_frequency_capping: false
+                      schedule_details:
+                        schedule_type: now
+                      campaign_specific_details:
+                        audience_limit: 10
+                        subject: Sample Sub
+                        domain_filter:
+                          enable_domain_filter: false
+                        sender_details:
+                          sender_name: taaha
+                          sender_email: taaha@m3m.in
+                  notify_callback:
+                    notify:
+                      email:
+                      - taaha.multani@netcorecloud.com
+                      - prashant.pawae@netcorecloud.com
+                    callback:
+                    - url: https://hkdk.events/hap8uawn6vg4ja
+                      method: POST
+                      headers:
+                        Content-Type: application/json
+                        Authorization: Bearer <token>
+                      body_params:
+                        key1: value1
+                        key2: value2
+                        key3: value3
+                      query_params:
+                        param1: value1
+                        param2: value2
+                    - url: https://client.com/callbackurl.php
+                      method: POST
+                      headers:
+                        Content-Type: application/json
+                        Authorization: Bearer <token>
+                      body_params:
+                        key1: value1
+                        key2: value2
+                        key3: value3
+                      query_params:
+                        param1: value1
+                        param2: value2
+                description: ''
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        campaign_id:
+                          type: integer
+                        campaign_name:
+                          type: string
+                        channel:
+                          type: string
+                  request_id:
+                    type: string
+                  description:
+                    type: string
+                    title: ''
+                  status:
+                    type: string
+                  code:
+                    type: string
+                required:
+                - data
+                - request_id
+                - description
+                - status
+                - code
+              example:
+                '1':
+                  summary: Create Email Success
+                  value:
+                    data:
+                    - campaign_id: 533
+                      campaign_name: TM - Test 1 - Updated
+                      channel: email
+                    request_id: 01942c17-29a4-7e12-9d76-fb06a3115fb7
+                    description: Campaign Updated Successfully
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationFailureResponse'
+              example:
+                '2':
+                  summary: System Config Validation Failure
+                  value:
+                    request_id: 0193afe5-95c8-727a-8b23-5d1cf5735ed3
+                    description: System Configuration Validation Failure.
+                    errors:
+                    - field: data[0].frequency_capping.enable_frequency_capping
+                      message: Frequency capping is not enabled for this client
+                    - field: data[0].tags
+                      message: Tags are mandatory for this client
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                title: ''
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                  description:
+                    type: string
+                  error:
+                    type: string
+                  code:
+                    type: integer
+                required:
+                - request_id
+                - description
+                - error
+                - code
+              example:
+                '3':
+                  summary: API Key invalid
+                  value:
+                    request_id: 01942bff-fb81-7a03-89d3-916e8097c48b
+                    description: Unauthorized
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorsResponse'
+              example:
+                '4':
+                  summary: Database connection failure
+                  value:
+                    request_id: 0193af65-4d80-743a-a296-2805ecd590b4
+                    description: Internal Server Error
+          headers: {}
+      security:
+      - ApiKeyAuth: []
+      operationId: postCampaignUpdate
+      x-operation-id-source: derived
+components:
+  schemas:
+    ContentDetails:
+      type: object
+      properties:
+        template_id:
+          type: string
+          description: 'Template ID for the content.
+
+
+            '
+      description: Content details for the campaign. Note - This is not a mandatory block as long as the campaign is in "draft" state
+      required:
+      - template_id
+    OutputBlock:
+      type: object
+      properties:
+        get_count:
+          type: boolean
+          description: Get count of the results.
+        sorting:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                description: Field to be sorted with
+              direction:
+                type: string
+                description: 'Allowed: asc, desc'
+          description: Should not be present if get_count is True.
+        pagination:
+          type: object
+          properties:
+            page:
+              type: integer
+              description: The page number
+            limit:
+              type: integer
+              description: Number of results per page
+          description: Should not be present if get_count is True. Break search results into segments or pages.
+        fields:
+          type: array
+          items:
+            type: string
+          description: 'Should not be present if get_count is True. The fields which should be present in the output. Allowed Values : campaign_id, channel, campaign_name, campaign_state, campaign_type, tags, google_analytics, conversion_tracking, audience_details, content_details, frequency_capping, schedule_details, campaign_specific_details'
+      required:
+      - get_count
+    ValidationFailureResponse:
+      type: object
+      properties:
+        request_id:
+          type: string
+        description:
+          type: string
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              message:
+                type: string
+            required:
+            - field
+            - message
+        status:
+          type: string
+        code:
+          type: string
+      required:
+      - request_id
+      - description
+      - errors
+      - status
+      - code
+    GoogleAnalytics:
+      type: object
+      properties:
+        enable_ga_tracking:
+          type: boolean
+        global_level_ga_tracking:
+          type: boolean
+        utm_source:
+          type: string
+        utm_medium:
+          type: string
+        utm_campaign:
+          type: string
+        utm_content:
+          type: string
+        custom_key_value_parameters:
+          type: object
+          properties:
+            key1:
+              type: string
+            key2:
+              type: string
+          description: Custom keys apart from utm_*
+      description: Google Analytics Tracking.
+      required:
+      - enable_ga_tracking
+    ConversionTracking:
+      type: object
+      properties:
+        enable_conversion_tracking:
+          type: boolean
+        global_level_conversion_tracking:
+          type: boolean
+        payload_params:
+          type: array
+          items:
+            type: object
+            properties:
+              payload:
+                type: string
+              operator:
+                type: string
+              value:
+                type: string
+        event_name:
+          type: string
+        conversion_window:
+          type: object
+          properties:
+            value:
+              type: integer
+            timeframe:
+              type: string
+            revenue_params:
+              type: string
+      required:
+      - enable_conversion_tracking
+      description: Conversion details for the campaign. In Development
+    FilterBlock:
+      type: object
+      properties:
+        filtering_criteria_operator:
+          type: string
+          description: 'Allowed : and, or'
+        filtering_criteria:
+          type: array
+          items:
+            type: object
+            properties:
+              condition_operator:
+                type: string
+                description: 'Allowed : and, or'
+              condition_details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    field:
+                      type: string
+                      description: 'Field Name '
+                    field_category:
+                      type: string
+                      description: 'Allowed : Channel Name. Fields which are epcific to channel need this key to be present to be searched successfully.'
+                    operation:
+                      type: string
+                      description: 'Allowed : "equals" | "not_equals" | "greater_than" | "less_than" | "greater_than_or_equal_to" | "less_than_or_equal_to" | "between" | "in" | "not_in" | "contains" | "does_not_contain" | "starts_with" | "ends_with" | "is_null" | "is_not_null" | "matches_regex"'
+                    value:
+                      type: array
+                      items:
+                        type: string
+                  required:
+                  - field
+                  - operation
+                  - value
+            required:
+            - condition_operator
+            - condition_details
+      required:
+      - filtering_criteria_operator
+      - filtering_criteria
+    CampaignSpecific:
+      type: object
+      properties:
+        app_ids:
+          type: array
+          items:
+            type: string
+          description: '[APN] List of app IDs associated with the campaign.'
+        app_inbox:
+          type: object
+          properties:
+            app_inbox_enabled:
+              type: boolean
+              description: Indicates if the app inbox is enabled.
+            app_inbox_category:
+              type: string
+              description: Category for the app inbox.
+            app_inbox_ttl:
+              type: string
+              description: Time to live for the app inbox.
+          description: '[APN] App inbox details.'
+        local_PN:
+          type: string
+          description: '[APN] Indicates if the campaign is a local push notification.'
+        time_to_live:
+          type: object
+          properties:
+            ttl_type:
+              type: string
+              description: '[APN] Type of time to live. Allowed: "specific", "immediate"'
+            ttl_date_time:
+              type: string
+              description: '[APN] Date and time for time to live. Only should be present with "Specific"'
+            cut_off_date:
+              type: string
+              description: '[APN] Cut-off date for time to live. Only should be present with "Immediate"'
+            unit:
+              type: string
+              description: '[BPN] Allowed: hours, days'
+            value:
+              type: integer
+              description: '[BPN] Actual Value'
+          description: '[APN,BPN] Time to live details for the campaign.'
+        site_id:
+          type: string
+          description: '[BPN] Website id'
+        autohide_notification:
+          type: boolean
+          description: '[BPN] Auto-hide notification after approx 8 seconds'
+        subject:
+          type: string
+          description: '[EMAIL] Subject of the email.'
+        domain_filter:
+          type: object
+          properties:
+            enable_domain_filter:
+              type: boolean
+            domain_filter_conditions:
+              type: object
+              properties:
+                operator:
+                  type: string
+                condition_array:
+                  type: object
+                  properties:
+                    operator:
+                      type: string
+                    domain:
+                      type: string
+          description: '[EMAIL] Filter emails by Domain.'
+          required:
+          - enable_domain_filter
+        sender_details:
+          type: object
+          properties:
+            sender_name:
+              type: string
+              description: '[EMAIL]'
+            sender_email:
+              type: string
+              description: '[EMAIL]'
+            reply_email:
+              type: string
+              description: '[EMAIL]'
+            cc:
+              type: string
+              description: '[EMAIL]'
+            channel_id:
+              type: integer
+              description: '[SMS] Channel_id which comes from bizbond'
+            sender_id:
+              type: string
+              description: '[SMS] Sender_id which falls under channel_id'
+            custom_domain:
+              type: string
+              description: '[SMS] Custom Domain for sms (Can be null)'
+            business_number:
+              type: integer
+              description: '[WHATSAPP]  Business number to be used'
+          description: '[EMAIL,SMS,WHATSAPP] Manditory block if campaign_state is schedule.'
+        preheader:
+          type: string
+          description: '[EMAIL] Preheader for the email'
+        attachments:
+          type: array
+          items:
+            type: string
+          description: '[EMAIL] Attachments via Email'
+        header:
+          type: object
+          properties:
+            header_type:
+              type: string
+              description: '[EMAIL] custom or predefined. Note: If either browser_view or mobile_view is enabled, header value is replaced.'
+              example:
+              - 'custom '
+              - predefined
+            header_id:
+              type: string
+              description: '[EMAIL] If header type is predefined, header_id should be present.'
+            header_string:
+              type: string
+              description: '[EMAIL] If header type is custom, header_string should be present'
+          description: '[EMAIL] Use custom header inside Email Template. Note: Only use this field if both, browser_view and mobile_view are disabled.'
+        browser_view:
+          type: boolean
+          description: '[EMAIL] To enable browserview in header. If enabled, header value is replaced.'
+        mobile_view:
+          type: boolean
+          description: '[EMAIL] To enable mobileview in header. If enabled, header value is replaced.'
+        footer:
+          type: object
+          properties:
+            footer_id:
+              type: string
+              description: '[EMAIL] Footers only allowed via pre-made templates.'
+          description: '[EMAIL] Use custom footer inside Email Template.'
+        throttle_limit:
+          type: object
+          properties:
+            throttle_limit_enabled:
+              type: boolean
+              description: '[SMS] Throttle limit enabled/disabled'
+            sms_limit:
+              type: integer
+              description: '[SMS] SMS per minute'
+          description: '[SMS] Throttle limit for SMS'
+        split_details:
+          type: object
+          properties:
+            winner_details:
+              type: object
+              properties:
+                distribution:
+                  type: integer
+                criteria:
+                  type: string
+                  description: 'Allowed options: open/click/conversion'
+                duration_count:
+                  type: string
+                duration_type:
+                  type: string
+                  description: 'Allowed Options: hour/day'
+              required:
+              - duration_count
+              - duration_type
+            variant_details:
+              type: array
+              items:
+                type: object
+                properties:
+                  variant_name:
+                    type: string
+                  variant_distribution:
+                    type: integer
+                  sender_name:
+                    type: string
+                  sender_email:
+                    type: string
+                  preheader:
+                    type: string
+                  reply_email_id:
+                    type: string
+                  attachments:
+                    type: array
+                    items:
+                      type: string
+                  template_id:
+                    type: integer
+                  browser_view:
+                    type: boolean
+                  mobile_view:
+                    type: boolean
+                  custom_footer:
+                    type: string
+          description: '[ANY] This block will be used when Campaign type is split'
+        slice_and_send_details:
+          type: object
+          properties:
+            slice_size:
+              type: integer
+            slice_campaign_start_at:
+              type: string
+            slice_campaign_end_at:
+              type: string
+            slice_frequency_type:
+              type: string
+              description: 'Allowed Options: daily/custom'
+            slice_custom_days:
+              type: array
+              items:
+                type: string
+            slice_send_times:
+              type: array
+              items:
+                type: string
+          description: '[ANY] This block will be used when Campaign type is Slice and Send'
+        sto_details:
+          type: object
+          properties:
+            sto_start_time:
+              type: string
+            sto_end_time:
+              type: string
+            sto_unpredictable:
+              type: object
+              properties:
+                send_at:
+                  type: string
+                  description: 'Allowed options: best/custom/end'
+                custom_send_time:
+                  type: string
+            control_group_details:
+              type: object
+              properties:
+                enable_control_group:
+                  type: boolean
+                control_group_percentage:
+                  type: integer
+                set_default_time:
+                  type: string
+          description: '[ANY] This block will be used when Campaign type is sto'
+        audience_limit:
+          type: integer
+          description: '[ANY] Max audience limit. Limits the no. of users that the campaign needs to be sent out to. Frequency Capping and Limit cannot be used together for a single campaign. Manditory block if campaign_state is schedule.'
+      description: Channel Specific details for the campaign.
+    FrequencyCapping:
+      type: object
+      properties:
+        enable_frequency_capping:
+          type: boolean
+          description: 'Indicates if frequency capping is enabled.
+
+
+            '
+      description: This is used to manage how often a campaign is sent to the same user. Limit the number of times a user can receive the campaign within a specified time frame. Details of sub-parameter is provided below.
+      required:
+      - enable_frequency_capping
+    ScheduleDetails:
+      type: object
+      properties:
+        schedule_type:
+          type: string
+          description: 'sto, slice and send are in development. Values allowed: now, later, sto, slice and send'
+        schedule_time:
+          type: string
+          description: 'Use : ISO 8601 UTC Time format - yyyy-mm-ddThh:mm:ssZ eg: (2023-12-11T08:58:09Z)'
+      description: Schedule details for the campaign. Not a Mandatory parameter till campaign is in Draft State.
+      required:
+      - schedule_type
+    AudienceDetails:
+      type: object
+      properties:
+        include_audience:
+          type: object
+          properties:
+            contact_master:
+              type: boolean
+            data:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: array
+                    items:
+                      type: integer
+                    description: Unique identifier for the audience.
+                  name:
+                    type: array
+                    items:
+                      type: string
+                    description: Name of the audience.
+                  audience_type:
+                    type: string
+                    description: 'Type of the audience. Allowed values: list, segment, udt'
+              description: 'You can include by Either ID or name. You can also combine them. '
+          required:
+          - contact_master
+          description: List of audiences to include. We can use either Contact Master OR List/Segment OR UDT ID while creating the campaign.
+        exclude_audience:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: array
+                    items:
+                      type: integer
+                    description: Unique identifier for the audience.
+                  name:
+                    type: array
+                    items:
+                      type: string
+                    description: Name of the audience.
+                  audience_type:
+                    type: string
+                    description: 'Type of the audience. UDT is not allowed. Alowed values: list, segment'
+              description: 'You can exclude by Either ID or name. You can also combine them. '
+          description: List of audiences to exclude.
+          required:
+          - data
+      required:
+      - include_audience
+      - exclude_audience
+      description: Details of the audience for the campaign. Section to specify Audience Details to be included or excluded for the campaign via Contact Master, List IDs, Segment IDs or UDT ID. Note - This is not a mandatory block as long as the campaign is in "draft" state.
+    TestCampaign:
+      type: object
+      properties:
+        campaign_id:
+          type: integer
+        channel:
+          type: string
+        test_user_details:
+          type: object
+          properties:
+            test_type:
+              type: string
+              description: primary_key or push_token
+            targets:
+              type: array
+              items:
+                type: string
+          required:
+          - test_type
+          - targets
+      required:
+      - campaign_id
+      - channel
+      - test_user_details
+    ServerErrorsResponse:
+      type: object
+      properties:
+        request_id:
+          type: string
+        description:
+          type: string
+        error:
+          type: string
+        code:
+          type: integer
+      required:
+      - request_id
+      - description
+      - error
+      - code
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: api-key
+      description: "API key needed to access the endpoints. \nExample: `5evddf6604d2845b3b27023e5c2716f1`"
+      x-default: 5evddf6604d2845b3b27023e5c2716f1
+x-provenance:
+  method: searched
+  source: https://developer.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on developer.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

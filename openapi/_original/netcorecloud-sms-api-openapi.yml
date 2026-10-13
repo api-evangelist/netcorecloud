@@ -1,0 +1,586 @@
+# x-archived-from: netcorecloud-sms-api-openapi.yml
+# x-archived-on: 2026-10-13
+openapi: 3.1.0
+info:
+  title: SMS API
+  version: '1.0'
+  description: 'Comprehensive SMS API that allows businesses to send single or bulk
+    SMS messages to customers.
+
+    **API Categories:**
+
+    - **Send Message**: SingleMsgApi — send SMS via GET or POST
+
+    - **JSON Message**: JsonSingleApiV2 — send SMS via JSON body with optional AES-256
+    GCM encryption
+
+    - **CSV Message**: Send bulk SMS using CSV-formatted data via UploadCsvFile
+
+    - **Report**: DLR (Delivery Receipt) consolidated report with scroll-based pagination
+
+    '
+  license:
+    name: Proprietary
+    identifier: proprietary
+servers:
+- url: https://smsapi.netcorecloud.net/BulkSms
+  description: SMS API Server
+tags:
+- name: Report
+  description: DLR consolidated report
+components:
+  securitySchemes:
+    headerAuth:
+      type: apiKey
+      in: header
+      name: username
+      description: 'Authentication requires two headers (for Report APIs):
+
+        - `username` — the API username
+
+        - `password` — the API password
+
+
+        Both are validated against the external Auth API.
+
+        '
+  schemas:
+    DLRReportItem:
+      type: object
+      properties:
+        mobile_no:
+          type: string
+          example: '919876543210'
+        request_id:
+          type: integer
+          example: 17735018747
+        sender_id:
+          type: string
+          example: TESTSM
+        dlt_template_id:
+          type: integer
+          example: 1107161234567
+        feed_name:
+          type: string
+          example: TestFeed1
+        message:
+          type: string
+          example: Dear Customer, your OTP is 123456. Valid for 10 minutes.
+        operator:
+          type: string
+          example: Airtel
+        circle:
+          type: string
+          example: Delhi
+        requested_on:
+          type: string
+          description: Timestamp when the SMS was submitted
+          example: '2026-01-12 10:15:30'
+        last_activity:
+          type: string
+          description: Timestamp of the last delivery status update
+          example: '2026-01-12 10:15:35'
+        status:
+          type: string
+          description: Delivery status code
+          example: DELIVRD
+        sms_count:
+          type: integer
+          example: 1
+        tag:
+          type: string
+          description: Message tag / campaign identifier
+          example: campaign_jan
+        transaction_id:
+          type: integer
+          example: 90001
+        message_type:
+          type: string
+          description: Derived message type based on feed attributes
+          enum:
+          - Text
+          - Unicode
+          - Flash
+          example: Text
+    DLRReportResponse:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          type: string
+          enum:
+          - success
+          - failure
+          example: success
+        message:
+          type: string
+          description: Present only on failure
+        scroll_id:
+          type: string
+          description: Scroll ID for fetching the next page. Omitted when no more
+            data is available.
+          example: FGluY2x1ZGVfY29udGV4dF91dWlkDXF1ZX...
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/DLRReportItem'
+    DLRErrorResponse:
+      type: object
+      required:
+      - status
+      - message
+      properties:
+        status:
+          type: string
+          enum:
+          - failure
+          example: failure
+        message:
+          type: string
+          description: Human-readable error description
+          example: Bad Request. missing required field in request.
+    JsonSingleApiV2Request:
+      type: object
+      required:
+      - mobile
+      - messages
+      properties:
+        feedid:
+          type: string
+          description: Account/Feed ID used for authentication and required for encryption
+            key retrieval.
+          example: '392095'
+        username:
+          type: string
+          description: Username or registered mobile number for authentication.
+        password:
+          type: string
+          format: password
+          description: Password associated with the username.
+        jobname:
+          type: string
+          maxLength: 50
+          description: Custom name assigned to the message batch for tracking.
+        short:
+          type: string
+          description: 'URL shortener flag: 0 = off (default), 1 = on'
+          default: '0'
+        tz:
+          type: string
+          description: Timezone for scheduled time (e.g. GMT+05:30)
+        time:
+          type: string
+          description: Future publish time (yyyymmddhhmm or yyyy-MM-dd HH:mm)
+        mobile:
+          type: string
+          description: Comma-separated mobile numbers
+          example: 9870524533,9956808517
+        messages:
+          type: string
+          description: 'SMS message content (alias: message)'
+          example: Your OTP is 456789
+        message:
+          type: string
+          description: SMS message content to be sent.
+        senderid:
+          type: string
+          description: Sender ID
+        entityid:
+          type: string
+          description: DLT entity ID
+        templateid:
+          type: string
+          description: DLT template ID
+        async:
+          type: string
+          enum:
+          - '0'
+          - '1'
+          default: '0'
+          description: 0 = sync (default), 1 = async
+        dlt_template_type:
+          type: string
+          description: DLT template type
+        jobid:
+          type: string
+          description: Job ID
+        mtype:
+          type: string
+          description: Message type (1 = text)
+        url:
+          type: string
+          description: WAP URL for WAP push
+        udh:
+          type: string
+          description: UDH for binary messages
+        hexflag:
+          type: string
+          description: Hex flag for encoded messages
+        response_type:
+          type: string
+          enum:
+          - json
+          - xml
+          description: Response format
+        DepId:
+          type: string
+          description: Department ID
+        AppID:
+          type: string
+          description: Application ID
+        ssl:
+          type: string
+          description: Encryption mode (when in JSON body)
+        ssliv:
+          type: string
+          description: IV (when message encrypted in JSON)
+        aesKey:
+          type: string
+          description: AES key (when message encrypted in JSON)
+paths:
+  /v1/report/dlr-consolidated-report:
+    get:
+      tags:
+      - Report
+      summary: Get DLR consolidated report
+      operationId: getDLRConsolidatedReport
+      servers:
+      - url: https://smsapi.netcorecloud.net/BulkSms
+        description: SMS API (DLR report path)
+      description: 'Retrieves delivery receipt reports from Elasticsearch. Supports
+        scroll-based pagination.
+
+
+        **Initial request:** Provide `feed_id`, `from_date`, and `to_date`. The response
+        includes a `scroll_id` if more data is available.
+
+
+        **Pagination:** Pass the `scroll_id` from the previous response to fetch the
+        next page. No other parameters are needed when scrolling.
+
+
+        **End of data:** When the last page is reached, `scroll_id` is omitted from
+        the response. If scrolled past the end, `data` returns as an empty array.
+
+
+        **Constraints:**
+
+        - Date range must not exceed 31 days.
+
+        - `from_date` must not be after `to_date`.
+
+        - All requested `feed_id` values must belong to the authenticated user.
+
+        '
+      security:
+      - headerAuth: []
+      parameters:
+      - name: feed_id
+        in: query
+        required: false
+        description: Comma-separated feed IDs. Required for initial search; not needed
+          when using `scroll_id`.
+        schema:
+          type: string
+        example: 392092,392093
+      - name: from_date
+        in: query
+        required: false
+        description: Start date in YYYY-MM-DD format. Required for initial search.
+        schema:
+          type: string
+          format: date
+        example: '2026-01-01'
+      - name: to_date
+        in: query
+        required: false
+        description: End date in YYYY-MM-DD format. Required for initial search.
+        schema:
+          type: string
+          format: date
+        example: '2026-01-31'
+      - name: scroll_id
+        in: query
+        required: false
+        description: Scroll ID from a previous response to fetch the next page. When
+          provided, all other parameters are ignored.
+        schema:
+          type: string
+      - name: ent_id
+        in: query
+        required: false
+        description: Enterprise ID filter
+        schema:
+          type: integer
+      - name: delivery_status
+        in: query
+        required: false
+        description: Filter by delivery status (e.g., DELIVRD, FAILED)
+        schema:
+          type: string
+        example: DELIVRD
+      - name: sender_id
+        in: query
+        required: false
+        description: Filter by sender ID
+        schema:
+          type: string
+        example: TESTSM
+      - name: mobile_number
+        in: query
+        required: false
+        description: Filter by mobile number (digits only)
+        schema:
+          type: string
+        example: '919876543210'
+      - name: request_id
+        in: query
+        required: false
+        description: Filter by request ID
+        schema:
+          type: integer
+          format: int64
+        example: 17735018747
+      responses:
+        '200':
+          description: DLR report data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DLRReportResponse'
+              examples:
+                withScrollId:
+                  summary: Response with more pages available
+                  value:
+                    status: success
+                    scroll_id: FGluY2x1ZGVfY29udGV4dF91dWlkDXF1ZX...
+                    data:
+                    - mobile_no: '919876543210'
+                      request_id: 17735018747
+                      sender_id: TESTSM
+                      dlt_template_id: 1107161234567
+                      feed_name: TestFeed1
+                      message: Dear Customer, your OTP is 123456.
+                      operator: Airtel
+                      circle: Delhi
+                      requested_on: '2026-01-12 10:15:30'
+                      last_activity: '2026-01-12 10:15:35'
+                      status: DELIVRD
+                      sms_count: 1
+                      tag: campaign_jan
+                      transaction_id: 90001
+                      message_type: Text
+                lastPage:
+                  summary: Last page (no scroll_id)
+                  value:
+                    status: success
+                    data:
+                    - mobile_no: '919876543224'
+                      request_id: 17735018764
+                      sender_id: ALERTS
+                      dlt_template_id: 1107161234567
+                      feed_name: TestFeed1
+                      message: Payment of Rs.1500 debited.
+                      operator: BSNL
+                      circle: Rajasthan
+                      requested_on: '2026-01-12 13:00:00'
+                      last_activity: '2026-01-12 13:00:03'
+                      status: DELIVRD
+                      sms_count: 1
+                      tag: afternoon_batch
+                      transaction_id: 90014
+                      message_type: Text
+                noData:
+                  summary: No matching data or scrolled past end
+                  value:
+                    status: success
+                    data: []
+        '400':
+          description: Bad request or expired/invalid scroll_id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DLRErrorResponse'
+              examples:
+                missingFields:
+                  summary: Missing required fields
+                  value:
+                    status: failure
+                    message: Bad Request. missing required field in request.
+                expiredScroll:
+                  summary: Expired or invalid scroll_id
+                  value:
+                    status: failure
+                    message: scroll_id is expired or invalid. Please initiate a new
+                      search.
+        '401':
+          description: Authentication failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DLRErrorResponse'
+              example:
+                status: failure
+                message: Unauthorised. authentication failed, wrong Username or password.
+        '403':
+          description: User not authorized for the requested resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DLRErrorResponse'
+              example:
+                status: failure
+                message: Forbidden. user not authorised for action.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DLRErrorResponse'
+              example:
+                status: failure
+                message: Internal Server Error. Some internal error while serving
+                  request.
+  /v2/JsonSingleApi:
+    post:
+      tags:
+      - JSON Message
+      summary: Send single SMS (JSON)
+      operationId: jsonSingleApiV2Post
+      security: []
+      description: 'Send a single SMS to one or more recipients via JSON request body.
+
+
+        **Key Features:**
+
+        - JSON request/response format
+
+        - Optional AES-256 GCM encryption for in-transit security (set `X-SSL: 2`
+        header)
+
+        - Supports synchronous or asynchronous processing
+
+        - DLT/TRAI compliant messaging
+
+
+        **Encryption Mode (X-SSL=2):**
+
+        When encryption is enabled, the entire request body is AES-256 GCM encrypted.
+
+        IV and AES key can be provided in headers (`X-SSLIV`, `X-AES-KEY`) or fetched
+        from DB using `feedid`.
+
+        The `feedid` query parameter is required when using encryption.
+
+
+        **JSON via query parameter:**
+
+        Alternatively, the JSON payload can be passed as the `json` query parameter
+        instead of in the request body.
+
+        '
+      parameters:
+      - name: feedid
+        in: query
+        required: false
+        description: Account/Feed ID. Required when using X-SSL=2 (encrypted body).
+          Used to fetch IV/AES key from DB when not provided in headers.
+        schema:
+          type: string
+          example: '392095'
+      - name: json
+        in: query
+        required: false
+        description: Alternative way to pass JSON body as query parameter
+        schema:
+          type: string
+      - name: X-SSL
+        in: header
+        required: false
+        description: Set to 2 for AES-256 GCM encrypted body. Requires feedid in query.
+        schema:
+          type: string
+          enum:
+          - '1'
+          - '2'
+      - name: X-SSLIV
+        in: header
+        required: false
+        description: IV for AES decryption (else fetched from DB by feedid)
+        schema:
+          type: string
+      - name: X-AES-KEY
+        in: header
+        required: false
+        description: AES key for decryption (else fetched from DB by feedid)
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JsonSingleApiV2Request'
+            example:
+              feedid: '392095'
+              username: '9137964367'
+              password: your_password
+              mobile: 9870524533,9956808517
+              messages: Your OTP is 456789
+              senderid: MYAPP
+      responses:
+        '200':
+          description: The request was processed successfully.
+          content:
+            application/json:
+              examples:
+                Success:
+                  summary: SMS submitted successfully
+                  value:
+                    req_id: '12345678'
+                    status: success
+                    submittedAt: '2026-03-16T10:30:00Z'
+                Error:
+                  summary: Submission failed
+                  value:
+                    req_id: '-1'
+                    status: error
+                    submittedAt: '2026-03-16T10:30:00Z'
+                    errors:
+                    - code: '-1'
+                      desc: Empty request body not allowed
+        '400':
+          description: The request is invalid due to malformed input or missing data.
+          content:
+            application/json:
+              examples:
+                BadRequest:
+                  summary: Invalid request
+                  value:
+                    req_id: '-1'
+                    status: error
+                    submittedAt: '2026-03-16T10:30:00Z'
+                    errors:
+                    - code: '-1'
+                      desc: Empty request body not allowed
+        '500':
+          description: The request failed due to an unexpected server-side issue.
+          content:
+            application/json:
+              examples:
+                ServerError:
+                  summary: Server error
+                  value:
+                    req_id: '-1'
+                    status: error
+                    submittedAt: '2026-03-16T10:30:00Z'
+                    errors:
+                    - code: '500'
+                      desc: Internal Server Error
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com,
+    merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

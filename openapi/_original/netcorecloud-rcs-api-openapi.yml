@@ -1,0 +1,1811 @@
+# x-archived-from: netcorecloud-rcs-api-openapi.yml
+# x-archived-on: 2026-10-13
+openapi: 3.1.0
+x-stoplight:
+  id: o7al2fnfvhxlr
+info:
+  title: RCS API
+  version: '1.0'
+  description: 'Comprehensive collection of RCS APIs that allow users to interact
+    with .
+
+    '
+  license:
+    name: Proprietary
+    identifier: proprietary
+servers:
+- url: https://soipapi.netcorecloud.com
+  description: WhatsApp APIs Server
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer token authentication using JWT. Include the token in the
+        Authorization header as 'Bearer <your_token>'.
+paths:
+  /rcs/botinfo:
+    get:
+      summary: Fetch Bot Info API
+      tags:
+      - Template APIs
+      security:
+      - bearerAuth: []
+      description: "Use this endpoint to retrieve bot metadata without sending a request\
+        \ body.  \nPass all required values as query parameters or headers.\n"
+      parameters:
+      - schema:
+          type: string
+          example: a3f1d5e792bc4e8aa6785c9d12f30b44
+        in: header
+        name: api_key
+        description: Enter your RCS API key for authentication.
+        required: true
+      - schema:
+          type: string
+        in: header
+        name: Content-Type
+        description: Must be set to application/json.
+        required: true
+      - schema:
+          type: string
+        in: query
+        name: type
+        description: 'Enter the bot type you want to filter by. For example: Promotional.'
+      - schema:
+          type: string
+          example: abc123
+        in: header
+        name: nc_bot_id
+        description: "Optional. Enter the unique bot identifier from the RCS Dashboard.\
+          \  \nIf not provided, the system uses the default bot configured in your\
+          \ panel.\n"
+      responses:
+        '200':
+          description: "**Success Response — Bot details found**\n\n```\n{\n    \"\
+            status\": \"success\",\n    \"message\": \"Data fetched successfully\"\
+            ,\n    \"client_id\": <client_id>,\n    \"data\": {\n        \"bot_details\"\
+            : [\n            {\n                \"botId\": \"<bot_id>\",\n       \
+            \         \"bot_type\": \"Promotional\",\n                \"bot_name\"\
+            : \"Netcore Cloud promotional\"\n            }\n        ]\n    }\n}\n\
+            ```\n\n**Success Response — No data found**\n\n```\n{\n  \"status\": \"\
+            success\",\n  \"message\": \"No data found\",\n  \"client_id\": <client_id>,\n\
+            \  \"data\": {\n    \"bots\": []\n  }\n}\n```\n"
+        '400':
+          description: "**Invalid API Key**\n\n```\n{\n   \"errors\":[\n      {\n\
+            \         \"message\":\"Authorization Failed, invalid token\",\n     \
+            \    \"field\":\"api_key\"\n      }\n   ]\n}\n```\n\n**Invalid Content\
+            \ Type**\n\n```\n{\n   \"errors\":[\n      {\n         \"message\":\"\
+            ContentType not valid\",\n         \"field\":\"ContentType\"\n      }\n\
+            \   ]\n}\n```\n"
+      operationId: ''
+      x-stoplight:
+        id: wg9ndju0z58jg
+      x-internal: false
+    parameters: []
+  /rcs/template/preview:
+    get:
+      summary: Template Preview API
+      tags:
+      - Template APIs
+      security:
+      - bearerAuth: []
+      description: 'Retrieve detailed preview information for a specific RCS template.
+
+        This endpoint returns template content, status, orientation, alignment, and
+        all suggestion details.
+
+        '
+      parameters:
+      - schema:
+          type: string
+          example: a3f1d5e792bc4e8aa6785c9d12f30b44
+        in: header
+        name: api_key
+        description: Enter your API key for authentication.
+        required: true
+      - schema:
+          type: string
+          example: application/json
+        in: header
+        name: Content-Type
+        description: Must be set to application/json.
+        required: true
+      - schema:
+          type: integer
+          example: 9753
+        in: query
+        name: template_id
+        description: The ID of the template to preview.
+        required: true
+      - schema:
+          type: string
+          example: abc123
+        in: header
+        name: nc_bot_id
+        description: 'Optional bot ID. If not provided, the default bot configured
+          on your panel will be used.
+
+          You can locate the nc_bot_id in the General Settings on the CPaaS >> Bot
+          ID.
+
+          '
+      responses:
+        '200':
+          description: "Successfully fetched template preview data.\n\n```\n{\n  \
+            \  \"status\": \"success\",\n    \"message\": \"Data fetched successfully\"\
+            ,\n    \"template_id\": 9753,\n    \"data\": {\n        \"template_name\"\
+            : \"test_half\",\n        \"template_type\": \"text_message\",\n     \
+            \   \"template_status\": \"auto-approved\",\n        \"template_content\"\
+            : \"Hello welocme to netcore\",\n        \"orientation\": \"\",\n    \
+            \    \"alignment\": \"\",\n        \"height\": \"\",\n        \"width\"\
+            : \"\",\n        \"suggestion_details\": [\n            {\n          \
+            \      \"suggestion_type\": \"2\",\n                \"suggestion\": \"\
+            {\\\"displayText\\\":\\\"Visit half\\\",\\\"postback\\\":\\\"Visit half\\\
+            \",\\\"url\\\":\\\"https://www.netcorecloud.com/\\\",\\\"webview\\\":\\\
+            \"Half\\\"}\"\n            },\n            {\n                \"suggestion_type\"\
+            : \"1\",\n                \"suggestion\": \"{\\\"displayText\\\":\\\"\
+            Click here\\\",\\\"postback\\\":\\\"Click here\\\"}\"\n            },\n\
+            \            {\n                \"suggestion_type\": \"8\",\n        \
+            \        \"suggestion\": \"{\\\"displayText\\\":\\\"Visit Tall\\\",\\\"\
+            postback\\\":\\\"Visit Tall\\\",\\\"url\\\":\\\"https://www.netcorecloud.com\\\
+            \",\\\"domain\\\":\\\"https://qa.nctrckg.com\\\",\\\"suggestionAttr\\\"\
+            :\\\"[button_3_url]\\\",\\\"webview\\\":\\\"Tall\\\"}\"\n            },\n\
+            \            {\n                \"suggestion_type\": \"2\",\n        \
+            \        \"suggestion\": \"{\\\"displayText\\\":\\\"Visit Full\\\",\\\"\
+            postback\\\":\\\"Visit Full\\\",\\\"url\\\":\\\"https://www.abcccccc.com/\\\
+            \",\\\"webview\\\":\\\"Full\\\"}\"\n            },\n            {\n  \
+            \              \"suggestion_type\": \"2\",\n                \"suggestion\"\
+            : \"{\\\"displayText\\\":\\\"Visit Default\\\",\\\"postback\\\":\\\"Visit\
+            \ Default\\\",\\\"url\\\":\\\"https://www.netcorecloud.com/\\\"}\"\n \
+            \           },\n            {\n                \"suggestion_type\": \"\
+            4\",\n                \"suggestion\": \"{\\\"displayText\\\":\\\"Get Location\\\
+            \",\\\"postback\\\":\\\"Get Location\\\",\\\"latitude\\\":\\\"23.455\\\
+            \",\\\"longitude\\\":\\\"54.566\\\",\\\"label\\\":\\\"Netcore\\\"}\"\n\
+            \            }\n        ],\n        \"created_date\": \"2025-11-07 18:41:08\"\
+            ,\n        \"updated_date\": \"2025-11-07 18:45:00\"\n    }\n}\n```\n"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                    description: Response status
+                  message:
+                    type: string
+                    example: Data fetched successfully
+                    description: Response message
+                  template_id:
+                    type: integer
+                    example: 9753
+                    description: The ID of the template
+                  data:
+                    type: object
+                    properties:
+                      template_name:
+                        type: string
+                        example: test_half
+                        description: Name of the template
+                      template_type:
+                        type: string
+                        example: text_message
+                        description: Type of the template (e.g., text_message, carousel,
+                          rich_card)
+                      template_status:
+                        type: string
+                        example: auto-approved
+                        description: Status of the template (e.g., approved, auto-approved,
+                          pending)
+                      template_content:
+                        type: string
+                        example: Hello welocme to netcore
+                        description: Content/text of the template
+                      orientation:
+                        type: string
+                        example: ''
+                        description: Orientation of the template (vertical/horizontal)
+                      alignment:
+                        type: string
+                        example: ''
+                        description: Alignment of the template (left/right/center)
+                      height:
+                        type: string
+                        example: ''
+                        description: Height of the template (SHORT/MEDIUM/TALL)
+                      width:
+                        type: string
+                        example: ''
+                        description: Width of the template (SMALL/MEDIUM/LARGE)
+                      suggestion_details:
+                        type: array
+                        description: Array of suggestion details for the template
+                        items:
+                          type: object
+                          properties:
+                            suggestion_type:
+                              type: string
+                              example: '2'
+                              description: 'Type of suggestion:
+
+                                1 = REPLY
+
+                                2 = OPEN_URL
+
+                                4 = SHOW_LOCATION
+
+                                8 = OPEN_URL with dynamic attributes
+
+                                '
+                            suggestion:
+                              type: string
+                              example: '{"displayText":"Visit half","postback":"Visit
+                                half","url":"https://www.netcorecloud.com/","webview":"Half"}'
+                              description: 'JSON string containing suggestion details.
+                                Structure varies by suggestion_type:
+
+                                - Type 1 (REPLY): {"displayText":"...","postback":"..."}
+
+                                - Type 2 (OPEN_URL): {"displayText":"...","postback":"...","url":"...","webview":"..."}
+
+                                - Type 4 (SHOW_LOCATION): {"displayText":"...","postback":"...","latitude":"...","longitude":"...","label":"..."}
+
+                                - Type 8 (OPEN_URL with dynamic): {"displayText":"...","postback":"...","url":"...","domain":"...","suggestionAttr":"...","webview":"..."}
+
+                                '
+                      created_date:
+                        type: string
+                        format: date-time
+                        example: '2025-11-07 18:41:08'
+                        description: Template creation date
+                      updated_date:
+                        type: string
+                        format: date-time
+                        example: '2025-11-07 18:45:00'
+                        description: Template last update date
+              examples:
+                Success Response:
+                  value:
+                    status: success
+                    message: Data fetched successfully
+                    template_id: 9753
+                    data:
+                      template_name: test_half
+                      template_type: text_message
+                      template_status: auto-approved
+                      template_content: Hello welocme to netcore
+                      orientation: ''
+                      alignment: ''
+                      height: ''
+                      width: ''
+                      suggestion_details:
+                      - suggestion_type: '2'
+                        suggestion: '{"displayText":"Visit half","postback":"Visit
+                          half","url":"https://www.netcorecloud.com/","webview":"Half"}'
+                      - suggestion_type: '1'
+                        suggestion: '{"displayText":"Click here","postback":"Click
+                          here"}'
+                      - suggestion_type: '8'
+                        suggestion: '{"displayText":"Visit Tall","postback":"Visit
+                          Tall","url":"https://www.netcorecloud.com","domain":"https://qa.nctrckg.com","suggestionAttr":"[button_3_url]","webview":"Tall"}'
+                      - suggestion_type: '2'
+                        suggestion: '{"displayText":"Visit Full","postback":"Visit
+                          Full","url":"https://www.abcccccc.com/","webview":"Full"}'
+                      - suggestion_type: '2'
+                        suggestion: '{"displayText":"Visit Default","postback":"Visit
+                          Default","url":"https://www.netcorecloud.com/"}'
+                      - suggestion_type: '4'
+                        suggestion: '{"displayText":"Get Location","postback":"Get
+                          Location","latitude":"23.455","longitude":"54.566","label":"Netcore"}'
+                      created_date: '2025-11-07 18:41:08'
+                      updated_date: '2025-11-07 18:45:00'
+        '400':
+          description: "Returned for invalid authentication, incorrect content type,\
+            \ or missing/invalid template_id.\n\n**Invalid API Key:**\n```\n{\n  \
+            \  \"errors\": [\n        {\n            \"message\": \"Authorization\
+            \ Failed, invalid token\",\n            \"field\": \"api_key\"\n     \
+            \   }\n    ]\n}\n```\n\n**Invalid Content Type:**\n```\n{\n    \"errors\"\
+            : [\n        {\n            \"message\": \"ContentType not valid\",\n\
+            \            \"field\": \"ContentType\"\n        }\n    ]\n}\n```\n\n\
+            **Missing or Invalid Template ID:**\n```\n{\n    \"errors\": [\n     \
+            \   {\n            \"message\": \"Template ID is required\",\n       \
+            \     \"field\": \"template_id\"\n        }\n    ]\n}\n```\n"
+        '404':
+          description: "Template not found.\n\n```\n{\n    \"status\": \"error\",\n\
+            \    \"message\": \"Template not found\",\n    \"template_id\": 9753\n\
+            }\n```\n"
+      operationId: ''
+      x-stoplight:
+        id: template_preview_endpoint
+      x-internal: false
+    parameters: []
+  /template:
+    get:
+      summary: Fetch Template API
+      tags:
+      - Template APIs
+      security:
+      - bearerAuth: []
+      description: Fetch your approved RCS templates. Apply query parameters to refine
+        results. No request body is required.
+      parameters:
+      - schema:
+          type: string
+          example: a3f1d5e792bc4e8aa6785c9d12f30b44
+        in: header
+        name: api_key
+        description: Enter your API key for authentication.
+        required: true
+      - schema:
+          type: string
+        in: header
+        name: Content-Type
+        description: Set this to application/json.
+        required: true
+      - schema:
+          type: string
+        in: query
+        name: status
+        description: Filter templates by status (e.g., approved).
+      - schema:
+          type: string
+        in: query
+        name: limit
+        description: Set the number of templates to return.
+      - schema:
+          type: string
+        in: query
+        name: exclude_type
+        description: Exclude templates of a specific type (e.g., rich_card).
+      - schema:
+          type: string
+        in: query
+        name: template_type
+        description: Filter templates by type (e.g., carousel).
+      - schema:
+          type: string
+        in: query
+        name: offset
+        description: Skip a specific number of records before fetching results.
+      - schema:
+          type: string
+        in: query
+        name: name
+        description: Search for a template by name.
+      - schema:
+          type: string
+          example: abc123
+        in: header
+        name: nc_bot_id
+        description: Optional bot ID. If not provided, the default bot configured
+          on your panel will be used.
+      responses:
+        '200':
+          description: "Successfully fetched template data.\n\n```\n{\n   \"status\"\
+            :\"success\",\n   \"message\":\"Data fetched successfully\",\n   \"client_id\"\
+            :<CLIENT_ID>,\n   \"data\":{\n      \"bot_id\":\"<BOT_ID>\",\n      \"\
+            bot_type\":\"Promotional\",\n      \"bot_name\":\"Netcore Cloud promotional\"\
+            ,\n      \"templates\":[\n         {\n            \"template_id\":<TEMPLATE_ID>,\n\
+            \            \"template_name\":\"<TEMPLATE_NAME>\",\n            \"template_type\"\
+            :\"carousel\",\n            \"template_status\":\"approved\",\n      \
+            \      \"display_template_type\":\"Rich card carousel\",\n           \
+            \ \"created_at\":\"2024-04-24 17:13:09\",\n            \"modified_at\"\
+            :\"2024-04-24 17:13:09\"\n         }\n      ],\n      \"total_rows\":1\n\
+            \   }\n}\n```\n\nNo templates found:\n\n```\n{\n   \"status\":\"success\"\
+            ,\n   \"message\":\"No data found\",\n   \"client_id\":77865,\n   \"data\"\
+            :{\n      \"templates\":[],\n      \"total_rows\":0\n   }\n}\n```\n"
+        '400':
+          description: "Returned for invalid authentication or incorrect content type.\n\
+            \nInvalid API key:\n```\n{\n   \"errors\":[\n      {\n         \"message\"\
+            :\"Authorization Failed, invalid token\",\n         \"field\":\"api_key\"\
+            \n      }\n   ]\n}\n```\n\nInvalid content type:\n```\n{\n   \"errors\"\
+            :[\n      {\n         \"message\":\"ContentType not valid\",\n       \
+            \  \"field\":\"ContentType\"\n      }\n   ]\n}\n```\n"
+      operationId: ''
+      x-stoplight:
+        id: 59tk0a7un2i7i
+    parameters: []
+  /soip/rcs/v2/message:
+    post:
+      summary: Template Message API
+      tags:
+      - Message Sending APIs
+      operationId: ''
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  messageId:
+                    type: string
+                  requestError:
+                    type: object
+                    properties:
+                      serviceException:
+                        type: object
+                        properties:
+                          messageId:
+                            type: string
+                          text:
+                            type: string
+                          validationErrors:
+                            type: 'null'
+                x-examples:
+                  Example 1:
+                    messageId: 8c5581b49869d0ebfed7e2d98c63f9dc
+                    requestError:
+                      serviceException:
+                        messageId: ''
+                        text: ''
+                        validationErrors: null
+              examples:
+                Example 1:
+                  value:
+                    messageId: string
+                    requestError:
+                      serviceException:
+                        messageId: string
+                        text: string
+                        validationErrors: null
+            application/xml:
+              schema:
+                type: object
+                properties: {}
+        '400':
+          description: "content type not valid header must contain \"Content-Type\"\
+            \ as \"application/json\"\n\n \n{\n    \"requestError\": {\n        \"\
+            serviceException\": {\n            \"messageId\": \"\",\n            \"\
+            text\": \"ContentType not valid\",\n            \"validationErrors\":\
+            \ null\n        }\n    }\n}\n"
+        '401':
+          description: "Unauthenticated: apikey not found/ unable to get feedid/clientid\
+            \ check if api_key is correct, if yes, contact SRE to for onboarding.\n\
+            \n{\n    \"requestError\": {\n        \"serviceException\": {\n      \
+            \      \"messageId\": \"8f1500e4319ee7ab4b0ff04103cce250\",\n        \
+            \    \"text\": \"Unauthenticated: apikey not found/ unable to get feedid/clientid\"\
+            ,\n            \"validationErrors\": [\n                \"apikey not valid\"\
+            \n            ]\n        }\n    }\n}\n"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              x-examples:
+                Example 1:
+                  messages:
+                  - to: '918983190458'
+                    content:
+                      type: template
+                      templateCode: employee_campaign
+                      attributes:
+                        FIRSTNAME: Akash
+                    callbackData: '7890986'
+                    ttl: 10s
+                    expireTime: '2023-06-20T15:39:30Z'
+                    tags:
+                    - '12'
+                  fallbackchain:
+                  - channel: RCS
+                  - from: Travel agent
+                    channel: SMS
+                    text: Test Messages [FIRSTNAME] 😘🫣👿😻🤬 Netcore
+                Non Template Text Message:
+                  messages:
+                  - to: '919999339598'
+                    content:
+                      type: text
+                      text: Welcome to Netcore RCS Demo 2.0
+                    callbackData: '7890986'
+                    tags:
+                    - '12'
+                  fallbackchain:
+                  - channel: RCS
+                Non Template Text Message with Suggestions:
+                  messages:
+                  - to: '919999339598'
+                    content:
+                      type: text
+                      text: Chaitra agar Message aaye to screenshot post karo
+                      Suggestions:
+                      - text: Click
+                        postbackData: reply
+                        type: REPLY
+                    callbackData: '7890986'
+                    tags:
+                    - '12'
+                  fallbackstatus: true
+                  fallbackchain:
+                  - from: Travel agency
+                    channel: RCS
+                Rich Card Message:
+                  messages:
+                  - To: '919999999999'
+                    content:
+                      orientation: vertical
+                      alignment: right
+                      content:
+                        title: Amazon Black Friday Sale 2021,
+                        description: Online shopping for Black Friday Sale from a
+                          great selection at Electronics Store.
+                        media:
+                          file:
+                            url: https://m.media-amazon.com/images/G/01/AdProductsWebsite/images/AUX/sbv-hero._TTW_.jpg
+                          thumbnail:
+                            url: https://m.media-amazon.com/images/G/01/AdProductsWebsite/images/AUX/sbv-hero._TTW_.jpg
+                          height: MEDIUM
+                      type: CARD
+                    callbackData: Callback data
+                    tags:
+                    - asd
+                    - sdfdf
+                    - dfdf
+                  fallbackstatus: true
+                  fallbackchain:
+                  - channel: RCS
+                Rich Card File Message:
+                  messages:
+                  - To: '9199999999'
+                    content:
+                      content:
+                        file:
+                          file:
+                            url: https://images-eu.ssl-images-amazon.com/images/G/31/img21/Wireless/katariy/Category_page/Nov/D24582943_IN_WL_Category_Page_1500x400.gif
+                          thumbnail:
+                            url: https://images-eu.ssl-images-amazon.com/images/G/31/img21/Wireless/katariy/Category_page/Nov/D24582943_IN_WL_Category_Page_1500x400.gif
+                          height: MEDIUM
+                      type: FILE
+                    callbackData: '7890986'
+                    tags:
+                    - '12'
+                  fallbackstatus: true
+                  fallbackchain:
+                  - channel: RCS
+                Rich Card Carousel Message:
+                  messages:
+                  - To: '919999339598'
+                    content:
+                      orientation: vertical
+                      alignment: right
+                      contents:
+                      - Title: title,
+                        Description: Document
+                        Media:
+                          file:
+                            url: https://v.fastcdn.co/u/014b5490/56308202-0-Personalization-P1-0.png
+                          thumbnail:
+                            url: https://v.fastcdn.co/u/014b5490/56308572-0-Email-arketing-First.png
+                          height: MEDIUM
+                      type: CARD
+                    callbackData: Callback data
+                    tags:
+                    - asd
+                    - sdfdf
+                    - dfdf
+                  fallbackstatus: true
+                  fallbackchain:
+                  - channel: RCS
+                Text Message with Suggestions:
+                  messages:
+                  - to: '919999999999'
+                    content:
+                      type: text
+                      text: 'Hello '
+                      Suggestions:
+                      - text: Click
+                        postbackData: reply
+                        type: REPLY
+                    callbackData: '7890986'
+                    tags:
+                    - '12'
+                  fallbackchain:
+                  - channel: RCS
+                File Message:
+                  messages:
+                  - to: '919999999999'
+                    content:
+                      file:
+                        url: https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/1200px-Image_created_with_a_mobile_phone.png
+                      Suggestions:
+                      - text: Click
+                        postbackData: reply
+                        type: REPLY
+                      thumbnail:
+                        url: https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/220px-Image_created_with_a_mobile_phone.png
+                      type: FILE
+                    callbackData: '7890986'
+                    tags:
+                    - '12'
+                  fallbackchain:
+                  - channel: RCS
+                Card Message:
+                  messages:
+                  - To: '919999999999'
+                    content:
+                      orientation: vertical
+                      alignment: right
+                      content:
+                        title: title,
+                        description: Verification 1
+                        media:
+                          file:
+                            url: https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg
+                          thumbnail:
+                            url: https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg
+                          height: MEDIUM
+                        suggestions:
+                        - text: OpenGoogs
+                          postbackdata: test
+                          type: OPEN_URL
+                          url: https://www.google.com
+                      type: CARD
+                    callbackData: Callback data
+                    tags:
+                    - asd
+                    - sdfdf
+                    - dfdf
+                  fallbackchain:
+                  - channel: RCS
+                Carousel Message:
+                  messages:
+                  - To: '919999999999'
+                    content:
+                      type: CAROUSEL
+                      cardWidth: MEDIUM
+                      contents:
+                      - title: title,
+                        description: description
+                        media:
+                          file:
+                            url: https://v.fastcdn.co/u/014b5490/56308202-0-Personalization-P1-0.png
+                          thumbnail:
+                            url: https://media.istockphoto.com/photos/blurred-abstract-photo-of-light-burst-among-trees-and-glitter-golden-picture-id1061974964?b=1&k=20&m=1061974964&s=170667a&w=0&h=Ch21MBSBEZak9naxA3hHaI7qyPAjr_eEgiQBSNFtDsg=
+                          height: MEDIUM
+                        suggestions:
+                        - text: Click Image
+                          postbackData: imageClick
+                          type: REPLY
+                        - text: Click to Call
+                          postbackData: call
+                          phoneNumber: '385977666618'
+                          type: DIAL_PHONE
+                        - text: Map
+                          postbackData: map
+                          latitude: 45.793418
+                          longitude: 15.946297
+                          label: label
+                          type: SHOW_LOCATION
+                        - text: Share
+                          postbackData: share
+                          type: REQUEST_LOCATION
+                      - title: title,
+                        description: description
+                        media:
+                          file:
+                            url: https://v.fastcdn.co/u/014b5490/56308572-0-Email-arketing-First.png
+                          thumbnail:
+                            url: https://media.istockphoto.com/photos/blurred-abstract-photo-of-light-burst-among-trees-and-glitter-golden-picture-id1061974964?b=1&k=20&m=1061974964&s=170667a&w=0&h=Ch21MBSBEZak9naxA3hHaI7qyPAjr_eEgiQBSNFtDsg=
+                          height: MEDIUM
+                        suggestions:
+                        - text: Click Image
+                          postbackData: imageClick
+                          type: REPLY
+                        - text: Click to Call
+                          postbackData: call
+                          phoneNumber: '385977666618'
+                          type: DIAL_PHONE
+                        - text: Map
+                          postbackData: map
+                          latitude: 45.793418
+                          longitude: 15.946297
+                          label: label
+                          type: SHOW_LOCATION
+                        - text: Share
+                          postbackData: share
+                          type: REQUEST_LOCATION
+                    callbackData: Callback data
+                    tags:
+                    - asd
+                    - sdfdf
+                    - dfdf
+                  fallbackchain:
+                  - channel: RCS
+              properties:
+                messages:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      To:
+                        type: string
+                        description: Recipient phone number in E.164 format (uppercase,
+                          for freeform messages)
+                      to:
+                        type: string
+                        description: Recipient phone number in E.164 format (lowercase,
+                          for template messages)
+                      content:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                            - template
+                            - text
+                            - CAROUSEL
+                            - CARD
+                            - FILE
+                            - TEXT
+                            description: Type of message content
+                          templateCode:
+                            type: string
+                            description: Template code for template type messages
+                          attributes:
+                            type: object
+                            description: Template attributes for template type messages
+                            properties:
+                              FIRSTNAME:
+                                type: string
+                          text:
+                            type: string
+                            description: Text content for TEXT type messages
+                          file:
+                            type: object
+                            description: File object for FILE type messages
+                            properties:
+                              url:
+                                type: string
+                                format: uri
+                                description: URL of the file
+                          thumbnail:
+                            type: object
+                            description: Thumbnail for FILE type messages
+                            properties:
+                              url:
+                                type: string
+                                format: uri
+                                description: URL of the thumbnail image
+                          Suggestions:
+                            type: array
+                            description: Array of suggestion chips (capital S for
+                              TEXT and FILE types)
+                            items:
+                              type: object
+                              properties:
+                                text:
+                                  type: string
+                                  description: Display text of the suggestion
+                                postbackData:
+                                  type: string
+                                  description: Data to be sent back when suggestion
+                                    is clicked
+                                postbackdata:
+                                  type: string
+                                  description: Data to be sent back when suggestion
+                                    is clicked (lowercase variant)
+                                type:
+                                  type: string
+                                  enum:
+                                  - REPLY
+                                  - DIAL_PHONE
+                                  - SHOW_LOCATION
+                                  - REQUEST_LOCATION
+                                  - OPEN_URL
+                                  description: Type of suggestion action
+                                phoneNumber:
+                                  type: string
+                                  description: Phone number for DIAL_PHONE type (required
+                                    for DIAL_PHONE)
+                                latitude:
+                                  type: number
+                                  format: float
+                                  description: Latitude for SHOW_LOCATION type (required
+                                    for SHOW_LOCATION)
+                                longitude:
+                                  type: number
+                                  format: float
+                                  description: Longitude for SHOW_LOCATION type (required
+                                    for SHOW_LOCATION)
+                                label:
+                                  type: string
+                                  description: Label for SHOW_LOCATION type
+                                url:
+                                  type: string
+                                  format: uri
+                                  description: URL for OPEN_URL type (required for
+                                    OPEN_URL)
+                          orientation:
+                            type: string
+                            enum:
+                            - vertical
+                            - horizontal
+                            description: Orientation for CARD type messages
+                          alignment:
+                            type: string
+                            enum:
+                            - left
+                            - right
+                            - center
+                            description: Alignment for CARD type messages
+                          content:
+                            type: object
+                            description: Content object for CARD type messages
+                            properties:
+                              title:
+                                type: string
+                                description: Title of the card
+                              description:
+                                type: string
+                                description: Description of the card
+                              media:
+                                type: object
+                                properties:
+                                  file:
+                                    type: object
+                                    properties:
+                                      url:
+                                        type: string
+                                        format: uri
+                                        description: URL of the media file
+                                  thumbnail:
+                                    type: object
+                                    properties:
+                                      url:
+                                        type: string
+                                        format: uri
+                                        description: URL of the thumbnail image
+                                  height:
+                                    type: string
+                                    enum:
+                                    - SHORT
+                                    - MEDIUM
+                                    - TALL
+                                    description: Height of the media
+                              suggestions:
+                                type: array
+                                description: Array of suggestion chips for CARD type
+                                items:
+                                  type: object
+                                  properties:
+                                    text:
+                                      type: string
+                                      description: Display text of the suggestion
+                                    postbackData:
+                                      type: string
+                                      description: Data to be sent back when suggestion
+                                        is clicked
+                                    postbackdata:
+                                      type: string
+                                      description: Data to be sent back when suggestion
+                                        is clicked (lowercase variant)
+                                    type:
+                                      type: string
+                                      enum:
+                                      - REPLY
+                                      - DIAL_PHONE
+                                      - SHOW_LOCATION
+                                      - REQUEST_LOCATION
+                                      - OPEN_URL
+                                      description: Type of suggestion action
+                                    phoneNumber:
+                                      type: string
+                                      description: Phone number for DIAL_PHONE type
+                                        (required for DIAL_PHONE)
+                                    latitude:
+                                      type: number
+                                      format: float
+                                      description: Latitude for SHOW_LOCATION type
+                                        (required for SHOW_LOCATION)
+                                    longitude:
+                                      type: number
+                                      format: float
+                                      description: Longitude for SHOW_LOCATION type
+                                        (required for SHOW_LOCATION)
+                                    label:
+                                      type: string
+                                      description: Label for SHOW_LOCATION type
+                                    url:
+                                      type: string
+                                      format: uri
+                                      description: URL for OPEN_URL type (required
+                                        for OPEN_URL)
+                          cardWidth:
+                            type: string
+                            enum:
+                            - SMALL
+                            - MEDIUM
+                            - LARGE
+                            description: Width of the card (for CAROUSEL type)
+                          contents:
+                            type: array
+                            description: Array of card contents (for CAROUSEL type)
+                            items:
+                              type: object
+                              properties:
+                                title:
+                                  type: string
+                                  description: Title of the card
+                                description:
+                                  type: string
+                                  description: Description of the card
+                                media:
+                                  type: object
+                                  properties:
+                                    file:
+                                      type: object
+                                      properties:
+                                        url:
+                                          type: string
+                                          format: uri
+                                          description: URL of the media file
+                                    thumbnail:
+                                      type: object
+                                      properties:
+                                        url:
+                                          type: string
+                                          format: uri
+                                          description: URL of the thumbnail image
+                                    height:
+                                      type: string
+                                      enum:
+                                      - SHORT
+                                      - MEDIUM
+                                      - TALL
+                                      description: Height of the media
+                                suggestions:
+                                  type: array
+                                  description: Array of suggestion chips
+                                  items:
+                                    type: object
+                                    properties:
+                                      text:
+                                        type: string
+                                        description: Display text of the suggestion
+                                      postbackData:
+                                        type: string
+                                        description: Data to be sent back when suggestion
+                                          is clicked
+                                      type:
+                                        type: string
+                                        enum:
+                                        - REPLY
+                                        - DIAL_PHONE
+                                        - SHOW_LOCATION
+                                        - REQUEST_LOCATION
+                                        - OPEN_URL
+                                        description: Type of suggestion action
+                                      phoneNumber:
+                                        type: string
+                                        description: Phone number for DIAL_PHONE type
+                                          (required for DIAL_PHONE)
+                                      latitude:
+                                        type: number
+                                        format: float
+                                        description: Latitude for SHOW_LOCATION type
+                                          (required for SHOW_LOCATION)
+                                      longitude:
+                                        type: number
+                                        format: float
+                                        description: Longitude for SHOW_LOCATION type
+                                          (required for SHOW_LOCATION)
+                                      label:
+                                        type: string
+                                        description: Label for SHOW_LOCATION type
+                                      url:
+                                        type: string
+                                        format: uri
+                                        description: URL for OPEN_URL type (required
+                                          for OPEN_URL)
+                      callbackData:
+                        type: string
+                        description: Callback data to be returned in webhook
+                      ttl:
+                        type: string
+                        description: Define the timeline before the campaign expires.
+                          The duration must be at least 1800 seconds. If both `ttl`
+                          and `expireTime` parameters are provided, `expireTime` takes
+                          precedence. This field is optional.
+                      expireTime:
+                        type: string
+                        description: Specifies the absolute timestamp after which
+                          the message expires. The value must be in UTC. This field
+                          is optional.
+                      tags:
+                        type: array
+                        items:
+                          type: string
+                        description: Tags for message categorization
+                fallbackchain:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      channel:
+                        type: string
+                        enum:
+                        - RCS
+                        - SMS
+                        description: Fallback channel type
+                      from:
+                        type: string
+                        description: Sender name/ID for fallback channel
+                      text:
+                        type: string
+                        description: Fallback text message
+            examples:
+              Send RCS Text Message:
+                value:
+                  messages:
+                  - to: '918983190458'
+                    content:
+                      type: template
+                      templateCode: employee_campaign
+                      attributes:
+                        FIRSTNAME: Akash
+                    callbackData: '7890986'
+                    tags:
+                    - '12'
+                  fallbackchain:
+                  - channel: RCS
+                  - from: Travel agent
+                    channel: SMS
+                    text: Test Messages [FIRSTNAME] 😘🫣👿😻🤬 Netcore
+              'Example : Without Timestamp':
+                value:
+                  messages:
+                  - to: string
+                    content:
+                      type: string
+                      templateCode: string
+                      attributes:
+                        Attribute1: string
+                        Attribute2: string
+                    callbackData: string
+                    tags:
+                    - string
+                  fallbackchain:
+                  - channel: string
+                    from: string
+                    text: string
+              Example With Timestamp:
+                value:
+                  messages:
+                  - to: string
+                    content:
+                      type: string
+                      templateCode: string
+                      attributes:
+                        Attribute1: string
+                        Attribute2: string
+                    callbackData: string
+                    ttl: 1800s
+                    expireTime: '2023-06-20T15:39:30Z'
+                    tags:
+                    - string
+                  fallbackchain:
+                  - channel: string
+                    from: string
+                    text: string
+              Non Template Text Message:
+                value:
+                  messages:
+                  - to: '919999339598'
+                    content:
+                      type: text
+                      text: Welcome to Netcore RCS Demo 2.0
+                    callbackData: '7890986'
+                    tags:
+                    - '12'
+                  fallbackchain:
+                  - channel: RCS
+              Non Template Text Message with Suggestions:
+                value:
+                  messages:
+                  - to: '919999339598'
+                    content:
+                      type: text
+                      text: Chaitra agar Message aaye to screenshot post karo
+                      Suggestions:
+                      - text: Click
+                        postbackData: reply
+                        type: REPLY
+                    callbackData: '7890986'
+                    tags:
+                    - '12'
+                  fallbackstatus: true
+                  fallbackchain:
+                  - from: Travel agency
+                    channel: RCS
+              Rich Card Message:
+                value:
+                  messages:
+                  - To: '919999999999'
+                    content:
+                      orientation: vertical
+                      alignment: right
+                      content:
+                        title: Amazon Black Friday Sale 2021,
+                        description: Online shopping for Black Friday Sale from a
+                          great selection at Electronics Store.
+                        media:
+                          file:
+                            url: https://m.media-amazon.com/images/G/01/AdProductsWebsite/images/AUX/sbv-hero._TTW_.jpg
+                          thumbnail:
+                            url: https://m.media-amazon.com/images/G/01/AdProductsWebsite/images/AUX/sbv-hero._TTW_.jpg
+                          height: MEDIUM
+                      type: CARD
+                    callbackData: Callback data
+                    tags:
+                    - asd
+                    - sdfdf
+                    - dfdf
+                  fallbackstatus: true
+                  fallbackchain:
+                  - channel: RCS
+              Rich Card File Message:
+                value:
+                  messages:
+                  - To: '9199999999'
+                    content:
+                      content:
+                        file:
+                          file:
+                            url: https://images-eu.ssl-images-amazon.com/images/G/31/img21/Wireless/katariy/Category_page/Nov/D24582943_IN_WL_Category_Page_1500x400.gif
+                          thumbnail:
+                            url: https://images-eu.ssl-images-amazon.com/images/G/31/img21/Wireless/katariy/Category_page/Nov/D24582943_IN_WL_Category_Page_1500x400.gif
+                          height: MEDIUM
+                      type: FILE
+                    callbackData: '7890986'
+                    tags:
+                    - '12'
+                  fallbackstatus: true
+                  fallbackchain:
+                  - channel: RCS
+              Rich Card Carousel Message:
+                value:
+                  messages:
+                  - To: '919999339598'
+                    content:
+                      orientation: vertical
+                      alignment: right
+                      contents:
+                      - Title: title,
+                        Description: Document
+                        Media:
+                          file:
+                            url: https://v.fastcdn.co/u/014b5490/56308202-0-Personalization-P1-0.png
+                          thumbnail:
+                            url: https://v.fastcdn.co/u/014b5490/56308572-0-Email-arketing-First.png
+                          height: MEDIUM
+                      type: CARD
+                    callbackData: Callback data
+                    tags:
+                    - asd
+                    - sdfdf
+                    - dfdf
+                  fallbackstatus: true
+                  fallbackchain:
+                  - channel: RCS
+              Text Message with Suggestions:
+                value:
+                  messages:
+                  - to: '919999999999'
+                    content:
+                      type: text
+                      text: 'Hello '
+                      Suggestions:
+                      - text: Click
+                        postbackData: reply
+                        type: REPLY
+                    callbackData: '7890986'
+                    tags:
+                    - '12'
+                  fallbackchain:
+                  - channel: RCS
+              File Message:
+                value:
+                  messages:
+                  - to: '919999999999'
+                    content:
+                      file:
+                        url: https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/1200px-Image_created_with_a_mobile_phone.png
+                      Suggestions:
+                      - text: Click
+                        postbackData: reply
+                        type: REPLY
+                      thumbnail:
+                        url: https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/220px-Image_created_with_a_mobile_phone.png
+                      type: FILE
+                    callbackData: '7890986'
+                    tags:
+                    - '12'
+                  fallbackchain:
+                  - channel: RCS
+              Card Message:
+                value:
+                  messages:
+                  - To: '919999999999'
+                    content:
+                      orientation: vertical
+                      alignment: right
+                      content:
+                        title: title,
+                        description: Verification 1
+                        media:
+                          file:
+                            url: https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg
+                          thumbnail:
+                            url: https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg
+                          height: MEDIUM
+                        suggestions:
+                        - text: OpenGoogs
+                          postbackdata: test
+                          type: OPEN_URL
+                          url: https://www.google.com
+                      type: CARD
+                    callbackData: Callback data
+                    tags:
+                    - asd
+                    - sdfdf
+                    - dfdf
+                  fallbackchain:
+                  - channel: RCS
+              Carousel Message:
+                value:
+                  messages:
+                  - To: '919999999999'
+                    content:
+                      type: CAROUSEL
+                      cardWidth: MEDIUM
+                      contents:
+                      - title: title,
+                        description: description
+                        media:
+                          file:
+                            url: https://v.fastcdn.co/u/014b5490/56308202-0-Personalization-P1-0.png
+                          thumbnail:
+                            url: https://media.istockphoto.com/photos/blurred-abstract-photo-of-light-burst-among-trees-and-glitter-golden-picture-id1061974964?b=1&k=20&m=1061974964&s=170667a&w=0&h=Ch21MBSBEZak9naxA3hHaI7qyPAjr_eEgiQBSNFtDsg=
+                          height: MEDIUM
+                        suggestions:
+                        - text: Click Image
+                          postbackData: imageClick
+                          type: REPLY
+                        - text: Click to Call
+                          postbackData: call
+                          phoneNumber: '385977666618'
+                          type: DIAL_PHONE
+                        - text: Map
+                          postbackData: map
+                          latitude: 45.793418
+                          longitude: 15.946297
+                          label: label
+                          type: SHOW_LOCATION
+                        - text: Share
+                          postbackData: share
+                          type: REQUEST_LOCATION
+                      - title: title,
+                        description: description
+                        media:
+                          file:
+                            url: https://v.fastcdn.co/u/014b5490/56308572-0-Email-arketing-First.png
+                          thumbnail:
+                            url: https://media.istockphoto.com/photos/blurred-abstract-photo-of-light-burst-among-trees-and-glitter-golden-picture-id1061974964?b=1&k=20&m=1061974964&s=170667a&w=0&h=Ch21MBSBEZak9naxA3hHaI7qyPAjr_eEgiQBSNFtDsg=
+                          height: MEDIUM
+                        suggestions:
+                        - text: Click Image
+                          postbackData: imageClick
+                          type: REPLY
+                        - text: Click to Call
+                          postbackData: call
+                          phoneNumber: '385977666618'
+                          type: DIAL_PHONE
+                        - text: Map
+                          postbackData: map
+                          latitude: 45.793418
+                          longitude: 15.946297
+                          label: label
+                          type: SHOW_LOCATION
+                        - text: Share
+                          postbackData: share
+                          type: REQUEST_LOCATION
+                    callbackData: Callback data
+                    tags:
+                    - asd
+                    - sdfdf
+                    - dfdf
+                  fallbackchain:
+                  - channel: RCS
+        description: ''
+      description: 'Send a RCS Text Message to any RCS Enabled Mobile Number.
+
+        This API allows you to dispatch messages using a predefined template—simply
+        specify the template ID and content parameters.'
+      x-internal: false
+      parameters:
+      - schema:
+          type: string
+          example: a3f1d5e792bc4e8aa6785c9d12f30b44
+        in: header
+        name: api_key
+        required: true
+        description: Unique API key Login->Netcore->RCS Dashboard -> Settings
+      - schema:
+          type: string
+          example: application/json
+        in: header
+        name: Content-Type
+        description: application/json
+        required: true
+      - schema:
+          type: string
+          example: abc123
+        in: header
+        description: nc_bot_id refers to the unique identifier assigned to a bot within
+          the Netcore platform. This field is optional—if not provided, the action
+          will be executed using the default bot configured for the panel. You can
+          locate the nc_bot_id in the General Settings on the CPaaS >> Bot ID.
+        name: nc_bot_id
+    parameters: []
+  /template/create:
+    post:
+      summary: Create RCS Carousel Template
+      tags:
+      - Template APIs
+      operationId: ''
+      security:
+      - bearerAuth: []
+      description: Send template creation details in the JSON request body. Use this
+        API to create text templates, single rich cards, or multi-card carousel templates.
+      responses:
+        '200':
+          description: "Template created successfully.\n\n**With suggestions**\n```\n\
+            {\n  \"message\": \"Template created successfully\",\n  \"payload\": {\n\
+            \    \"name\": \"text_message_demo\",\n    \"type\": \"text_message\"\
+            ,\n    \"botId\": \"OCHhY1alm8nJfSnj\",\n    \"textMessageContent\": \"\
+            Time to go big or go home because it's India VS Australia FINALS!\",\n\
+            \    \"suggestions\": [\n      {\n        \"suggestionType\": \"reply\"\
+            ,\n        \"postback\": \"click_to_win\",\n        \"displayText\": \"\
+            Click to Win\"\n      },\n      {\n        \"suggestionType\": \"url_action\"\
+            ,\n        \"postback\": \"answer_and_win\",\n        \"displayText\"\
+            : \"Answer and Win\",\n        \"url\": \"https://brandx.onelink.me/\"\
+            \n      },\n      {\n        \"suggestionType\": \"dialer_action\",\n\
+            \        \"postback\": \"call_now_fast\",\n        \"displayText\": \"\
+            Call Now Fast\",\n        \"phoneNumber\": \"+919876543212\"\n      }\n\
+            \    ],\n    \"createdViaApi\": true\n  },\n  \"status\": \"Success\"\n\
+            }\n```\n\n**Without suggestions**\n```\n{\n  \"message\": \"Template created\
+            \ successfully\",\n  \"payload\": {\n    \"name\": \"text_message_demo\"\
+            ,\n    \"type\": \"text_message\",\n    \"botId\": \"OCHhY1alm8nJfSnj\"\
+            ,\n    \"textMessageContent\": \"Time to go big or go home because it's\
+            \ India VS Australia FINALS!\",\n    \"createdViaApi\": true\n  },\n \
+            \ \"status\": \"Success\"\n}\n```\n"
+        '400':
+          description: "Template creation failed.\n\n**Template already exists**\n\
+            ```\n{\n  \"error\": \"Template with same name is already present.\",\n\
+            \  \"message\": \"Template creation failed\",\n  \"status\": \"Failure\"\
+            \n}\n```\n\n**Missing field**\n```\n{\n  \"error\": \"missing required\
+            \ field: rcs_type\",\n  \"message\": \"Template creation failed\",\n \
+            \ \"status\": \"Failure\"\n}\n```\n\n**Name length validation**\n```\n\
+            {\n  \"error\": \"The length of 'template_name' cannot be more than 20\
+            \ characters\",\n  \"message\": \"Template creation failed\",\n  \"status\"\
+            : \"Failure\"\n}\n```\n"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action_type:
+                  type: string
+                  description: Enter the message type you want to create.
+                payload:
+                  type: object
+                  required:
+                  - template_name
+                  - rcs_type
+                  - template_content
+                  properties:
+                    template_name:
+                      type: string
+                      description: Enter a unique template name.
+                    rcs_type:
+                      type: string
+                      description: Enter the RCS message type (text_message, rich_card,
+                        carousel).
+                    template_content:
+                      type: string
+                      description: Enter the message content for text templates.
+                    suggestions:
+                      type: array
+                      description: Add action buttons to the template.
+                      items:
+                        type: object
+                        properties:
+                          suggestionType:
+                            type: string
+                            description: Enter the action type (reply, url_action,
+                              dialer_action, etc.).
+                          displayText:
+                            type: string
+                            description: Enter the button label.
+                          postback:
+                            type: string
+                            description: Enter the identifier for tracking button
+                              interactions.
+                          url:
+                            type: string
+                            description: Enter the URL for URL-type actions.
+                          phoneNumber:
+                            type: string
+                            description: Enter the phone number for dialer actions.
+                    card_width:
+                      description: Placeholder — width setting for carousel cards.
+                    card_height:
+                      description: Placeholder — height setting for carousel cards.
+                    save_type:
+                      description: Placeholder — indicates whether to add or update
+                        the template.
+                    cards:
+                      description: Placeholder — array of cards for carousel templates.
+                    type:
+                      description: Placeholder — message subtype for rich cards.
+                    template_id:
+                      description: Placeholder — internal template ID for updates.
+            examples:
+              Text Message:
+                value:
+                  action_type: text_message
+                  payload:
+                    template_name: text_message_demo
+                    rcs_type: text_message
+                    template_content: Time to go big or go home because it's India
+                      VS Australia FINALS!
+                    suggestions:
+                    - suggestionType: reply
+                      displayText: Click to Win
+                      postback: click_to_win
+                    - suggestionType: url_action
+                      url: https://brandx.onelink.me/
+                      displayText: Answer and Win
+                      postback: answer_and_win
+                    - suggestionType: dialer_action
+                      phoneNumber: '+919876543212'
+                      displayText: Call Now Fast
+                      postback: call_now_fast
+              Carousel:
+                summary: Carousel Template
+                description: Create a multi-card carousel template.
+                value:
+                  action_type: carousel
+                  payload:
+                    card_width: SMALL_WIDTH
+                    card_height: SHORT_HEIGHT
+                    rcs_type: carousel
+                    save_type: add
+                    cards:
+                    - type: 1
+                      image_file: data:video/mp4;base64,AAAAIGZ0eXBpc29tAAAC...
+                      url: https://i.postimg.cc/7h0pYnGQ/tree-736885...
+                      thumbnail_url: https://i.postimg.cc/Vsg8TG61/tree-736885...
+                      thumbnail_file: ''
+                      title: Hi hello welocme
+                      description: hey good welcome
+                      is_button: true
+                      suggestions:
+                      - suggestionType: url_action
+                        url: https://netcorecloud.com/
+                        displayText: Answer and Win
+                        postback: answer_and_win
+                        webview: Full
+                      - suggestionType: share_location
+                        displayText: Share Location
+                        postback: share_location_postback
+                      - suggestionType: calendar_event
+                        startTime: '2025-12-07 14:30:00'
+                        endTime: '2025-12-30 15:00:00'
+                        title: Team Sync-up Meeting
+                        description: Monthly team sync-up meeting - Updated
+                        displayText: Schedule Updated Meeting
+                        postback: meeting_scheduled_updated
+                      - suggestionType: view_location_latlong
+                        latitude: 19.076
+                        longitude: 72.877
+                        label: Mumbai Store
+                        displayText: View Location
+                        postback: view_location_postback
+                    - type: 1
+                      image_file: ''
+                      url: https://i.postimg.cc/7h0pYnGQ/tree-736885...
+                      thumbnail_url: ''
+                      thumbnail_file: ''
+                      title: '[TITLE]'
+                      description: Welcome
+                      is_button: true
+                      suggestions:
+                      - suggestionType: dialer_action
+                        phoneNumber: '+919876543212'
+                        displayText: Call Now Fast
+                        postback: call_now_fast
+                      - suggestionType: url_action
+                        url: https://netcorecloud.com/
+                        displayText: Answer and Win
+                        postback: answer_and_win
+                    template_name: test_temp_16
+              Rich Card:
+                summary: Rich Card Template
+                description: Create a single rich card template.
+                value:
+                  action_type: rich_card
+                  payload:
+                    orientation: VERTICAL
+                    alignment: MEDIUM_HEIGHT
+                    type: 2
+                    rcs_type: rich_card
+                    template_id: pqNP
+                    save_type: add
+                    title: box8 offer
+                    image_file: data:video/mp4
+                    url: ''
+                    thumbnail_file: ''
+                    thumbnail_url: https://i.postimg.cc/Vsg8TG61/tree-736885-960-720-7-3.jpg
+                    description: new description
+                    suggestions:
+                    - suggestionType: reply
+                      cta_id: ''
+                      displayText: trgrtrtgtrgr
+                      postback: trgrtrtgtrgr[custom_param]
+                      url: ''
+                      phoneNumber: ''
+                    - suggestionType: url_action
+                      cta_id: ''
+                      displayText: ergergergreg
+                      postback: ergergergreg
+                      url: https://www.google.com
+                      phoneNumber: ''
+                    - suggestionType: dialer_action
+                      cta_id: ''
+                      displayText: gt4ff45g45g
+                      postback: gt4ff45g45g
+                      url: ''
+                      phoneNumber: '+917977772497'
+                    template_name: video_demo45
+      parameters:
+      - schema:
+          type: string
+          example: a3f1d5e792bc4e8aa6785c9d12f30b44
+        in: header
+        name: api_key
+        required: true
+        description: Enter your API key from the RCS Dashboard.
+      - schema:
+          type: string
+          example: application/json
+        in: header
+        name: Content-Type
+        required: true
+        description: Must be application/json.
+      - schema:
+          type: string
+          example: abc123
+        in: header
+        name: nc_bot_id
+        description: Optional bot ID. If missing, the default bot is used.
+  /template/edit:
+    put:
+      summary: Edit RCS Carousel Message API
+      tags:
+      - Template APIs
+      security:
+      - bearerAuth: []
+      description: Send the updated details of your carousel template in this request.
+        Ensure all authentication headers are included.
+      parameters:
+      - schema:
+          type: string
+          example: a3f1d5e792bc4e8aa6785c9d12f30b44
+        in: header
+        name: api_key
+        description: Enter your API key for authentication.
+        required: true
+      - schema:
+          type: string
+        in: header
+        name: Content-Type
+        description: Set this to application/json.
+        required: true
+      - schema:
+          type: string
+          example: abc123
+        in: header
+        name: nc_bot_id
+        description: Optionally specify the bot ID. If not passed, the default bot
+          for your account is used.
+      requestBody:
+        description: Send your updated template details in the request payload.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - action_type
+              properties:
+                action_type:
+                  type: string
+                  description: Enter the action type. For carousel updates, use "carousel".
+                payload:
+                  type: object
+                  required:
+                  - card_width
+                  - card_height
+                  - rcs_type
+                  - cards
+                  - template_name
+                  properties:
+                    card_width:
+                      type: string
+                      description: Select the card width (e.g., "SMALL_WIDTH", "MEDIUM_WIDTH").
+                    card_height:
+                      type: string
+                      description: Select the card height (e.g., "SHORT_HEIGHT", "MEDIUM_HEIGHT").
+                    rcs_type:
+                      type: string
+                      description: Use "carousel" to define the message type.
+                    cards:
+                      type: array
+                      description: Add one or more cards to include in the carousel.
+                      items:
+                        type: object
+                        required:
+                        - type
+                        properties:
+                          type:
+                            type: integer
+                            description: Specify the card type. A value of 2 supports
+                              suggestions or actions.
+                          image_file:
+                            type: string
+                            description: Upload the image or video as a base64 file.
+                          url:
+                            type: string
+                            description: Provide the direct media URL.
+                          thumbnail_url:
+                            type: string
+                            description: Provide the thumbnail image URL.
+                          thumbnail_file:
+                            type: string
+                            description: Upload the thumbnail file as base64.
+                          title:
+                            type: string
+                            description: Enter the card title.
+                          description:
+                            type: string
+                            description: Enter the card description.
+                          suggestions:
+                            type: array
+                            description: Add suggestion actions like replies, URLs,
+                              or dial actions.
+                            items:
+                              type: object
+                              properties:
+                                suggestionType:
+                                  type: string
+                                  description: Choose a suggestion type such as "reply",
+                                    "url_action", or "dialer_action".
+                                displayText:
+                                  type: string
+                                  description: Enter the label shown to users.
+                                postback:
+                                  type: string
+                                  description: Enter the data returned when the user
+                                    selects the suggestion.
+                                url:
+                                  type: string
+                                  description: Enter the URL for URL actions.
+                    template_name:
+                      type: string
+                      description: Enter the name of the template being edited.
+            examples:
+              Using File as URL:
+                value:
+                  action_type: carousel
+                  payload:
+                    card_width: SMALL_WIDTH
+                    card_height: SHORT_HEIGHT
+                    rcs_type: carousel
+                    cards:
+                    - type: 1
+                      image_file: ''
+                      url: https://i.postimg.cc/7h0pYnGQ/tree-736885-960-720-2-1.gif
+                      thumbnail_url: ''
+                      thumbnail_file: ''
+                      title: Sample Title 1
+                      description: Sample Description 1
+                      suggestions:
+                      - suggestionType: url_action
+                        displayText: Visit Google
+                        postback: Visit Google
+                        url: https://www.google.com
+                    - type: 1
+                      image_file: ''
+                      url: https://i.postimg.cc/7h0pYnGQ/tree-736885-960-720-2-1.gif
+                      thumbnail_url: ''
+                      thumbnail_file: ''
+                      title: Sample Title 2
+                      description: Sample Description 2
+                      suggestions:
+                      - suggestionType: reply
+                        displayText: Reply Example
+                        postback: Reply Example[custom_param]
+                    template_name: carousel_template_example
+              Using Multiple Video Cards File:
+                value:
+                  action_type: carousel
+                  payload:
+                    card_width: SMALL_WIDTH
+                    card_height: SHORT_HEIGHT
+                    rcs_type: carousel
+                    cards:
+                    - type: 2
+                      image_file: data:video/mp4;base64,<BASE64_VIDEO_STRING>
+                      url: ''
+                      thumbnail_url: https://i.postimg.cc/y6tQfV8p/tree-736885-960-720-2-1.jpg
+                      thumbnail_file: ''
+                      title: Sample Title 1
+                      description: Sample Description 1
+                      suggestions:
+                      - suggestionType: url_action
+                        displayText: Visit Google
+                        postback: Visit Google
+                        url: https://www.google.com
+                    - type: 1
+                      image_file: ''
+                      url: https://i.postimg.cc/yxRHkhdD/dynamic.jpg
+                      thumbnail_url: ''
+                      thumbnail_file: ''
+                      title: Sample Title 2
+                      description: Sample Description 2
+                      suggestions:
+                      - suggestionType: reply
+                        displayText: Reply Example 1
+                        postback: Reply Example 1[custom_param]
+                    - type: 1
+                      image_file: ''
+                      url: https://i.postimg.cc/yxRHkhdD/dynamic.jpg
+                      thumbnail_url: ''
+                      thumbnail_file: ''
+                      title: Sample Title 3
+                      description: Sample Description 3
+                      suggestions:
+                      - suggestionType: reply
+                        displayText: Reply Example 2
+                        postback: Reply Example 2[custom_param]
+                    template_name: carousel_combo9
+      responses:
+        '200':
+          description: "Template updated successfully.\n\n```\n{\n  \"message\": \"\
+            Template modified successfully\",\n  \"payload\": { ... },\n  \"status\"\
+            : \"Success\"\n}\n```\n"
+        '400':
+          description: "Returned when the template name already exists or required\
+            \ fields are missing.\n\n```\n{\n  \"error\": \"template 'test_edit_text_message'\
+            \ either does not exist or is not eligible for editing\",\n  \"message\"\
+            : \"Template creation failed\",\n  \"status\": \"Failure\"\n}\n```\n\n\
+            ```\n{\n  \"error\": \"missing required field: template_content\",\n \
+            \ \"message\": \"Template creation failed\",\n  \"status\": \"Failure\"\
+            \n}\n```\n"
+      operationId: ''
+      x-stoplight:
+        id: qwresljpcz8pf
+      x-internal: false
+    parameters: []
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com,
+    merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

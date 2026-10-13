@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/netcorecloud/main/json-schema/netcorecloud-google-analytics-schema.json",
+  "title": "GoogleAnalytics",
+  "description": "Google Analytics Tracking.",
+  "x-generated": "2026-10-13",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/netcorecloud-campaigns-api-openapi.yml#/components/schemas/GoogleAnalytics",
+  "type": "object",
+  "properties": {
+    "enable_ga_tracking": {
+      "type": "boolean"
+    },
+    "global_level_ga_tracking": {
+      "type": "boolean"
+    },
+    "utm_source": {
+      "type": "string"
+    },
+    "utm_medium": {
+      "type": "string"
+    },
+    "utm_campaign": {
+      "type": "string"
+    },
+    "utm_content": {
+      "type": "string"
+    },
+    "custom_key_value_parameters": {
+      "type": "object",
+      "properties": {
+        "key1": {
+          "type": "string"
+        },
+        "key2": {
+          "type": "string"
+        }
+      },
+      "description": "Custom keys apart from utm_*"
+    }
+  },
+  "required": [
+    "enable_ga_tracking"
+  ]
+}

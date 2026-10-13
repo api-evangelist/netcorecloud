@@ -1,0 +1,468 @@
+openapi: 3.2.0
+info:
+  title: Orbit Router Engine — Send API
+  version: 1.0.0
+  description: Complete API specification for the Orbit Router email routing platform.
+  contact:
+    name: Orbit Engineering
+  license:
+    name: Proprietary
+servers:
+- url: https://orbitus.netcorecloud.com
+  description: Production — Orbit Engine (HTTP Relay)
+- url: https://orbitus.netcorecloud.com/apiorbit
+  description: Production — Orbit Backend (Config & Management)
+security: []
+tags:
+- name: Engine — Send
+paths:
+  /v1s/nsend/:
+    post:
+      operationId: sendEmailNetcore
+      tags:
+      - Engine — Send
+      summary: Send email (Netcore format)
+      description: 'Send an email using **Netcore v6** payload format. Identical flow to `/v1s/ssend`
+
+        except the incoming type is `netcore`. Content type keys differ:
+
+        `text/html` → `html`, `text/plain` → `plain`, `categories` → `tags`.'
+      security:
+      - EngineApiKeyBearer: []
+      - EngineApiKeyHeader: []
+      - EngineApiKeyFallback: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NetcorePayload'
+            example:
+              personalizations:
+              - to:
+                - email: recipient@example.com
+                  name: Recipient
+              from:
+                email: sender@example.com
+                name: Sender
+              subject: Test Email
+              content:
+              - type: html
+                value: <p>HTML body</p>
+              tags:
+              - transactional
+              settings:
+                open_track: true
+                click_track: true
+      responses:
+        '200':
+          description: Email relayed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EngineSuccessResponse'
+        '400':
+          $ref: '#/components/responses/EngineBadRequest'
+        '401':
+          $ref: '#/components/responses/EngineAuthFailed'
+        '403':
+          $ref: '#/components/responses/EngineForbidden'
+        '413':
+          $ref: '#/components/responses/EnginePayloadTooLarge'
+        '500':
+          $ref: '#/components/responses/EngineInternalError'
+        '502':
+          $ref: '#/components/responses/EngineProviderError'
+        '504':
+          $ref: '#/components/responses/EngineProviderTimeout'
+  /v1s/ssend:
+    post:
+      operationId: sendEmailSendGrid
+      tags:
+      - Engine — Send
+      summary: Send email (SendGrid format)
+      description: 'Send an email using **SendGrid v3** payload format. The engine authenticates the request,
+
+        evaluates rules, selects a route via weighted distribution, optionally transforms the
+
+        payload if the target provider uses a different format, and forwards to the provider API.'
+      security:
+      - EngineApiKeyBearer: []
+      - EngineApiKeyHeader: []
+      - EngineApiKeyFallback: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendGridPayload'
+            example:
+              personalizations:
+              - to:
+                - email: recipient@example.com
+                  name: Recipient
+                cc:
+                - email: cc@example.com
+                bcc:
+                - email: bcc@example.com
+              from:
+                email: sender@example.com
+                name: Sender
+              subject: Hello from Orbit Router
+              content:
+              - type: text/plain
+                value: Plain text body
+              - type: text/html
+                value: <p>HTML body</p>
+              attachments:
+              - content: base64encodedcontent
+                type: application/pdf
+                filename: document.pdf
+                disposition: attachment
+              reply_to:
+                email: reply@example.com
+              categories:
+              - transactional
+      responses:
+        '200':
+          description: Email relayed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EngineSuccessResponse'
+        '400':
+          description: Invalid request (empty body, invalid JSON, payload validation failure, transform error).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EngineErrorResponse'
+              examples:
+                emptyBody:
+                  summary: Empty body
+                  value:
+                    success: error
+                    error: request body is empty
+                    error_code: empty_body
+                invalidJson:
+                  summary: Invalid JSON
+                  value:
+                    success: error
+                    error: invalid JSON
+                    error_code: invalid_json
+                invalidPayload:
+                  summary: Missing required fields
+                  value:
+                    success: error
+                    error: missing from address
+                    error_code: invalid_payload
+        '401':
+          description: Authentication failed — API key missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EngineErrorResponse'
+              example:
+                success: error
+                error: authentication failed
+                error_code: auth_failed
+        '403':
+          description: IP or domain restriction violation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EngineErrorResponse'
+              examples:
+                ipBlocked:
+                  summary: IP not allowed
+                  value:
+                    success: error
+                    error: IP not in allowed list
+                    error_code: ip_not_allowed
+                domainBlocked:
+                  summary: Domain not allowed
+                  value:
+                    success: error
+                    error: domain not in allowed list
+                    error_code: domain_not_allowed
+        '413':
+          description: Payload exceeds `max_request_body_size_mb`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EngineErrorResponse'
+        '500':
+          description: Internal server error (rule evaluation, route lookup, etc.).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EngineErrorResponse'
+        '502':
+          description: Provider returned an error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EngineErrorResponse'
+        '504':
+          description: Provider did not respond within the timeout.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EngineErrorResponse'
+components:
+  schemas:
+    SendGridContent:
+      type: object
+      required:
+      - type
+      - value
+      properties:
+        type:
+          type: string
+          enum:
+          - text/plain
+          - text/html
+        value:
+          type: string
+    NetcorePayload:
+      type: object
+      required:
+      - personalizations
+      - from
+      properties:
+        personalizations:
+          type: array
+          items:
+            $ref: '#/components/schemas/SendGridPersonalization'
+          minItems: 1
+        from:
+          $ref: '#/components/schemas/EmailAddress'
+        subject:
+          type: string
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/NetcoreContent'
+        tags:
+          type: array
+          items:
+            type: string
+          description: Equivalent to SendGrid `categories`.
+        settings:
+          type: object
+          properties:
+            open_track:
+              type: boolean
+            click_track:
+              type: boolean
+    SendGridPersonalization:
+      type: object
+      required:
+      - to
+      properties:
+        to:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmailAddress'
+          minItems: 1
+        cc:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmailAddress'
+        bcc:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmailAddress'
+        subject:
+          type: string
+          description: Overrides top-level subject for this personalization.
+    EngineSuccessResponse:
+      type: object
+      properties:
+        success:
+          type: string
+          example: ok
+        req_id:
+          type: string
+          description: 'Unique request ID: `{rand6}-{clusterID}-{providerID}-{timestamp}-{sequence}-{clientID}-{routeID}`.
+
+            '
+          example: f85l13-1-2-260310161455-000-2-11
+        message:
+          type: string
+          example: Message relayed successfully
+    EngineErrorResponse:
+      type: object
+      properties:
+        success:
+          type: string
+          example: error
+        error:
+          type: string
+        error_code:
+          type: string
+          enum:
+          - empty_body
+          - payload_too_large
+          - invalid_json
+          - invalid_payload
+          - transform_failed
+          - marshal_failed
+          - auth_failed
+          - auth_error
+          - ip_not_allowed
+          - domain_not_allowed
+          - rule_eval_failed
+          - route_not_found
+          - internal_error
+          - provider_error
+          - provider_timeout
+        req_id:
+          type: string
+    NetcoreContent:
+      type: object
+      required:
+      - type
+      - value
+      properties:
+        type:
+          type: string
+          enum:
+          - html
+          - plain
+          description: '`html` maps to `text/html`, `plain` maps to `text/plain`.'
+        value:
+          type: string
+    SendGridAttachment:
+      type: object
+      required:
+      - content
+      - filename
+      properties:
+        content:
+          type: string
+          description: Base64-encoded file content.
+        type:
+          type: string
+          description: MIME type.
+        filename:
+          type: string
+        disposition:
+          type: string
+          enum:
+          - attachment
+          - inline
+          default: attachment
+    EmailAddress:
+      type: object
+      required:
+      - email
+      properties:
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+    SendGridPayload:
+      type: object
+      required:
+      - personalizations
+      - from
+      properties:
+        personalizations:
+          type: array
+          items:
+            $ref: '#/components/schemas/SendGridPersonalization'
+          minItems: 1
+        from:
+          $ref: '#/components/schemas/EmailAddress'
+        subject:
+          type: string
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/SendGridContent'
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/SendGridAttachment'
+        reply_to:
+          $ref: '#/components/schemas/EmailAddress'
+        categories:
+          type: array
+          items:
+            type: string
+  responses:
+    EngineInternalError:
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EngineErrorResponse'
+    EngineAuthFailed:
+      description: API key missing or invalid.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EngineErrorResponse'
+    EngineForbidden:
+      description: IP or domain restriction violation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EngineErrorResponse'
+    EngineProviderError:
+      description: Upstream provider returned an error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EngineErrorResponse'
+    EnginePayloadTooLarge:
+      description: Payload exceeds `max_request_body_size_mb`.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EngineErrorResponse'
+    EngineProviderTimeout:
+      description: Upstream provider did not respond in time.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EngineErrorResponse'
+    EngineBadRequest:
+      description: Invalid request (empty body, invalid JSON, payload validation, transform error).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EngineErrorResponse'
+  securitySchemes:
+    BackendJWT:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'JWT token obtained from `POST /auth/login`. Access token lifetime: 15 minutes.
+
+        Claims: `user_id`, `client_id`, `role`, `jti`, `exp`, `iat`.
+
+        '
+    EngineApiKeyBearer:
+      type: http
+      scheme: bearer
+      description: 'Engine API key via `Authorization: Bearer <api_key>` (priority 1).'
+    EngineApiKeyHeader:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: Engine API key via `X-API-Key` header (priority 2).
+    EngineApiKeyFallback:
+      type: apiKey
+      in: header
+      name: api_key
+      description: Engine API key via `api_key` header (priority 3, fallback).
+x-readme:
+  explorer-enabled: true
+  proxy-enabled: true
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

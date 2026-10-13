@@ -1,0 +1,467 @@
+openapi: 3.2.0
+info:
+  title: Exports Export Report API
+  description: ''
+  version: 1.0.0
+servers:
+- url: https://netcoreapi-main-prod-us.netcorein.com/v5
+  description: US
+- url: https://netcoreapi-main-prod-ind.netcorein.com/v5
+  description: IND
+- url: https://netcoreapi-main-prod-eu.netcorein.com/v5
+  description: EU
+security:
+- ApiKeyAuth: []
+tags:
+- name: Export Report
+paths:
+  /export/report/create:
+    post:
+      summary: Create Export Report
+      deprecated: false
+      description: ''
+      tags:
+      - Export Report
+      parameters:
+      - name: api-key
+        in: header
+        description: ''
+        required: true
+        example: f19136e33b5126b31b3135ce4e06a575
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                export_template_name:
+                  type: string
+                user_type:
+                  type: string
+                filtering_criteria_operator:
+                  type: string
+                filtering_criteria:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      condition_operator:
+                        type: string
+                      condition_details:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            field:
+                              type: string
+                            field_category:
+                              type: string
+                            operation:
+                              type: string
+                              example: equals, not_equals, greater_than, less_than, greater_than_or_equal_to, less_than_or_equal_to, between, in, not_in, contains, does_not_contain, starts_with, ends_with, is_null, is_not_null, matches_regex
+                            value:
+                              type: array
+                              items:
+                                type: string
+                          required:
+                          - field
+                          - field_category
+                          - operation
+                          - value
+                    required:
+                    - condition_operator
+                    - condition_details
+                output:
+                  type: object
+                  properties:
+                    sorting:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          field:
+                            type: string
+                          direction:
+                            type: string
+                    pagination:
+                      type: object
+                      properties:
+                        page:
+                          type: integer
+                        limit:
+                          type: integer
+                      required:
+                      - page
+                      - limit
+                    fields:
+                      type: array
+                      items:
+                        type: string
+                    export_format:
+                      type: string
+                    delivery_method:
+                      type: object
+                      properties:
+                        method:
+                          type: string
+                        details:
+                          type: object
+                          properties:
+                            email:
+                              type: string
+                            ftp:
+                              type: object
+                              properties:
+                                server:
+                                  type: string
+                                username:
+                                  type: string
+                                password:
+                                  type: string
+                                path:
+                                  type: string
+                              required:
+                              - server
+                              - username
+                              - password
+                              - path
+                            s3:
+                              type: object
+                              properties:
+                                bucket_name:
+                                  type: string
+                                access_key:
+                                  type: string
+                                secret_key:
+                                  type: string
+                                path:
+                                  type: string
+                              required:
+                              - bucket_name
+                              - access_key
+                              - secret_key
+                              - path
+                          required:
+                          - email
+                      required:
+                      - method
+                      - details
+                  required:
+                  - fields
+                  - export_format
+                  - delivery_method
+                notify_callback:
+                  type: object
+                  properties:
+                    callback:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          url:
+                            type: string
+                          method:
+                            type: string
+                          headers:
+                            type: object
+                            properties:
+                              Content-Type:
+                                type: string
+                              Authorization:
+                                type: string
+                            required:
+                            - Content-Type
+                            - Authorization
+                          query_params:
+                            type: object
+                            properties:
+                              param1:
+                                type: string
+                              param2:
+                                type: string
+                            required:
+                            - param1
+                            - param2
+                          body_params:
+                            type: object
+                            properties:
+                              param3:
+                                type: string
+                              param4:
+                                type: string
+                            required:
+                            - param3
+                            - param4
+                        required:
+                        - url
+                        - method
+                  required:
+                  - callback
+                schedule:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    data_duration:
+                      type: object
+                      properties:
+                        from:
+                          type: string
+                        to:
+                          type: string
+                      required:
+                      - from
+                      - to
+                    frequency_type:
+                      type: string
+                    frequency_type_value:
+                      type: object
+                      properties:
+                        schedule_date_time:
+                          type: string
+                        schedule_time:
+                          type: string
+                        rate_unit:
+                          type: string
+                        rate_value:
+                          type: integer
+                        scheduled_week_day:
+                          type: string
+                        scheduled_month:
+                          type: string
+                        scheduled_month_day:
+                          type: string
+                      required:
+                      - schedule_date_time
+                      - schedule_time
+                      - rate_unit
+                      - rate_value
+                      - scheduled_week_day
+                      - scheduled_month
+                      - scheduled_month_day
+                    report_data_dynamic_range:
+                      type: string
+                  required:
+                  - name
+                  - data_duration
+                  - frequency_type
+                  - frequency_type_value
+                  - report_data_dynamic_range
+              required:
+              - export_template_name
+              - user_type
+              - filtering_criteria_operator
+              - filtering_criteria
+              - output
+            example:
+              export_template_name: contact
+              user_type: anon
+              filtering_criteria_operator: and
+              filtering_criteria:
+              - condition_operator: and
+                condition_details:
+                - field: CITY
+                  field_category: client.attributes
+                  operation: equals
+                  value:
+                  - Mumbai
+              output:
+                sorting:
+                - field: created_at
+                  direction: desc
+                pagination:
+                  page: 1
+                  limit: 10
+                fields:
+                - EMAIL
+                - MOBILE
+                - CITY
+                - created_at
+                - updated_at
+                export_format: csv
+                delivery_method:
+                  method: email
+                  details:
+                    email: user@example.com
+                    ftp:
+                      server: ftp.example.com
+                      username: ftp_user
+                      password: ftp_password
+                      path: /export/path/
+                    s3:
+                      bucket_name: my-s3-bucket
+                      access_key: s3_access_key
+                      secret_key: s3_secret_key
+                      path: /export/path/
+              notify_callback:
+                callback:
+                - url: https://hkdk.events/hap8uawn6vg4ja
+                  method: POST
+                - url: http://client.com/callbackurl.php
+                  method: GET
+                  headers:
+                    Content-Type: application/json
+                    Authorization: Bearer <token>
+                  query_params:
+                    param1: value1
+                    param2: value2
+                  body_params:
+                    param3: value3
+                    param4: value4
+              schedule:
+                name: Email Detailed Schedule for 1st Jan 24 to 31st Jan
+                data_duration:
+                  from: '2024-03-01 00:00:00'
+                  to: '2024-03-31 23:59:59'
+                frequency_type: daily
+                frequency_type_value:
+                  schedule_date_time: '2025-12-01 00:00:00'
+                  schedule_time: 00:00
+                  rate_unit: minutes
+                  rate_value: 5
+                  scheduled_week_day: Monday
+                  scheduled_month: January
+                  scheduled_month_day: '1'
+                report_data_dynamic_range: T-1
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                  description:
+                    type: string
+                  code:
+                    type: integer
+                  status:
+                    type: string
+                required:
+                - request_id
+                - description
+                - code
+                - status
+              example:
+                request_id: 019b970a-0fe2-711d-a1e3-9052b1820eb3
+                code: 200
+                status: success
+                data:
+                  id: 1791
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                  description:
+                    type: string
+                  code:
+                    type: integer
+                  status:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        field:
+                          type: string
+                        message:
+                          type: string
+                required:
+                - request_id
+                - description
+                - code
+                - status
+                - errors
+              example:
+                request_id: 01948894-a5d4-7321-a656-3e23720cb6a7
+                description: Validation Failure.
+                code: 400
+                status: failed
+                errors:
+                - field: ExportTemplateName
+                  message: 'Choose from: contact, audience, event, campaign_summary_report, campaign_detailed_report, journey_summary_report, journey_detailed_report, trigger_summary_report, trigger_detailed_report.%!(EXTRA string=test)'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                  description:
+                    type: string
+                  code:
+                    type: integer
+                  status:
+                    type: string
+                required:
+                - request_id
+                - description
+                - code
+                - status
+              example:
+                request_id: 01948895-17c8-7a47-9fa4-22ca28913e21
+                description: Unauthorized access.
+                code: 401
+                status: failed
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                    description: Unique request id of request.
+                  status:
+                    type: string
+                    description: status of api request (success|failed).
+                  description:
+                    type: string
+                    description: Api response description.
+                  code:
+                    type: integer
+                    description: Response status Code. (200 for success / 500 for error etc).
+                required:
+                - request_id
+                - status
+                - description
+                - code
+              example:
+                request_id: 01950317-6f62-7911-b399-5c13a607031d
+                description: Internal Server Error.
+                code: 500
+                status: failed
+          headers: {}
+      security:
+      - ApiKeyAuth: []
+      operationId: postExportReportCreate
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: api-key
+      description: "API key needed to access the endpoints. \nExample: `5evddf6604d2845b3b27023e5c2716f1`"
+      x-default: 5evddf6604d2845b3b27023e5c2716f1
+x-provenance:
+  method: searched
+  source: https://developer.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on developer.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

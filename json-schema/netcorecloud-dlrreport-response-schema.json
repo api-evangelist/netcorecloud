@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/netcorecloud/main/json-schema/netcorecloud-dlrreport-response-schema.json",
+  "title": "DLRReportResponse",
+  "x-generated": "2026-10-13",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/netcorecloud-sms-api-openapi.yml#/components/schemas/DLRReportResponse",
+  "type": "object",
+  "required": [
+    "status"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "success",
+        "failure"
+      ]
+    },
+    "message": {
+      "type": "string",
+      "description": "Present only on failure"
+    },
+    "scroll_id": {
+      "type": "string",
+      "description": "Scroll ID for fetching the next page. Omitted when no more data is available."
+    },
+    "data": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/DLRReportItem"
+      }
+    }
+  },
+  "$defs": {
+    "DLRReportItem": {
+      "type": "object",
+      "properties": {
+        "mobile_no": {
+          "type": "string"
+        },
+        "request_id": {
+          "type": "integer"
+        },
+        "sender_id": {
+          "type": "string"
+        },
+        "dlt_template_id": {
+          "type": "integer"
+        },
+        "feed_name": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "operator": {
+          "type": "string"
+        },
+        "circle": {
+          "type": "string"
+        },
+        "requested_on": {
+          "type": "string",
+          "description": "Timestamp when the SMS was submitted"
+        },
+        "last_activity": {
+          "type": "string",
+          "description": "Timestamp of the last delivery status update"
+        },
+        "status": {
+          "type": "string",
+          "description": "Delivery status code"
+        },
+        "sms_count": {
+          "type": "integer"
+        },
+        "tag": {
+          "type": "string",
+          "description": "Message tag / campaign identifier"
+        },
+        "transaction_id": {
+          "type": "integer"
+        },
+        "message_type": {
+          "type": "string",
+          "description": "Derived message type based on feed attributes",
+          "enum": [
+            "Text",
+            "Unicode",
+            "Flash"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/netcorecloud/main/json-schema/netcorecloud-refund-request-schema.json",
+  "title": "RefundRequest",
+  "description": "Defines the payload required to initiate a refund.",
+  "x-generated": "2026-10-13",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/netcorecloud-whatsapp-api-openapi.yml#/components/schemas/RefundRequest",
+  "type": "object",
+  "properties": {
+    "reference_id": {
+      "type": "string",
+      "description": "Unique identifier for the refund request."
+    },
+    "speed": {
+      "type": "string",
+      "description": "Determines refund processing speed.",
+      "enum": [
+        "normal",
+        "instant"
+      ]
+    },
+    "payment_config_id": {
+      "type": "string",
+      "description": "Unique ID of the payment configuration used for the refund."
+    },
+    "amount": {
+      "type": "object",
+      "description": "Defines refund amount details including offset.",
+      "properties": {
+        "currency": {
+          "type": "string",
+          "description": "Currency used for the refund (ISO 4217)."
+        },
+        "value": {
+          "type": "integer",
+          "description": "Numeric value of the refund."
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Value of any applied offset."
+        }
+      },
+      "required": [
+        "currency",
+        "value",
+        "offset"
+      ]
+    }
+  },
+  "required": [
+    "reference_id",
+    "speed",
+    "payment_config_id",
+    "amount"
+  ]
+}

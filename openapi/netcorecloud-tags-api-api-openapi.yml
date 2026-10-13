@@ -1,0 +1,255 @@
+openapi: 3.2.0
+info:
+  title: Email API V5 Tags API
+  description: 'Current API version: v5.1
+
+
+    Our API provides functionalities for email sending, templating emails, managing sender domain, credit usage check and reports.
+
+
+    API endpoint URL for non-EU customers: https://emailapi.netcorecloud.net/
+
+
+    API endpoint for EU customers: https://apieu.netcorecloud.net/'
+  version: '5.1'
+servers:
+- url: https://emailapi.netcorecloud.net/v5.1
+  description: Non-EU customers
+- url: https://apieu.netcorecloud.net/v5.1
+  description: EU customers
+security:
+- ApiKeyAuth: []
+tags:
+- name: Tags API
+paths:
+  /tags:
+    get:
+      tags:
+      - Tags API
+      summary: Get List of Tags
+      description: 'Retrieve the list of email tags configured in your account.
+
+
+        Use this endpoint to discover available tags and filter analytics by tag name and date range.'
+      operationId: GET_tags
+      parameters:
+      - name: tag
+        in: query
+        required: false
+        description: Add a tag name to filter results by a specific tag value.
+        schema:
+          type: string
+          example: transactional
+      - name: limit
+        in: query
+        required: false
+        description: Add the maximum number of tag records to return per page (1–100).
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 100
+          example: 50
+      - name: offset
+        in: query
+        required: false
+        description: Add the starting position for paginated results.
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+          example: 1
+      - name: enddate
+        in: query
+        required: false
+        description: Add the end date for tag statistics in YYYY-MM-DD format. Defaults to today if not provided.
+        schema:
+          type: string
+          format: date
+          example: '2026-02-01'
+      - name: startdate
+        in: query
+        required: true
+        description: Add the start date for tag statistics in YYYY-MM-DD format.
+        schema:
+          type: string
+          format: date
+          example: '2026-01-01'
+      - name: api_key
+        in: header
+        required: true
+        description: Add your Email API key.
+        schema:
+          type: string
+          example: x-api-key-123456789
+      responses:
+        '200':
+          description: Tag list returned
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+  /tags/stats:
+    get:
+      tags:
+      - Tags API
+      summary: Get Tag Statistics
+      description: 'Retrieve email statistics for one or more tags over a date range.
+
+
+        Use this endpoint to analyze delivery and engagement metrics grouped by tag.'
+      operationId: GET_tags-stats
+      parameters:
+      - name: aggregated_by
+        in: query
+        required: false
+        description: Choose how to aggregate results — by day, week, or month.
+        schema:
+          type: string
+          enum:
+          - day
+          - week
+          - month
+          example: day
+      - name: tag
+        in: query
+        required: true
+        description: Add one or more tag names separated by commas to fetch statistics.
+        schema:
+          type: string
+          example: transactional,marketing
+      - name: limit
+        in: query
+        required: false
+        description: Add the maximum number of records to return per page (1–100).
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 100
+          example: 25
+      - name: offset
+        in: query
+        required: false
+        description: Add the starting position for paginated results.
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+          example: 1
+      - name: enddate
+        in: query
+        required: false
+        description: Add the end date for statistics in YYYY-MM-DD format.
+        schema:
+          type: string
+          format: date
+          example: '2026-02-01'
+      - name: startdate
+        in: query
+        required: true
+        description: Add the start date for statistics in YYYY-MM-DD format.
+        schema:
+          type: string
+          format: date
+          example: '2026-01-01'
+      - name: api_key
+        in: header
+        required: true
+        description: Add your Email API key.
+        schema:
+          type: string
+          example: x-api-key-123456789
+      responses:
+        '200':
+          description: Tag statistics returned
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+  /tags/stats/sums:
+    get:
+      tags:
+      - Tags API
+      summary: Get Sum of Tag Statistics
+      description: 'Retrieve total summed email statistics for all tags over a date range.
+
+
+        Use this endpoint when you need overall totals per tag instead of time-series breakdown.'
+      operationId: GET_tags-stats-sums
+      parameters:
+      - name: aggregated_by
+        in: query
+        required: false
+        description: Choose how to group totals — by day, week, or month.
+        schema:
+          type: string
+          enum:
+          - day
+          - week
+          - month
+          example: month
+      - name: limit
+        in: query
+        required: false
+        description: Add the maximum number of tag summary records to return (1–100).
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 100
+          example: 20
+      - name: offset
+        in: query
+        required: false
+        description: Add the starting position for paginated summary results.
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+          example: 1
+      - name: enddate
+        in: query
+        required: false
+        description: Add the end date for statistics in YYYY-MM-DD format.
+        schema:
+          type: string
+          format: date
+          example: '2026-02-01'
+      - name: startdate
+        in: query
+        required: true
+        description: Add the start date for statistics in YYYY-MM-DD format.
+        schema:
+          type: string
+          format: date
+          example: '2026-01-01'
+      - name: api_key
+        in: header
+        required: true
+        description: Add your Email API key.
+        schema:
+          type: string
+          example: x-api-key-123456789
+      responses:
+        '200':
+          description: Tag statistic sums returned
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: api_key
+      in: header
+      description: Your Email API Key. You can find this in your Email API account at Settings->Integrations.
+x-readme:
+  explorer-enabled: true
+  proxy-enabled: true
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

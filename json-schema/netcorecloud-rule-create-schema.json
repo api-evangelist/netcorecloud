@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/netcorecloud/main/json-schema/netcorecloud-rule-create-schema.json",
+  "title": "RuleCreate",
+  "x-generated": "2026-10-13",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/RuleCreate",
+  "type": "object",
+  "required": [
+    "rule_name",
+    "expression",
+    "priority",
+    "enabled"
+  ],
+  "properties": {
+    "rule_name": {
+      "type": "string"
+    },
+    "expression": {
+      "type": "string",
+      "description": "Must compile with `expr.Compile()`."
+    },
+    "tag": {
+      "type": "string",
+      "default": "default"
+    },
+    "priority": {
+      "type": "integer",
+      "description": "Lower number = higher priority."
+    },
+    "enabled": {
+      "type": "boolean"
+    },
+    "rule_routes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "route_id",
+          "weight"
+        ],
+        "properties": {
+          "route_id": {
+            "type": "integer",
+            "description": "Must exist for the current client."
+          },
+          "weight": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "enabled": {
+            "type": "boolean",
+            "default": true
+          }
+        }
+      }
+    }
+  }
+}

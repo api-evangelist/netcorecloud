@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/netcorecloud/main/json-schema/netcorecloud-route-schema.json",
+  "title": "Route",
+  "x-generated": "2026-10-13",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/netcorecloud-orbit-router-openapi.yml#/components/schemas/Route",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer"
+    },
+    "provider_id": {
+      "type": "integer"
+    },
+    "route_name": {
+      "type": "string"
+    },
+    "host": {
+      "type": "string"
+    },
+    "port": {
+      "type": "integer",
+      "description": "SMTP port; null for HTTP routes."
+    },
+    "username": {
+      "type": "string",
+      "description": "SMTP username (masked on read)."
+    },
+    "password": {
+      "type": "string",
+      "description": "Masked value."
+    },
+    "api_key": {
+      "type": "string",
+      "description": "Masked value."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive"
+      ]
+    },
+    "protocol_type": {
+      "type": "string",
+      "enum": [
+        "smtp",
+        "http"
+      ]
+    },
+    "worker_size": {
+      "type": "integer"
+    },
+    "buffer_size": {
+      "type": "integer"
+    },
+    "is_default": {
+      "type": "boolean"
+    },
+    "tls_mode": {
+      "type": "string",
+      "enum": [
+        "starttls",
+        "tls",
+        "none"
+      ]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

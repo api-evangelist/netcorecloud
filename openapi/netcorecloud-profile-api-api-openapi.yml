@@ -1,0 +1,100 @@
+openapi: 3.2.0
+info:
+  title: Email API V6 Profile API
+  description: ''
+  version: 1.0.0
+servers:
+- url: https://emailapi.netcorecloud.net/v6
+  description: For Non EU region
+- url: https://apieu.netcorecloud.net/v6
+  description: For EU region
+security: []
+tags:
+- name: Profile API
+paths:
+  /profile:
+    patch:
+      summary: Update Timezone
+      deprecated: false
+      description: Update the timezone setting for the user profile. Use IANA timezone format (e.g., America/New_York). Optional `on-behalf-of` header allows parent accounts to update the timezone for their sub-accounts.
+      operationId: profile-timezone
+      tags:
+      - Profile API
+      parameters:
+      - name: on-behalf-of
+        in: header
+        description: The On Behalf Of header allows you to make API calls from a parent account on behalf of the parent's customer accounts.
+        required: false
+        schema:
+          type: string
+        example: subaccount-1234
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                time_zone:
+                  type: string
+              required:
+              - time_zone
+            example:
+              time_zone: America/New_York
+      responses:
+        '200':
+          description: Timezone updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                - message
+              example:
+                message: Profile updated successfully
+          headers: {}
+        '400':
+          description: Invalid timezone provided
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                        field:
+                          type: string
+                      required:
+                      - message
+                      - field
+                required:
+                - error
+              example:
+                error:
+                - message: Please provide a valid timezone
+                  field: time_zone
+          headers: {}
+      security:
+      - bearer: []
+components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

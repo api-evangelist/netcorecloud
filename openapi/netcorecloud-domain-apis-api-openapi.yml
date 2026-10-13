@@ -1,0 +1,477 @@
+openapi: 3.2.0
+info:
+  title: Email API V6 Domain APIs API
+  description: ''
+  version: 1.0.0
+servers:
+- url: https://emailapi.netcorecloud.net/v6
+  description: For Non EU region
+- url: https://apieu.netcorecloud.net/v6
+  description: For EU region
+security: []
+tags:
+- name: Domain APIs
+paths:
+  /domains:
+    post:
+      summary: Add Domain
+      description: Adds a new domain to your account and configures optional envelope and inbound settings.
+      operationId: add-domain
+      tags:
+      - Domain APIs
+      parameters:
+      - name: on-behalf-of
+        in: header
+        required: false
+        description: Use this header when making requests on behalf of a subaccount. Required only when using a master account's API key.
+        schema:
+          type: string
+          example: subaccount_username
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - domain
+              - envelopeName
+              properties:
+                domain:
+                  type: string
+                  description: The domain name you want to add
+                envelopeName:
+                  type: string
+                  description: The domain name you want to add
+                inboundName:
+                  type: string
+                  description: The inbound name you want to configure
+      responses:
+        '200':
+          description: Domain added successfully with DNS validation details.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              example:
+                error: Domain already added
+      security:
+      - bearer: []
+    get:
+      summary: Get all domains
+      description: Retrieves configuration and status details for a specified domain, including its DNS setup, tracking settings, and verification status.
+      operationId: get-domain
+      tags:
+      - Domain APIs
+      parameters:
+      - name: domain_name
+        in: query
+        required: true
+        description: Specifies the domain name.
+        schema:
+          type: string
+      - name: on-behalf-of
+        in: header
+        required: false
+        description: Use this header when making requests on behalf of a subaccount. Required only when using a master account's API key.
+        schema:
+          type: string
+          example: subaccount_username
+      responses:
+        '200':
+          description: Domain metadata returned.
+        '400':
+          description: Invalid domain
+          content:
+            application/json:
+              example:
+                error: Invalid domain given, domain not mapped with requested client
+      security:
+      - bearer: []
+  /domains/{domain}:
+    delete:
+      summary: Delete Domain
+      description: 'This API removes a domain from your account. Once deleted, the domain will no longer be available for sending or domain-based configurations such as authentication, tracking, or routing.
+
+        Use this endpoint when a domain is no longer needed or must be replaced. The domain must belong to your account or the subaccount specified.'
+      operationId: delete-domain
+      tags:
+      - Domain APIs
+      parameters:
+      - name: domain
+        in: path
+        required: true
+        description: 'The domain name you want to delete. The domain must exist in your account or associated subaccount.
+
+          '
+        schema:
+          type: string
+      - name: on-behalf-of
+        in: header
+        required: false
+        description: '*(Optional)* Use this when deleting a domain on behalf of a subaccount. Required only if using a master account’s API key.
+
+          '
+        schema:
+          type: string
+          example: subaccount_username
+      responses:
+        '204':
+          description: Domain successfully deleted. No content returned.
+        '400':
+          description: Bad Request – Invalid or unregistered domain.
+          content:
+            application/json:
+              example:
+                error: Invalid domain given, mapping not found for example.com
+      security:
+      - bearer: []
+    get:
+      summary: Get Domain
+      deprecated: false
+      description: 'This API enables you to fetch the DNS records (SPF, DKIM & Custom Envelope) for a domain added in your account. It is mandatory to add these records in your domain''s advanced DNS settings to activate your domain. Supported Authorization type is “Bearer” along with value of your Email API KEY Which you can find in your Email API account under Settings >Integrations > API.
+
+
+        **What are SPF and DKIM? And why are these are important to have?**
+
+
+        **SPF (Sender Policy Framework)** record ascertains ESPs that Email API is authorized to send emails using your domain.
+
+
+        **DKIM (Domain Key Identified Mail)** is a method to validate the authenticity of email messages. We send each email with a DKIM signature and ESPs use this signature to verify the authenticity of the email using the DKIM record entered in your domain''s DNS settings.'
+      operationId: get-domain-id
+      tags:
+      - Domain APIs
+      parameters:
+      - name: domain
+        in: path
+        description: The domain to retrieve, e.g., example.com. Must belong to the requesting client.
+        required: true
+        example: ''
+        schema:
+          type: string
+      - name: on_behalf-of
+        in: header
+        description: Use this header when making requests on behalf of a subaccount. Required only when using a master account's API key.
+        required: false
+        example: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  domain:
+                    type: string
+                  status:
+                    type: string
+                    enum:
+                    - active
+                    - rejected
+                    - under approval
+                    - pending
+                  tracking_settings:
+                    type: object
+                    properties:
+                      open_tracking:
+                        type: boolean
+                      click_tracking:
+                        type: boolean
+                      subscription_tracking:
+                        type: boolean
+                  dkim:
+                    type: object
+                    properties:
+                      valid:
+                        type: boolean
+                      required_value:
+                        type: string
+                      current_value:
+                        type: string
+                      host:
+                        type: string
+                  custom_envelope:
+                    type: object
+                    properties:
+                      valid:
+                        type: boolean
+                      required_value:
+                        type: string
+                      current_value:
+                        type: string
+                      host:
+                        type: string
+                  inbound:
+                    type: object
+                    properties:
+                      valid:
+                        type: boolean
+                      required_value:
+                        type: string
+                      current_value:
+                        type: string
+                      host:
+                        type: string
+                x-examples:
+                  Example 1:
+                    id: 126038
+                    domain: testabi1.tech
+                    status: active
+                    tracking_settings:
+                      open_tracking: true
+                      click_tracking: true
+                      subscription_tracking: true
+                    dkim:
+                      valid: false
+                      required_value: dkim2048.ind.netcorecloud.net
+                      current_value: ''
+                      host: nc2048._domainkey.testabi1.tech
+                    custom_envelope:
+                      valid: false
+                      required_value: eapi.ind.netcorecloud.net
+                      current_value: ''
+                      host: test.testabi1.tech
+                    inbound:
+                      valid: false
+                      required_value: inbound.eapi.ind.netcorecloud.net
+                      current_value: ''
+                      host: inbound.testabi1.tech
+              example:
+                id: 123
+                domain: abcd.shop
+                tracking_settings:
+                  open_tracking: true
+                  click_tracking: true
+                  subscription_tracking: true
+                dkim:
+                  valid: true
+                  required_value: dkim2048.sslqa.netcorecloud.net
+                  current_value: dkim2048.qa.netcorecloud.net
+                  host: nc2048._domainkey.abcd.shop
+                custom_envelope:
+                  valid: true
+                  required_value: eapi.sslqa.netcorecloud.net
+                  current_value: eapi.qa.netcorecloud.net
+                  host: delivery.abcd.shop
+                inbound:
+                  valid: true
+                  required_value: inbound.eapi.sslqa.netcorecloud.net
+                  current_value: inbound.eapi.qa.netcorecloud.net
+                  host: inbound.abcd.shop
+                status: active
+          headers: {}
+      security:
+      - bearer: []
+      x-internal: false
+  /domains/allocate:
+    post:
+      summary: Allocate Domain to Subaccount
+      deprecated: false
+      description: 'This API assigns an existing domain to a specific sub-account within your CPaaS environment.
+
+        Ensure the domain is already created and unallocated before invoking this endpoint. Each domain can be associated with only one sub-account at a time.
+
+        You must have valid credentials and the necessary permissions to allocate domains to sub-accounts.'
+      operationId: post-domains-allocate
+      tags:
+      - Domain APIs
+      parameters:
+      - name: Accept
+        in: header
+        required: true
+        description: Expected response format (e.g., application/json)
+        schema:
+          type: string
+          example: application/json
+      - name: Content-Type
+        in: header
+        required: true
+        description: Format of the request body (e.g., application/json)
+        schema:
+          type: string
+          example: application/json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subaccount_username:
+                  type: string
+                  description: Username of the sub-account to which the domain will be allocated.
+                domain_name:
+                  type: string
+                  description: Fully qualified domain name to be allocated.
+              required:
+              - subaccount_username
+              - domain_name
+            examples:
+              Example 1:
+                summary: Allocate domain to a subaccount
+                value:
+                  subaccount_username: test290
+                  domain_name: auto22.cpaasqa.site
+      responses:
+        '200':
+          description: Domain successfully allocated.
+          content:
+            application/json:
+              example:
+                allocated_to: test290
+                domain: auto22.cpaasqa.site
+                message: Domain allocated successfully
+        '400':
+          description: 'Bad Request – The domain is already assigned to another sub-account.
+
+            '
+          content:
+            application/json:
+              example:
+                message: Domain already allocated
+        '403':
+          description: 'Forbidden – The sub-account is invalid or you are not authorized to perform this action.
+
+            '
+          content:
+            application/json:
+              example:
+                error: Invalid or unauthorized sub-account
+        '404':
+          description: 'Not Found – The specified domain does not exist in your account.
+
+            '
+          content:
+            application/json:
+              example:
+                error: Domain not found
+      security:
+      - bearer: []
+      x-internal: false
+  /domains/validate/{domain}:
+    get:
+      summary: Verify Domain DNS Records
+      deprecated: false
+      description: 'This API triggers a DNS validation check for a specified domain, verifying the setup of key email authentication and routing records — including DKIM, envelope sender (custom return path), and inbound routing.
+
+        Use this endpoint to confirm whether your domain''s DNS records are correctly configured and active. A valid bearer token (Email API Key) is required and can be found under **Settings → Integrations → API** in your account.'
+      operationId: verify-dns
+      tags:
+      - Domain APIs
+      parameters:
+      - name: on-behalf-of
+        in: header
+        required: false
+        description: '*(Optional)* Use this header to perform the verification on behalf of a subaccount. Only required when using a master account’s API key.
+
+          '
+        schema:
+          type: string
+          example: subaccount_username
+      - name: domain
+        in: path
+        required: true
+        description: 'The domain name to verify. Must belong to your account or subaccount. Example: `example.com`
+
+          '
+        schema:
+          type: string
+          example: example.com
+      responses:
+        '200':
+          description: DNS records verified successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  domain:
+                    type: string
+                  dkim:
+                    type: object
+                    properties:
+                      valid:
+                        type: boolean
+                      required_value:
+                        type: string
+                      current_value:
+                        type: string
+                      host:
+                        type: string
+                  custom_envelope:
+                    type: object
+                    properties:
+                      valid:
+                        type: boolean
+                      required_value:
+                        type: string
+                      current_value:
+                        type: string
+                      host:
+                        type: string
+                  inbound:
+                    type: object
+                    properties:
+                      valid:
+                        type: boolean
+                      required_value:
+                        type: string
+                      current_value:
+                        type: string
+                      host:
+                        type: string
+              examples:
+                Success:
+                  summary: Example successful DNS validation response
+                  value:
+                    domain: example.com
+                    dkim:
+                      valid: true
+                      required_value: k=rsa; p=MIGfMA0G...
+                      current_value: k=rsa; p=MIGfMA0G...
+                      host: dkim._domainkey.example.com
+                    custom_envelope:
+                      valid: true
+                      required_value: mail.example.com
+                      current_value: mail.example.com
+                      host: example.com
+                    inbound:
+                      valid: true
+                      required_value: inbound.example.com
+                      current_value: inbound.example.com
+                      host: inbound.example.com
+        '400':
+          description: 'Bad Request – The domain is either invalid or not associated with your account.
+
+            '
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: Invalid domain given, domain not mapped with requested client
+      security:
+      - bearer: []
+components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

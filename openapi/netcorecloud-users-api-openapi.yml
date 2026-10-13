@@ -1,0 +1,240 @@
+openapi: 3.2.0
+info:
+  title: Orbit Router Users API
+  version: 1.0.0
+  description: Complete API specification for the Orbit Router email routing platform.
+  contact:
+    name: Orbit Engineering
+  license:
+    name: Proprietary
+servers:
+- url: https://orbitus.netcorecloud.com
+  description: Production — Orbit Engine (HTTP Relay)
+- url: https://orbitus.netcorecloud.com/apiorbit
+  description: Production — Orbit Backend (Config & Management)
+security: []
+tags:
+- name: Users
+paths:
+  /users:
+    post:
+      operationId: createUser
+      tags:
+      - Users
+      summary: Create a user
+      description: Requires admin role.
+      security:
+      - BackendJWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+      responses:
+        '201':
+          description: User created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackendErrorResponse'
+    get:
+      operationId: listUsers
+      tags:
+      - Users
+      summary: List users
+      description: Lists all users for the current client. Requires admin role.
+      security:
+      - BackendJWT: []
+      responses:
+        '200':
+          description: List of users.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserProfile'
+  /users/{id}:
+    parameters:
+    - $ref: '#/components/parameters/ResourceId'
+    delete:
+      operationId: deleteUser
+      tags:
+      - Users
+      summary: Delete a user
+      description: Cannot delete self. Requires admin role.
+      security:
+      - BackendJWT: []
+      responses:
+        '204':
+          description: User deleted.
+        '400':
+          description: Cannot delete own account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackendErrorResponse'
+        '404':
+          description: User not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackendErrorResponse'
+    put:
+      operationId: updateUser
+      tags:
+      - Users
+      summary: Update a user
+      description: Partial update. Requires admin role.
+      security:
+      - BackendJWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+      responses:
+        '200':
+          description: User updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        '404':
+          description: User not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackendErrorResponse'
+  /users/{id}/password:
+    parameters:
+    - $ref: '#/components/parameters/ResourceId'
+    put:
+      operationId: resetUserPassword
+      tags:
+      - Users
+      summary: Reset a user's password (admin action)
+      security:
+      - BackendJWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - new_password
+              properties:
+                new_password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: Password reset.
+        '404':
+          description: User not found.
+components:
+  parameters:
+    ResourceId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+      description: Resource ID.
+  schemas:
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        full_name:
+          type: string
+        role:
+          type: string
+          enum:
+          - admin
+          - viewer
+        client_id:
+          type: integer
+        two_factor_enabled:
+          type: boolean
+    BackendErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        field:
+          type: string
+          description: Optional field that caused the error.
+    UserCreate:
+      type: object
+      required:
+      - username
+      - email
+      - password
+      - role
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        role:
+          type: string
+          enum:
+          - admin
+          - viewer
+        allowed_subclient_ids:
+          type: array
+          items:
+            type: integer
+          description: Sub-client IDs this user may access.
+  securitySchemes:
+    BackendJWT:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'JWT token obtained from `POST /auth/login`. Access token lifetime: 15 minutes.
+
+        Claims: `user_id`, `client_id`, `role`, `jti`, `exp`, `iat`.
+
+        '
+    EngineApiKeyBearer:
+      type: http
+      scheme: bearer
+      description: 'Engine API key via `Authorization: Bearer <api_key>` (priority 1).'
+    EngineApiKeyHeader:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: Engine API key via `X-API-Key` header (priority 2).
+    EngineApiKeyFallback:
+      type: apiKey
+      in: header
+      name: api_key
+      description: Engine API key via `api_key` header (priority 3, fallback).
+x-readme:
+  explorer-enabled: true
+  proxy-enabled: true
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

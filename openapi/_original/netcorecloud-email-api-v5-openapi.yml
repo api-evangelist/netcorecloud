@@ -1,0 +1,1258 @@
+# x-archived-from: netcorecloud-email-api-v5-openapi.yml
+# x-archived-on: 2026-10-13
+openapi: 3.1.0
+info:
+  title: Email API V5
+  description: 'Current API version: v5.1
+
+
+    Our API provides functionalities for email sending, templating emails, managing
+    sender domain, credit usage check and reports.
+
+
+    API endpoint URL for non-EU customers: https://emailapi.netcorecloud.net/
+
+
+    API endpoint for EU customers: https://apieu.netcorecloud.net/'
+  version: '5.1'
+servers:
+- url: https://emailapi.netcorecloud.net/v5.1
+  description: Non-EU customers
+- url: https://apieu.netcorecloud.net/v5.1
+  description: EU customers
+tags:
+- name: Subaccount API
+  description: Subaccount management
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: api_key
+      in: header
+      description: Your Email API Key. You can find this in your Email API account
+        at Settings->Integrations.
+security:
+- ApiKeyAuth: []
+x-readme:
+  explorer-enabled: true
+  proxy-enabled: true
+paths:
+  /subaccounts/delete:
+    delete:
+      tags:
+      - Subaccount API
+      summary: Delete Subaccount
+      description: Permanently delete an email subaccount.
+      parameters:
+      - name: api_key
+        in: header
+        required: true
+        description: Add your master account API key.
+        schema:
+          type: string
+          example: x-api-key-123456789
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: Add subaccount username to delete.
+                  example: acme_marketing_team
+              required:
+              - username
+      responses:
+        '200':
+          description: Subaccount deleted successfully
+  /template:
+    get:
+      tags:
+      - Template API
+      summary: View a template
+      description: 'Retrieve and preview a stored template from the Netcore CPaaS
+        dashboard.
+
+
+        Use this endpoint to fetch template content by template_id.
+
+        '
+      operationId: get-template
+      parameters:
+      - name: template_id
+        in: query
+        required: true
+        description: Add the template ID you want to preview.
+        schema:
+          type: string
+          example: '102345'
+      - name: api_key
+        in: header
+        required: true
+        description: Add your Netcore CPaaS dashboard Email API key.
+        schema:
+          type: string
+          example: x-api-key-123456789
+      responses:
+        '200':
+          description: Template details returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      template_name:
+                        type: string
+                        example: order_confirmation_v1
+                      content:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                              example: html
+                            value:
+                              type: string
+                              example: <html>...</html>
+                  message:
+                    type: string
+                    example: Success
+                  status:
+                    type: string
+                    example: success
+        '401':
+          description: Unauthorized
+    patch:
+      tags:
+      - Template API
+      summary: Update a template
+      description: 'Update template name and/or template content stored in the Netcore
+        CPaaS dashboard.
+
+
+        Pass the template_id and only the fields you want to change.
+
+        '
+      operationId: patch-template
+      parameters:
+      - name: api_key
+        in: header
+        required: true
+        description: Add your Netcore CPaaS dashboard Email API key.
+        schema:
+          type: string
+          example: x-api-key-123456789
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                template_id:
+                  type: integer
+                  description: Add the template ID you want to update.
+                  example: 102345
+                template_name:
+                  type: string
+                  description: Add a new template name if you want to rename the template.
+                  example: order_confirmation_v2
+                content:
+                  type: array
+                  description: Add updated content blocks to replace the existing
+                    template content.
+                  items:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        description: Choose content format — html or amp.
+                        example: html
+                      value:
+                        type: string
+                        description: Add the updated template body content.
+                        example: <html><body>Hello [% NAME %], your order has shipped.</body></html>
+              required:
+              - template_id
+      responses:
+        '200':
+          description: Template updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      template_id:
+                        type: integer
+                        example: 102345
+                      template_name:
+                        type: string
+                        example: order_confirmation_v2
+                  message:
+                    type: string
+                    example: Template updated
+                  status:
+                    type: string
+                    example: success
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+    post:
+      tags:
+      - Template API
+      summary: Add a template
+      description: 'Create and store a new email template on the Netcore CPaaS dashboard.
+
+
+        A template is a reusable server-side email layout referenced by template_id
+        when sending emails.
+
+        You can include substitution placeholders like [% NAME %] that are replaced
+        at send time.
+
+
+        Templates created in a master account are not accessible in subaccounts.
+
+
+        Base URLs:
+
+        Non-EU: https://emailapi.netcorecloud.net/
+
+        EU: https://apieu.netcorecloud.net/
+
+        '
+      operationId: post-template
+      parameters:
+      - name: api_key
+        in: header
+        required: true
+        description: Add your Netcore CPaaS dashboard Email API key to authorize this
+          request.
+        schema:
+          type: string
+          example: x-api-key-123456789
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                template_name:
+                  type: string
+                  description: Add a unique template name using letters, numbers,
+                    or underscore only (max 255 characters).
+                  pattern: ^[a-z0-9A-Z_]{1,255}$
+                  maxLength: 255
+                  example: order_confirmation_v1
+                content:
+                  type: array
+                  description: Add one or more template content blocks (HTML and/or
+                    AMP).
+                  items:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        description: Choose content format — use html for standard
+                          email or amp for AMP email. If using amp, also add an html
+                          fallback block.
+                        example: html
+                      value:
+                        type: string
+                        description: Add the URL-encoded template body content. You
+                          can include placeholders like [% NAME %].
+                        example: <html><body>Hello [% NAME %], your order is confirmed.</body></html>
+              required:
+              - template_name
+              - content
+      responses:
+        '201':
+          description: Template added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      template_id:
+                        type: integer
+                        example: 102345
+                      template_name:
+                        type: string
+                        example: order_confirmation_v1
+                  message:
+                    type: string
+                    example: Template created
+                  status:
+                    type: string
+                    example: success
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+  /templates:
+    get:
+      tags:
+      - Template API
+      summary: List templates
+      description: 'Retrieve all templates stored in your Netcore CPaaS dashboard
+        account.
+
+
+        Use this endpoint to get template IDs and names before sending emails using
+        templates.
+
+        '
+      operationId: get-templates
+      parameters:
+      - name: api_key
+        in: header
+        required: true
+        description: Add your Netcore CPaaS dashboard Email API key.
+        schema:
+          type: string
+          example: x-api-key-123456789
+      responses:
+        '200':
+          description: Template list returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        template_id:
+                          type: integer
+                          example: 102345
+                        template_name:
+                          type: string
+                          example: order_confirmation_v1
+                        added:
+                          type: string
+                          example: '2026-01-10 12:21:00'
+                        last_modified:
+                          type: string
+                          example: '2026-01-15 09:11:00'
+                  message:
+                    type: string
+                    example: Success
+                  status:
+                    type: string
+                    example: success
+        '401':
+          description: Unauthorized
+  /stats:
+    get:
+      tags:
+      - Events API
+      summary: Fetch Summary Stats
+      description: 'Email API captures different events like Open, Click, Unsubscribe
+        etc and generates statistics. This data is available in your Email API account
+        as well as you can fetch the same via this API.
+
+
+        The statistics are calculated every hour in your set timezone.
+
+
+        Note: To check and update timezone, please log in to your Email API account
+        and navigate through My Profile.
+
+
+        The following retention policy is applied to the statistics:
+
+
+        Monthly stats are stored throughout the lifespan of the domain.
+
+        Events data are available for last 90 days only.'
+      operationId: GET_stats
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 100
+          maximum: 100
+          minimum: 1
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 1
+          minimum: 1
+      - name: aggregated_by
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - day
+          - week
+          - month
+      - name: enddate
+        in: query
+        description: 'The end date of the statistics to retrieve. Defaults to today.
+          Must follow format YYYY-MM-DD.
+
+          '
+        required: false
+        schema:
+          type: string
+          format: date
+          default: '2018-08-02'
+      - name: startdate
+        in: query
+        description: 'The starting date of the statistics to retrieve. Must follow
+          format YYYY-MM-DD.
+
+          '
+        required: true
+        schema:
+          type: string
+          format: date
+          default: '2017-07-01'
+      - name: api_key
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                        stats:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              metrics:
+                                type: object
+                                properties:
+                                  bounce:
+                                    type: string
+                                  click:
+                                    type: string
+                                  dropped:
+                                    type: string
+                                  invalid:
+                                    type: string
+                                  open:
+                                    type: string
+                                  sent:
+                                    type: string
+                                  spam:
+                                    type: string
+                                  unique_click:
+                                    type: string
+                                  unique_open:
+                                    type: string
+                                  unsub:
+                                    type: string
+                  message:
+                    type: string
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_info:
+                    type: object
+                    properties:
+                      error_code:
+                        type: integer
+                      error_message:
+                        type: string
+                  message:
+                    type: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_info:
+                    type: object
+                    properties:
+                      error_code:
+                        type: integer
+                      error_message:
+                        type: string
+                  message:
+                    type: string
+  /subaccounts/getcreditddetails:
+    get:
+      tags:
+      - Subaccount API
+      summary: Get Credit Details
+      description: Fetch current credit balance and credit settings for a subaccount.
+      parameters:
+      - name: username
+        in: query
+        required: true
+        description: Add subaccount username to fetch credit details.
+        schema:
+          type: string
+          example: acme_marketing_team
+      - name: api_key
+        in: header
+        required: true
+        description: Add your master account API key.
+        schema:
+          type: string
+          example: x-api-key-123456789
+      responses:
+        '200':
+          description: Credit details returned
+  /subaccounts/getSubAccounts:
+    get:
+      tags:
+      - Subaccount API
+      summary: List Subaccounts
+      description: Retrieve all email subaccounts created under your master account.
+      parameters:
+      - name: api_key
+        in: header
+        required: true
+        description: Add your master account API key.
+        schema:
+          type: string
+          example: x-api-key-123456789
+      responses:
+        '200':
+          description: Subaccount list returned
+  /tags:
+    get:
+      tags:
+      - Tags API
+      summary: Get List of Tags
+      description: 'Retrieve the list of email tags configured in your account.
+
+
+        Use this endpoint to discover available tags and filter analytics by tag name
+        and date range.
+
+        '
+      operationId: GET_tags
+      parameters:
+      - name: tag
+        in: query
+        required: false
+        description: Add a tag name to filter results by a specific tag value.
+        schema:
+          type: string
+          example: transactional
+      - name: limit
+        in: query
+        required: false
+        description: Add the maximum number of tag records to return per page (1–100).
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 100
+          example: 50
+      - name: offset
+        in: query
+        required: false
+        description: Add the starting position for paginated results.
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+          example: 1
+      - name: enddate
+        in: query
+        required: false
+        description: Add the end date for tag statistics in YYYY-MM-DD format. Defaults
+          to today if not provided.
+        schema:
+          type: string
+          format: date
+          example: '2026-02-01'
+      - name: startdate
+        in: query
+        required: true
+        description: Add the start date for tag statistics in YYYY-MM-DD format.
+        schema:
+          type: string
+          format: date
+          example: '2026-01-01'
+      - name: api_key
+        in: header
+        required: true
+        description: Add your Email API key.
+        schema:
+          type: string
+          example: x-api-key-123456789
+      responses:
+        '200':
+          description: Tag list returned
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+  /tags/stats:
+    get:
+      tags:
+      - Tags API
+      summary: Get Tag Statistics
+      description: 'Retrieve email statistics for one or more tags over a date range.
+
+
+        Use this endpoint to analyze delivery and engagement metrics grouped by tag.
+
+        '
+      operationId: GET_tags-stats
+      parameters:
+      - name: aggregated_by
+        in: query
+        required: false
+        description: Choose how to aggregate results — by day, week, or month.
+        schema:
+          type: string
+          enum:
+          - day
+          - week
+          - month
+          example: day
+      - name: tag
+        in: query
+        required: true
+        description: Add one or more tag names separated by commas to fetch statistics.
+        schema:
+          type: string
+          example: transactional,marketing
+      - name: limit
+        in: query
+        required: false
+        description: Add the maximum number of records to return per page (1–100).
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 100
+          example: 25
+      - name: offset
+        in: query
+        required: false
+        description: Add the starting position for paginated results.
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+          example: 1
+      - name: enddate
+        in: query
+        required: false
+        description: Add the end date for statistics in YYYY-MM-DD format.
+        schema:
+          type: string
+          format: date
+          example: '2026-02-01'
+      - name: startdate
+        in: query
+        required: true
+        description: Add the start date for statistics in YYYY-MM-DD format.
+        schema:
+          type: string
+          format: date
+          example: '2026-01-01'
+      - name: api_key
+        in: header
+        required: true
+        description: Add your Email API key.
+        schema:
+          type: string
+          example: x-api-key-123456789
+      responses:
+        '200':
+          description: Tag statistics returned
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+  /tags/stats/sums:
+    get:
+      tags:
+      - Tags API
+      summary: Get Sum of Tag Statistics
+      description: 'Retrieve total summed email statistics for all tags over a date
+        range.
+
+
+        Use this endpoint when you need overall totals per tag instead of time-series
+        breakdown.
+
+        '
+      operationId: GET_tags-stats-sums
+      parameters:
+      - name: aggregated_by
+        in: query
+        required: false
+        description: Choose how to group totals — by day, week, or month.
+        schema:
+          type: string
+          enum:
+          - day
+          - week
+          - month
+          example: month
+      - name: limit
+        in: query
+        required: false
+        description: Add the maximum number of tag summary records to return (1–100).
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 100
+          example: 20
+      - name: offset
+        in: query
+        required: false
+        description: Add the starting position for paginated summary results.
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+          example: 1
+      - name: enddate
+        in: query
+        required: false
+        description: Add the end date for statistics in YYYY-MM-DD format.
+        schema:
+          type: string
+          format: date
+          example: '2026-02-01'
+      - name: startdate
+        in: query
+        required: true
+        description: Add the start date for statistics in YYYY-MM-DD format.
+        schema:
+          type: string
+          format: date
+          example: '2026-01-01'
+      - name: api_key
+        in: header
+        required: true
+        description: Add your Email API key.
+        schema:
+          type: string
+          example: x-api-key-123456789
+      responses:
+        '200':
+          description: Tag statistic sums returned
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+  /events:
+    get:
+      tags:
+      - Events API
+      summary: Fetch Event Logs
+      description: "**Lets you to retrieve the email transaction logs.**\n\nFollowing\
+        \ events can be passed in query parameter `events`:\n\n* Processed\n* Sent\n\
+        * Bounce (Hard bounce and Soft bounce)\n* Dropped\n* Invalid\n* Opened\n*\
+        \ Clicked\n* Unsubscribe\n* Abuse\n\nyou can also pass Aggregate events :\n\
+        \n* total_requested (Includes all entries)\n* total_delivered (Includes 'Sent',\
+        \ 'Open', 'Click', 'Unsubscribe' and 'Spam')\n* total_opened (Includes 'Open',\
+        \ 'Click', 'Unsubscribe' and 'Spam')\n* total_clicked (Includes 'Click' and\
+        \ 'Unsubscribe')\n\nMake sure to pass the above events individually as any\
+        \ combination including the above 4 event types will return an error. Data\
+        \ fetching is based on a combination of 'limit' & 'scrollid'.\t'limit' indicates\
+        \ the number of rows that will be passed in the response. The maximum number\
+        \ of rows allowed for a single request is 5000. If the 'limit' is not set,\
+        \ 50 rows are retrieved. In the response message, the 'scrollid' is shared\
+        \ for that request. To fetch the next batch of rows, The 'scrollid' needs\
+        \ to be passed."
+      operationId: logs
+      parameters:
+      - name: scrollid
+        in: query
+        description: Use the scrollid provided in your first query to fetch the next
+          batch of data
+        schema:
+          type: string
+      - name: offset
+        in: query
+        description: The point in the list to begin retrieving results.
+        schema:
+          type: integer
+          default: 0
+          maximum: 1000
+          minimum: 0
+      - name: fromaddress
+        in: query
+        description: Filter logs based on fromaddress
+        schema:
+          type: string
+          maxLength: 255
+      - name: email
+        in: query
+        description: Filter logs based on recipient's email
+        schema:
+          type: string
+          maxLength: 255
+      - name: xapiheader
+        in: query
+        description: Filter logs based on x-apiheader
+        schema:
+          type: string
+          maxLength: 255
+      - name: subject
+        in: query
+        description: Filter logs based on subject
+        schema:
+          type: string
+          maxLength: 255
+      - name: limit
+        in: query
+        description: The number of results to return.
+        schema:
+          type: integer
+          default: 10
+          maximum: 1000
+          minimum: 1
+      - name: enddate
+        in: query
+        description: The end date of the statistics to retrieve. Defaults to today.
+          Must follow format YYYY-MM-DD.
+        schema:
+          type: string
+          format: date
+      - name: startdate
+        in: query
+        description: The starting date of the statistics to retrieve. Must follow
+          format YYYY-MM-DD.
+        schema:
+          type: string
+          format: date
+      - name: sort
+        in: query
+        description: Sort based on email sent time
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+      - name: events
+        in: query
+        description: Filter based on different email events. If not passed, all events
+          will be fetched. Multiple comma separated events are allowed.
+        schema:
+          type: string
+          enum:
+          - processed
+          - sent
+          - open
+          - click
+          - unsubscribe
+          - bounce
+          - softbounce
+          - spam
+          - invalid
+          - dropped
+          - hardbounce
+      - name: api_key
+        in: header
+        description: Your Email API Key. This you can get by login into your account.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /subaccounts:
+    patch:
+      tags:
+      - Subaccount API
+      summary: Enable or Disable Subaccount
+      description: Enable or disable email sending for a subaccount.
+      parameters:
+      - name: api_key
+        in: header
+        required: true
+        description: Add your master account API key.
+        schema:
+          type: string
+          example: x-api-key-123456789
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: Add subaccount to enable or disable.
+                  example: acme_marketing_team
+                disabled:
+                  type: boolean
+                  description: Set true to disable sending or false to enable sending.
+                  example: true
+              required:
+              - username
+              - disabled
+      responses:
+        '200':
+          description: Subaccount status updated
+  /logs/download:
+    post:
+      tags:
+      - Events API
+      summary: Download Logs
+      description: 'This endpoint allows you to download the email transaction logs
+        which includes following events:
+
+
+        1. Processed
+
+        2. Sent
+
+        3. Bounce (Hardbounce and Softbounce)
+
+        4. Dropped
+
+        5. Invalid
+
+        6. Opened
+
+        7. Clicked
+
+        8. Unsubscribe
+
+        9. Abuse
+
+        '
+      parameters:
+      - name: api_key
+        in: header
+        description: Your Pepipost API Key. This you can get by login into your account.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                startdate:
+                  type: string
+                  description: The starting date of the statistics to retrieve. Must
+                    follow format YYYY-MM-DD.
+                  format: date
+                enddate:
+                  type: string
+                  description: The end date of the statistics to retrieve. Defaults
+                    to today. Must follow format YYYY-MM-DD.
+                  format: date
+                events:
+                  type: string
+                  enum:
+                  - processed
+                  - sent
+                  - open
+                  - click
+                  - unsubscribe
+                  - bounce
+                  - softbounce
+                  - invalid
+                  - spam
+                  - dropped
+                  - hardbounce
+                  description: Filter based on different email events. If not passed,
+                    all events will be fetched. Multiple comma separated events are
+                    allowed.
+                email:
+                  type: string
+                  description: Filter logs based on recipient's email
+                fromaddress:
+                  type: string
+                  description: Filter logs based on fromaddress
+                subject:
+                  type: string
+                  description: Filter logs based on subject
+                xapiheader:
+                  type: string
+                  description: Filter logs based on x-apiheader
+              required:
+              - startdate
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      requestid:
+                        type: integer
+                  status:
+                    type: string
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /subaccounts/createSubaccount:
+    post:
+      tags:
+      - Subaccount API
+      summary: Create Subaccount
+      description: Create a new Email API subaccount under your master account.
+      parameters:
+      - name: api_key
+        in: header
+        required: true
+        description: Add your master account API key to authorize this request.
+        schema:
+          type: string
+          example: x-api-key-123456789
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: Add a unique username for the subaccount. Use this
+                    value in all future subaccount API calls.
+                  example: acme_marketing_team
+                email:
+                  type: string
+                  description: Add the subaccount owner email address where the activation
+                    link will be sent.
+                  example: owner@acme.com
+                setpassword:
+                  type: integer
+                  description: Set whether you want to define the password now — use
+                    1 to set password here or 0 to let the user set it via email link.
+                  example: 1
+                password:
+                  type: string
+                  description: Add a password for the subaccount when setpassword
+                    = 1. Must meet password policy requirements.
+                  example: Acme@1234
+                credit_type:
+                  type: string
+                  description: Choose credit mode for this subaccount — unlimited
+                    or one_time_credit.
+                  example: one_time_credit
+              required:
+              - username
+              - email
+              - setpassword
+      responses:
+        '200':
+          description: Subaccount created successfully
+        '400':
+          description: Invalid request
+  /subaccounts/setrecurringcreditddetails:
+    post:
+      tags:
+      - Subaccount API
+      summary: Set Recurring Credits
+      description: Configure automatic recurring credit allocation for a subaccount.
+      parameters:
+      - name: api_key
+        in: header
+        required: true
+        description: Add your master account API key.
+        schema:
+          type: string
+          example: x-api-key-123456789
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: Add subaccount to receive recurring credits.
+                  example: acme_marketing_team
+                recurring_credit:
+                  type: integer
+                  description: Add the number of credits added each cycle.
+                  example: 10000
+                timeperiod:
+                  type: string
+                  description: Choose how often credits should be added — daily, weekly,
+                    or monthly.
+                  example: monthly
+                start_date:
+                  type: string
+                  description: Add the start date for recurring credits in YYYY-MM-DD
+                    format.
+                  example: '2026-03-01'
+                end_date:
+                  type: string
+                  description: Add the end date to stop recurring credits in YYYY-MM-DD
+                    format.
+                  example: '2026-12-31'
+                status:
+                  type: string
+                  description: Set recurring credit status — use enable to activate
+                    or disable to stop.
+                  example: enable
+              required:
+              - username
+              - recurring_credit
+              - timeperiod
+      responses:
+        '200':
+          description: Recurring credit rule saved
+  /subaccounts/setsubaccountcredit:
+    post:
+      tags:
+      - Subaccount API
+      summary: Add or Subtract Credits
+      description: Manually increase or decrease email credits for a subaccount.
+      parameters:
+      - name: api_key
+        in: header
+        required: true
+        description: Add your master account API key.
+        schema:
+          type: string
+          example: x-api-key-123456789
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: Add subaccount username whose credit balance you want
+                    to change.
+                  example: acme_marketing_team
+                action:
+                  type: string
+                  description: Choose credit action — use increase to add credits
+                    or decrease to deduct credits.
+                  example: increase
+                amount:
+                  type: integer
+                  description: Add the number of credits to increase or decrease.
+                  example: 5000
+              required:
+              - username
+              - action
+              - amount
+      responses:
+        '200':
+          description: Credits updated successfully
+  /subaccounts/updateSubaccount:
+    post:
+      tags:
+      - Subaccount API
+      summary: Update Subaccount
+      description: Update subaccount credentials or credit mode.
+      parameters:
+      - name: api_key
+        in: header
+        required: true
+        description: Add your master account API key.
+        schema:
+          type: string
+          example: x-api-key-123456789
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: Add the username of the subaccount you want to update.
+                  example: acme_marketing_team
+                new_email:
+                  type: string
+                  description: Add the new email address to replace the existing subaccount
+                    email.
+                  example: new-owner@acme.com
+                new_password:
+                  type: string
+                  description: Add a new password for the subaccount login.
+                  example: NewPass@123
+                confirm_password:
+                  type: string
+                  description: Re-enter the new password to confirm it matches.
+                  example: NewPass@123
+                credit_type:
+                  type: string
+                  description: Choose the new credit mode — unlimited or one_time_credit.
+                  example: unlimited
+              required:
+              - username
+      responses:
+        '200':
+          description: Subaccount updated successfully
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com,
+    merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'

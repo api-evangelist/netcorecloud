@@ -1,0 +1,528 @@
+openapi: 3.2.0
+info:
+  title: Email API V6 Webhook APIs API
+  description: ''
+  version: 1.0.0
+servers:
+- url: https://emailapi.netcorecloud.net/v6
+  description: For Non EU region
+- url: https://apieu.netcorecloud.net/v6
+  description: For EU region
+security: []
+tags:
+- name: Webhook APIs
+paths:
+  /webhooks:
+    get:
+      summary: List Webhooks
+      description: Retrieves a list of all webhook configurations created for the authenticated account. Each webhook object includes its subscribed event types and any associated custom headers.
+      operationId: listWebhooks
+      tags:
+      - Webhook APIs
+      parameters:
+      - name: on-behalf-of
+        in: header
+        description: 'Allows a master account to retrieve webhooks configured by a subaccount, by specifying the subaccount''s username.
+
+          '
+        required: false
+        schema:
+          type: string
+          example: subaccount1
+      responses:
+        '200':
+          description: Webhook list retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/paths/~1webhooks~1%7Bid%7D/get/responses/200/content/application~1json/schema'
+              example:
+              - webhook_id: 1
+                events:
+                  delivered: https://api.example.com/webhook/delivered
+                  open: https://api.example.com/webhook/open
+                headers:
+                  Authorization: Bearer token123
+              - webhook_id: 2
+                events:
+                  click: https://api.example.com/webhook/click
+                  bounce: https://api.example.com/webhook/bounce
+        '400':
+          description: Bad Request – Invalid or unsupported input.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    field:
+                      type: string
+                    message:
+                      type: string
+              example:
+                error:
+                - message: Not eligible for webhook
+                  field: ''
+        '401':
+          description: Unauthorized – Missing or invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1webhooks/get/responses/400/content/application~1json/schema'
+        '403':
+          description: Forbidden – Client does not have permission to view webhooks.
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1webhooks/get/responses/400/content/application~1json/schema'
+        '500':
+          description: Internal Server Error – Unexpected failure occurred.
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1webhooks/get/responses/400/content/application~1json/schema'
+      security:
+      - bearerAuth: []
+    post:
+      summary: Create Webhook
+      description: Creates a new webhook configuration to receive notifications for one or more email events. Each event must be mapped to a valid callback URL. Optional custom headers can be defined to be sent with every webhook POST request.
+      operationId: createWebhook
+      tags:
+      - Webhook APIs
+      parameters:
+      - name: on-behalf-of
+        in: header
+        description: 'Allows a master account to create a webhook for a subaccount by specifying the subaccount''s username.
+
+          '
+        required: false
+        schema:
+          type: string
+          example: subaccount1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                events:
+                  type: object
+                  properties:
+                    delivered:
+                      type: string
+                      description: Test description
+                    open:
+                      type: string
+                    click:
+                      type: string
+                    bounce:
+                      type: string
+                    unsubscribe:
+                      type: string
+                    spam:
+                      type: string
+                    dropped:
+                      type: string
+                    invalid:
+                      type: string
+                    scheduled:
+                      type: string
+                    cancelled:
+                      type: string
+                headers:
+                  type: object
+                  properties: {}
+                  additionalProperties:
+                    type: string
+                  maxProperties: 5
+              required:
+              - events
+            examples:
+              valid:
+                summary: Valid Webhook Example
+                value:
+                  events:
+                    delivered: https://api.example.com/webhook/delivered
+                    open: https://api.example.com/webhook/open
+                    click: https://api.example.com/webhook/click
+                    bounce: https://api.example.com/webhook/bounce
+                    unsubscribe: https://api.example.com/webhook/unsubscribe
+                    spam: https://api.example.com/webhook/spam
+                    dropped: https://api.example.com/webhook/dropped
+                    invalid: https://api.example.com/webhook/invalid
+                    scheduled: https://api.example.com/webhook/scheduled
+                    cancelled: https://api.example.com/webhook/cancelled
+                  headers:
+                    Authorization: Bearer token123
+                    X-Custom-Header: value
+      responses:
+        '200':
+          description: Webhook created successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: Unique identifier for the created webhook.
+                required:
+                - id
+              example:
+                id: 1
+        '400':
+          description: Bad Request – Validation failed or incorrect field formatting.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                        field:
+                          type: string
+              examples:
+                invalid-fields:
+                  summary: Multiple validation errors
+                  value:
+                    error:
+                    - message: 'improper webhook response type : please contact support'
+                      field: ''
+                    - message: invalid url
+                      field: open
+                    - message: invalid url
+                      field: click
+                invalid-headers:
+                  summary: Invalid headers format
+                  value:
+                    error:
+                    - message: invalid headers format
+                      field: ''
+        '401':
+          description: Unauthorized – API key missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1webhooks/get/responses/400/content/application~1json/schema'
+        '403':
+          description: Forbidden – You do not have access to create a webhook.
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1webhooks/get/responses/400/content/application~1json/schema'
+        '500':
+          description: Internal Server Error – An unexpected failure occurred.
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1webhooks/get/responses/400/content/application~1json/schema'
+      security:
+      - bearerAuth: []
+  /webhooks/{id}:
+    patch:
+      summary: Partial Update Webhook
+      description: Updates one or more fields of an existing webhook configuration. Only the fields provided in the request body will be modified. This allows for non-destructive updates to webhook event mappings or headers.
+      operationId: partialUpdateWebhook
+      tags:
+      - Webhook APIs
+      parameters:
+      - name: id
+        in: path
+        description: Unique numeric ID of the webhook to partially update.
+        required: true
+        schema:
+          type: integer
+          format: int64
+          example: 1
+      - name: on-behalf-of
+        in: header
+        description: 'When a master account API key is used you can search domain for suppressions of the subaccount by providing subaccount username.
+
+          '
+        required: false
+        schema:
+          type: string
+          example: subaccount_id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/paths/~1webhooks/post/requestBody/content/application~1json/schema'
+            example:
+              events:
+                click: https://api.example.com/webhook/click
+                open: https://api.example.com/webhook/open
+              headers:
+                Authorization: Bearer token123
+                X-Custom-Header: updated-value
+      responses:
+        '204':
+          description: Webhook partially updated successfully. No content is returned.
+        '400':
+          description: Bad Request – Invalid or malformed request data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1webhooks/get/responses/400/content/application~1json/schema'
+              example:
+                error:
+                - message: invalid event
+                  field: cl1ick
+        '401':
+          description: Unauthorized – Missing or invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1webhooks/get/responses/400/content/application~1json/schema'
+        '403':
+          description: Forbidden – Insufficient permissions to update the webhook.
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1webhooks/get/responses/400/content/application~1json/schema'
+        '404':
+          description: Webhook not found – No webhook exists with the given ID.
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1webhooks/get/responses/400/content/application~1json/schema'
+              examples:
+                not_found:
+                  value:
+                    error: invalid_entry
+        '500':
+          description: Internal Server Error – Unexpected failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1webhooks/get/responses/400/content/application~1json/schema'
+      security:
+      - bearerAuth: []
+    put:
+      summary: Update Webhook
+      description: Replaces an existing webhook configuration with a new set of event subscriptions and optional custom headers. All existing settings are overwritten. Use this to fully reset the configuration.
+      operationId: updateWebhook
+      tags:
+      - Webhook APIs
+      parameters:
+      - name: id
+        in: path
+        description: Unique numeric ID of the webhook to update.
+        required: true
+        schema:
+          type: integer
+          format: int64
+          example: 1
+      - name: on-behalf-of
+        in: header
+        description: When a master account API key is used, this header lets you retrieve webhook details for a subaccount by providing the subaccount's username.
+        required: false
+        schema:
+          type: string
+        example: subaccount_user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/paths/~1webhooks/post/requestBody/content/application~1json/schema'
+            example:
+              events:
+                delivered: https://api.example.com/webhook/delivered
+                open: https://api.example.com/webhook/open
+                click: https://api.example.com/webhook/click
+                bounce: https://api.example.com/webhook/bounce
+                unsubscribe: https://api.example.com/webhook/unsubscribe
+                spam: https://api.example.com/webhook/spam
+                dropped: https://api.example.com/webhook/dropped
+                invalid: https://api.example.com/webhook/invalid
+                scheduled: https://api.example.com/webhook/scheduled
+                cancelled: https://api.example.com/webhook/cancelled
+              headers:
+                Authorization: Bearer token123
+                X-Custom-Header: value
+      responses:
+        '204':
+          description: Webhook updated successfully. No content is returned.
+        '400':
+          description: Bad Request – One or more fields are invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1webhooks/get/responses/400/content/application~1json/schema'
+              example:
+                error:
+                - message: invalid event
+                  field: cl1ick
+        '401':
+          description: Unauthorized – Missing or invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1webhooks/get/responses/400/content/application~1json/schema'
+        '403':
+          description: Forbidden – Insufficient permissions to update the webhook.
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1webhooks/get/responses/400/content/application~1json/schema'
+        '404':
+          description: Webhook not found – The provided ID does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1webhooks/get/responses/400/content/application~1json/schema'
+              examples:
+                not_found:
+                  value:
+                    error: invalid_entry
+        '500':
+          description: Internal Server Error – Unexpected failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1webhooks/get/responses/400/content/application~1json/schema'
+      security:
+      - bearerAuth: []
+    delete:
+      summary: Delete Webhook
+      description: 'Permanently deletes a specific webhook configuration based on its ID.
+
+        Use this API to remove webhook callbacks for events such as delivered, open, or click. Deleting a webhook is irreversible.
+
+        Note: When using a master account API key, you can delete a webhook for a subaccount by specifying the subaccount''s username in the `on-behalf-of` header.'
+      operationId: webhookDelete
+      tags:
+      - Webhook APIs
+      parameters:
+      - name: id
+        in: path
+        description: ID of the webhook to delete.
+        required: true
+        schema:
+          type: integer
+      - name: on-behalf-of
+        in: header
+        description: 'Allows a master account to retrieve webhooks configured by a subaccount, by specifying the subaccount''s username.
+
+          '
+        required: false
+        schema:
+          type: string
+          example: subaccount1
+      responses:
+        '204':
+          description: Webhook deleted successfully
+          headers: {}
+        '400':
+          description: Invalid webhook ID or malformed request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                required:
+                - error
+              example:
+                error: invalid_entry
+          headers: {}
+      security:
+      - bearer: []
+    get:
+      summary: Get Webhook
+      description: 'Retrieve the configuration details of a specific webhook, including the event URLs and custom headers.
+
+        This API returns all the events (e.g., delivered, open, click) associated with the webhook, along with their respective callback URLs.
+
+        Note: When using a master account API key, you can fetch webhook details for a subaccount by specifying the subaccount''s username in the `on-behalf-of` header.'
+      operationId: webhookGet
+      tags:
+      - Webhook APIs
+      parameters:
+      - name: id
+        in: path
+        description: ID of the webhook to retrieve.
+        required: true
+        schema:
+          type: integer
+      - name: on-behalf-of
+        in: header
+        description: 'Allows a master account to retrieve webhooks configured by a subaccount, by specifying the subaccount''s username.
+
+          '
+        required: false
+        schema:
+          type: string
+          example: subaccount1
+      responses:
+        '200':
+          description: Webhook details retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  webhook_id:
+                    type: integer
+                  events:
+                    $ref: '#/paths/~1webhooks/post/requestBody/content/application~1json/schema/properties/events'
+                  headers:
+                    type: object
+                    properties: {}
+                    additionalProperties:
+                      type: string
+                required:
+                - webhook_id
+                - events
+              example:
+                webhook_id: 1
+                events:
+                  delivered: https://api.example.com/webhook/delivered
+                  open: https://api.example.com/webhook/open
+                  click: https://api.example.com/webhook/click
+                headers:
+                  Authorization: Bearer token123
+                  X-Custom-Header: value
+          headers: {}
+        '400':
+          description: Invalid webhook ID or malformed request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                required:
+                - error
+              example:
+                error: invalid_entry
+          headers: {}
+      security:
+      - bearer: []
+components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+x-provenance:
+  method: searched
+  source: https://emaildocs.netcorecloud.com/reference
+  note: Verbatim OpenAPI fragments embedded in each ReadMe reference page on emaildocs.netcorecloud.com, merged by path. Not authored by API Evangelist.
+  retrieved: '2026-10-13'
