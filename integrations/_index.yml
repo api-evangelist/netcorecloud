@@ -52,3 +52,60 @@
   source: edge
   status: pending-partner-spec
   arazzo: null
+- slug: netcorecloud-rcs
+  label: RCS
+  partner: google
+  partner_name: RCS
+  type: contract
+  channel: contract-enum
+  evidence: https://github.com/api-evangelist/netcorecloud/blob/main/openapi/netcorecloud-contacts-api-openapi.yml
+  source: edge
+  relationship: messaging-channel
+  contract_reference:
+    repo: netcorecloud
+    spec_file: netcorecloud-contacts-api-openapi.yml
+    value: rcs
+    property: contacts.subscription_details.subscription_channel
+    matched_domain: google.com
+    detected_by: sweep-cpaas.py
+    detected: '2026-10-13'
+  status: not-a-workflow
+  arazzo: null
+- slug: netcorecloud-whatsapp
+  label: WhatsApp
+  partner: whatsapp
+  partner_name: WhatsApp
+  type: contract
+  channel: contract-enum
+  evidence: https://github.com/api-evangelist/netcorecloud/blob/main/openapi/netcorecloud-contacts-api-openapi.yml
+  source: edge
+  relationship: messaging-channel
+  contract_reference:
+    repo: netcorecloud
+    spec_file: netcorecloud-contacts-api-openapi.yml
+    value: whatsapp
+    property: contacts.subscription_details.subscription_channel
+    matched_domain: whatsapp.com
+    detected_by: sweep-cpaas.py
+    detected: '2026-10-13'
+  status: not-a-workflow
+  arazzo: null
+- slug: netcorecloud-novu
+  label: novu
+  partner: novu
+  partner_name: novu
+  type: contract
+  channel: contract-enum
+  evidence: https://github.com/api-evangelist/novu/blob/main/openapi/novu-channel-connections-api-openapi.yml
+  source: edge
+  relationship: delivery-provider
+  contract_reference:
+    repo: novu
+    spec_file: novu-channel-connections-api-openapi.yml
+    value: netcore
+    property: schemas.GetChannelConnectionResponseDto.providerId
+    matched_domain: netcorecloud.com
+    detected_by: sweep-cpaas.py
+    detected: '2026-10-13'
+  status: not-a-workflow
+  arazzo: null

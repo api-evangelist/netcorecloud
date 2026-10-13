@@ -66,6 +66,54 @@ edges:
   direction: third-party
   category: Microsoft
   partner_url: https://zapier.com/office.com
+- partner_name: RCS
+  partner: google
+  partner_match: domain
+  type: contract
+  channel: contract-enum
+  relationship: messaging-channel
+  direction: provider-built
+  evidence: https://github.com/api-evangelist/netcorecloud/blob/main/openapi/netcorecloud-contacts-api-openapi.yml
+  contract_reference:
+    repo: netcorecloud
+    spec_file: netcorecloud-contacts-api-openapi.yml
+    value: rcs
+    property: contacts.subscription_details.subscription_channel
+    matched_domain: google.com
+    detected_by: sweep-cpaas.py
+    detected: '2026-10-13'
+- partner_name: WhatsApp
+  partner: whatsapp
+  partner_match: domain
+  type: contract
+  channel: contract-enum
+  relationship: messaging-channel
+  direction: provider-built
+  evidence: https://github.com/api-evangelist/netcorecloud/blob/main/openapi/netcorecloud-contacts-api-openapi.yml
+  contract_reference:
+    repo: netcorecloud
+    spec_file: netcorecloud-contacts-api-openapi.yml
+    value: whatsapp
+    property: contacts.subscription_details.subscription_channel
+    matched_domain: whatsapp.com
+    detected_by: sweep-cpaas.py
+    detected: '2026-10-13'
+- partner_name: novu
+  partner: novu
+  partner_match: domain
+  type: contract
+  channel: contract-enum
+  relationship: delivery-provider
+  direction: partner-built
+  evidence: https://github.com/api-evangelist/novu/blob/main/openapi/novu-channel-connections-api-openapi.yml
+  contract_reference:
+    repo: novu
+    spec_file: novu-channel-connections-api-openapi.yml
+    value: netcore
+    property: schemas.GetChannelConnectionResponseDto.providerId
+    matched_domain: netcorecloud.com
+    detected_by: sweep-cpaas.py
+    detected: '2026-10-13'
 templates:
 - title: Add Netcore Cloud submissions to Google Sheets as new rows
   url: https://zapier.com/apps/google-sheets/integrations/netcore-cloud/1235390/add-netcore-cloud-submissions-to-google-sheets-as-new-rows
