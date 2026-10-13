@@ -2,17 +2,46 @@ generated: '2026-10-13'
 method: derived
 generator: derive-mcp-candidate.py
 source:
+- openapi/netcorecloud-api-management-api-openapi.yml
+- openapi/netcorecloud-apn-template-api-openapi.yml
 - openapi/netcorecloud-attributes-api-openapi.yml
-- openapi/netcorecloud-campaigns-api-openapi.yml
+- openapi/netcorecloud-auth-api-openapi.yml
+- openapi/netcorecloud-campaign-api-openapi.yml
+- openapi/netcorecloud-clients-api-openapi.yml
+- openapi/netcorecloud-configuration-api-openapi.yml
+- openapi/netcorecloud-consent-management-api-openapi.yml
 - openapi/netcorecloud-contacts-api-openapi.yml
-- openapi/netcorecloud-email-api-v5-openapi.yml
-- openapi/netcorecloud-email-api-v6-openapi.yml
-- openapi/netcorecloud-exports-api-openapi.yml
-- openapi/netcorecloud-orbit-router-openapi.yml
-- openapi/netcorecloud-rcs-api-openapi.yml
-- openapi/netcorecloud-sms-api-openapi.yml
+- openapi/netcorecloud-conversion-tracking-api-openapi.yml
+- openapi/netcorecloud-dashboard-audit-api-openapi.yml
+- openapi/netcorecloud-domain-apis-api-openapi.yml
+- openapi/netcorecloud-engine-cache-api-openapi.yml
+- openapi/netcorecloud-engine-health-api-openapi.yml
+- openapi/netcorecloud-engine-send-api-openapi.yml
+- openapi/netcorecloud-engine-test-api-openapi.yml
+- openapi/netcorecloud-events-api-api-openapi.yml
+- openapi/netcorecloud-export-report-api-openapi.yml
+- openapi/netcorecloud-export-templates-api-openapi.yml
+- openapi/netcorecloud-ip-management-api-api-openapi.yml
+- openapi/netcorecloud-json-message-api-openapi.yml
+- openapi/netcorecloud-message-samples-api-openapi.yml
+- openapi/netcorecloud-message-sending-api-openapi.yml
+- openapi/netcorecloud-message-sending-apis-api-openapi.yml
+- openapi/netcorecloud-profile-api-api-openapi.yml
+- openapi/netcorecloud-providers-api-openapi.yml
+- openapi/netcorecloud-report-api-openapi.yml
+- openapi/netcorecloud-routes-api-openapi.yml
+- openapi/netcorecloud-rules-api-openapi.yml
+- openapi/netcorecloud-scope-api-api-openapi.yml
+- openapi/netcorecloud-send-mail-api-api-openapi.yml
+- openapi/netcorecloud-subaccount-api-api-openapi.yml
+- openapi/netcorecloud-subaccount-apis-api-openapi.yml
+- openapi/netcorecloud-suppression-apis-api-openapi.yml
+- openapi/netcorecloud-tags-api-api-openapi.yml
+- openapi/netcorecloud-template-api-api-openapi.yml
+- openapi/netcorecloud-template-apis-api-openapi.yml
 - openapi/netcorecloud-trigger-api-openapi.yml
-- openapi/netcorecloud-whatsapp-api-openapi.yml
+- openapi/netcorecloud-users-api-openapi.yml
+- openapi/netcorecloud-webhook-apis-api-openapi.yml
 status: candidate
 deployment:
   mode: none
@@ -20,206 +49,206 @@ deployment:
   verified: probed
 note: 'No MCP server was found. The pre-flight posted tools/list to /mcp on api.netcorecloud.com, netcorecloud.com, cedocs.netcorecloud.com, trust.netcorecloud.com;
   verdict opaque (https://trust.netcorecloud.com/api/mcp answered 403: the edge authenticates before it routes, which proves nothing either way).
-  Candidate tools below are derived from the 192 operation(s) in the provider''s own OpenAPI (40 listed); they describe what a server WOULD expose,
+  Candidate tools below are derived from the 196 operation(s) in the provider''s own OpenAPI (40 listed); they describe what a server WOULD expose,
   not one that exists.'
 tools:
-- name: create_attribute_create
-  operationId: POST /client/attribute/create
+- name: delete_api_keys_api_key_id
+  operationId: delete-api_keys-api_key_id
+  method: DELETE
+  path: /api_keys/{api_key_id}
+  description: Delete API Key using API Key ID
+- name: post_client_template_create
+  operationId: postClientTemplateCreate
+  method: POST
+  path: /client/template/create
+  description: Template Create
+- name: post_client_attribute_create
+  operationId: postClientAttributeCreate
   method: POST
   path: /client/attribute/create
   description: Create Attributes
-- name: create_campaign_create
-  operationId: POST /campaign/create
+- name: change_password
+  operationId: changePassword
+  method: PUT
+  path: /auth/password
+  description: Change own password
+- name: post_campaign_create
+  operationId: postCampaignCreate
   method: POST
   path: /campaign/create
   description: Create Campaign
-- name: create_contact_create
-  operationId: POST /contact/create
+- name: create_sub_client
+  operationId: createSubClient
+  method: POST
+  path: /clients
+  description: Create a sub-client
+- name: create_api_key
+  operationId: createApiKey
+  method: POST
+  path: /config/api-keys
+  description: Create an API key
+- name: manage_user_consent
+  operationId: manageUserConsent
+  method: POST
+  path: /v2/consent/manage
+  description: Manage User Consent (Opt-in/Opt-out)
+- name: post_contact_create
+  operationId: postContactCreate
   method: POST
   path: /contact/create
   description: Create Contacts
-- name: delete_subaccounts_delete
-  operationId: DELETE /subaccounts/delete
-  method: DELETE
-  path: /subaccounts/delete
-  description: Delete Subaccount
+- name: track_conversions
+  operationId: trackConversions
+  method: POST
+  path: /v3/metainfo/dispatch_capi_event
+  description: Track Customer Conversions (CAPI)
+- name: get_dashboard_stats
+  operationId: getDashboardStats
+  method: GET
+  path: /dashboard/stats
+  description: Dashboard statistics
 - name: add_domain
   operationId: add-domain
   method: POST
   path: /domains
   description: Add Domain
-- name: create_report_create
-  operationId: POST /export/report/create
-  method: POST
-  path: /export/report/create
-  description: Create Export Report
 - name: cache_refresh_all
   operationId: cacheRefreshAll
   method: POST
   path: /v1/cache/refresh/all
   description: Refresh all caches
-- name: get_rcs_botinfo
-  operationId: GET /rcs/botinfo
+- name: get_metrics
+  operationId: getMetrics
   method: GET
-  path: /rcs/botinfo
-  description: Fetch Bot Info API
-- name: get_dlrconsolidated_report
-  operationId: getDLRConsolidatedReport
-  method: GET
-  path: /v1/report/dlr-consolidated-report
-  description: Get DLR consolidated report
-- name: create_trigger_publish
-  operationId: POST /trigger/publish
+  path: /metrics
+  description: Server metrics
+- name: send_email_netcore
+  operationId: sendEmailNetcore
   method: POST
-  path: /trigger/publish
-  description: Publish Trigger - APN
-- name: fetch_flow_list
-  operationId: fetchFlowList
-  method: GET
-  path: /v3/metainfo/flow/list
-  description: Fetch Flow List API
-- name: create_attribute_delete
-  operationId: POST /client/attribute/delete
+  path: /v1s/nsend/
+  description: Send email (Netcore format)
+- name: test_send_email
+  operationId: testSendEmail
   method: POST
-  path: /client/attribute/delete
-  description: Delete Attribute
-- name: create_campaign_delete
-  operationId: POST /campaign/delete
-  method: POST
-  path: /campaign/delete
-  description: Delete Campaign
-- name: create_audience_search
-  operationId: POST /contact/audience/search
-  method: POST
-  path: /contact/audience/search
-  description: Audience Contact Search
-- name: get_template
-  operationId: get-template
+  path: /v1s/test/send
+  description: Test mail (direct to provider)
+- name: get_stats
+  operationId: GET_stats
   method: GET
-  path: /template
-  description: View a template
-- name: get_domain
-  operationId: get-domain
-  method: GET
-  path: /domains
-  description: Get all domains
-- name: create_template_create
-  operationId: POST /export/template/create
+  path: /stats
+  description: Fetch Summary Stats
+- name: post_export_report_create
+  operationId: postExportReportCreate
+  method: POST
+  path: /export/report/create
+  description: Create Export Report
+- name: post_export_template_create
+  operationId: postExportTemplateCreate
   method: POST
   path: /export/template/create
   description: Create Export Templates
-- name: cache_refresh_auth
-  operationId: cacheRefreshAuth
+- name: assign_ips_to_pool
+  operationId: assignIPsToPool
   method: POST
-  path: /v1/cache/refresh/auth
-  description: Refresh auth cache
-- name: get_template_preview
-  operationId: GET /rcs/template/preview
-  method: GET
-  path: /rcs/template/preview
-  description: Template Preview API
+  path: /ip/pool/assign-ips
+  description: Assign IPs to Pool
 - name: json_single_api_v2_post
   operationId: jsonSingleApiV2Post
   method: POST
   path: /v2/JsonSingleApi
   description: Send single SMS (JSON)
-- name: create_flow
-  operationId: createFlow
+- name: upload_message_samples
+  operationId: uploadMessageSamples
   method: POST
-  path: /v3/metainfo/flow/create
-  description: Create Flow API
-- name: create_attribute_search
-  operationId: POST /client/attribute/search
+  path: /v3/metainfo/message_samples
+  description: Upload Message Samples API
+- name: send_template_message
+  operationId: sendTemplateMessage
   method: POST
-  path: /client/attribute/search
-  description: Search Attributes
-- name: create_campaign_duplicate
-  operationId: POST /campaign/duplicate
+  path: /v2/message/nc
+  description: Send Template Message
+- name: post_soip_rcs_v2_message
+  operationId: postSoipRcsV2Message
   method: POST
-  path: /campaign/duplicate
-  description: Duplicate Campaign
-- name: create_contact_delete
-  operationId: POST /contact/delete
-  method: POST
-  path: /contact/delete
-  description: Delete Contacts
-- name: patch_template
-  operationId: patch-template
+  path: /soip/rcs/v2/message
+  description: Template Message API
+- name: profile_timezone
+  operationId: profile-timezone
   method: PATCH
-  path: /template
-  description: Update a template
+  path: /profile
+  description: Update Timezone
+- name: create_provider
+  operationId: createProvider
+  method: POST
+  path: /providers
+  description: Create a provider
+- name: get_dlrconsolidated_report
+  operationId: getDLRConsolidatedReport
+  method: GET
+  path: /v1/report/dlr-consolidated-report
+  description: Get DLR consolidated report
+- name: create_route
+  operationId: createRoute
+  method: POST
+  path: /routes
+  description: Create a route
+- name: create_rule
+  operationId: createRule
+  method: POST
+  path: /rules
+  description: Create a rule
+- name: get_scopes
+  operationId: get-scopes
+  method: GET
+  path: /scopes
+  description: Retrieve All Scopes
+- name: send_mail
+  operationId: sendMail
+  method: POST
+  path: /mail/send
+  description: Send Mail
+- name: delete_subaccounts_delete
+  operationId: deleteSubaccountsDelete
+  method: DELETE
+  path: /subaccounts/delete
+  description: Delete Subaccount
+- name: create_subaccount
+  operationId: create-subaccount
+  method: POST
+  path: /subaccounts
+  description: Create Subaccount
 - name: add_domains_to_suppression
   operationId: add-domains-to-suppression
   method: POST
   path: /suppressions/global/domain
   description: Add Domains to Suppression List
-- name: create_template_delete
-  operationId: POST /export/template/delete
-  method: POST
-  path: /export/template/delete
-  description: Delete Export Templates
-- name: cache_refresh_routes
-  operationId: cacheRefreshRoutes
-  method: POST
-  path: /v1/cache/refresh/routes
-  description: Refresh routes cache
-- name: create_v2_message
-  operationId: POST /soip/rcs/v2/message
-  method: POST
-  path: /soip/rcs/v2/message
-  description: Template Message API
-- name: edit_flow_with_json
-  operationId: editFlowWithJSON
-  method: POST
-  path: /v3/metainfo/flow/edit
-  description: Edit Flow with JSON File API
-- name: create_attribute_update
-  operationId: POST /client/attribute/update
-  method: POST
-  path: /client/attribute/update
-  description: Update Attribute
-- name: create_campaign_search
-  operationId: POST /campaign/search
-  method: POST
-  path: /campaign/search
-  description: Search Campaign
-- name: create_contact_search
-  operationId: POST /contact/search
-  method: POST
-  path: /contact/search
-  description: Search Contacts
-- name: post_template
-  operationId: post-template
-  method: POST
-  path: /template
-  description: Add a template
-- name: get_suppression_domain
-  operationId: get-suppression-domain
+- name: get_tags
+  operationId: GET_tags
   method: GET
-  path: /suppressions/global/domain
-  description: Retrieve Domain(s) in the Suppression List
-- name: create_template_search
-  operationId: POST /export/template/search
+  path: /tags
+  description: Get List of Tags
+- name: get_template
+  operationId: get-template
+  method: GET
+  path: /template
+  description: View a template
+- name: create_template
+  operationId: create-template
   method: POST
-  path: /export/template/search
-  description: Search Export Templates
-- name: cache_refresh_rules
-  operationId: cacheRefreshRules
+  path: /templates
+  description: Create New Template
+- name: post_trigger_publish
+  operationId: postTriggerPublish
   method: POST
-  path: /v1/cache/refresh/rules
-  description: Refresh rules cache
-- name: update_template_edit
-  operationId: PUT /template/edit
-  method: PUT
-  path: /template/edit
-  description: Edit RCS Carousel Message API
-- name: create_oauth_link
-  operationId: createOAuthLink
+  path: /trigger/publish
+  description: Publish Trigger - APN
+- name: create_user
+  operationId: createUser
   method: POST
-  path: /v2/payments/configuration/oauth_link
-  description: Generate OAuth Link for Payment Configuration
-- name: create_attribute_usage
-  operationId: POST /client/attribute/usage
-  method: POST
-  path: /client/attribute/usage
-  description: Get Attribute Usage
+  path: /users
+  description: Create a user
+- name: list_webhooks
+  operationId: listWebhooks
+  method: GET
+  path: /webhooks
+  description: List Webhooks

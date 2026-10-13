@@ -2,18 +2,18 @@ generated: '2026-10-13'
 method: derived
 generator: derive-problem-types.py
 source:
+- openapi/netcorecloud-api-management-api-openapi.yml
+- openapi/netcorecloud-apn-template-api-openapi.yml
 - openapi/netcorecloud-attributes-api-openapi.yml
-- openapi/netcorecloud-campaigns-api-openapi.yml
+- openapi/netcorecloud-auth-api-openapi.yml
+- openapi/netcorecloud-campaign-api-openapi.yml
+- openapi/netcorecloud-clients-api-openapi.yml
+- openapi/netcorecloud-configuration-api-openapi.yml
+- openapi/netcorecloud-consent-management-api-openapi.yml
 - openapi/netcorecloud-contacts-api-openapi.yml
-- openapi/netcorecloud-email-api-v5-openapi.yml
-- openapi/netcorecloud-email-api-v6-openapi.yml
-- openapi/netcorecloud-exports-api-openapi.yml
-- openapi/netcorecloud-orbit-router-openapi.yml
-- openapi/netcorecloud-rcs-api-openapi.yml
-- openapi/netcorecloud-sms-api-openapi.yml
-- openapi/netcorecloud-templates-api-openapi.yml
-- openapi/netcorecloud-trigger-api-openapi.yml
-- openapi/netcorecloud-whatsapp-api-openapi.yml
+- openapi/netcorecloud-conversion-tracking-api-openapi.yml
+- openapi/netcorecloud-dashboard-audit-api-openapi.yml
+- openapi/netcorecloud-domain-apis-api-openapi.yml
 format: custom
 envelope:
   media_type: application/json
@@ -28,7 +28,7 @@ problems:
   operations: 130
   media_types:
   - application/json
-  schema: schema
+  schema: BackendErrorResponse
 - status: 401
   title: Unauthorized
   description: Authentication required

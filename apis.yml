@@ -2505,7 +2505,7 @@ apis:
   - type: JSONSchema
     url: json-schema/netcorecloud-dlrreport-response-schema.json
 x-enrichment:
-  date: '2026-10-13'
   status: enriched
-  artifacts_added: 30
   pass: local-v5
+  date: '2026-10-13'
+  artifacts_added: 30

@@ -4,206 +4,11 @@ generator: harvest-well-known.py
 source: Live GET of the named /.well-known/ path list on every host the record knows; every row is a request that
   was issued.
 summary:
-  hosts_probed: 12
-  paths_probed: 132
-  documents_served: 0
+  hosts_probed: 8
+  paths_probed: 88
+  documents_served: 1
 hosts:
 - host: netcoreapi-main-prod-us.netcorein.com
-  control:
-    path: /.well-known/apis-io-negative-control-7f3ab91c.json
-    status: 404
-    bytes: 0
-  documents:
-  - path: /.well-known/security.txt
-    status: 404
-    standard: RFC 9116
-  - path: /.well-known/openid-configuration
-    status: 404
-    standard: OpenID Connect Discovery 1.0
-  - path: /.well-known/oauth-authorization-server
-    status: 404
-    standard: RFC 8414
-  - path: /.well-known/oauth-protected-resource
-    status: 404
-    standard: RFC 9728
-  - path: /.well-known/api-catalog
-    status: 404
-    standard: RFC 9727
-  - path: /.well-known/apis.json
-    status: 404
-    standard: APIs.json
-  - path: /.well-known/ai-plugin.json
-    status: 404
-    standard: OpenAI plugin manifest
-  - path: /.well-known/aauth-resource.json
-    status: 404
-    standard: AAuth
-  - path: /.well-known/ucp.json
-    status: 404
-    standard: UCP
-  - path: /.well-known/acp.json
-    status: 404
-    standard: ACP
-  - path: /.well-known/mcp/server-card.json
-    status: 404
-    standard: MCP server card
-- host: emailapi.netcorecloud.net
-  control:
-    path: /.well-known/apis-io-negative-control-7f3ab91c.json
-    status: 404
-    bytes: 0
-  documents:
-  - path: /.well-known/security.txt
-    status: 404
-    standard: RFC 9116
-  - path: /.well-known/openid-configuration
-    status: 404
-    standard: OpenID Connect Discovery 1.0
-  - path: /.well-known/oauth-authorization-server
-    status: 404
-    standard: RFC 8414
-  - path: /.well-known/oauth-protected-resource
-    status: 404
-    standard: RFC 9728
-  - path: /.well-known/api-catalog
-    status: 404
-    standard: RFC 9727
-  - path: /.well-known/apis.json
-    status: 404
-    standard: APIs.json
-  - path: /.well-known/ai-plugin.json
-    status: 404
-    standard: OpenAI plugin manifest
-  - path: /.well-known/aauth-resource.json
-    status: 404
-    standard: AAuth
-  - path: /.well-known/ucp.json
-    status: 404
-    standard: UCP
-  - path: /.well-known/acp.json
-    status: 404
-    standard: ACP
-  - path: /.well-known/mcp/server-card.json
-    status: 404
-    standard: MCP server card
-- host: orbitus.netcorecloud.com
-  control:
-    path: /.well-known/apis-io-negative-control-7f3ab91c.json
-    status: 404
-    bytes: 0
-  documents:
-  - path: /.well-known/security.txt
-    status: 404
-    standard: RFC 9116
-  - path: /.well-known/openid-configuration
-    status: 404
-    standard: OpenID Connect Discovery 1.0
-  - path: /.well-known/oauth-authorization-server
-    status: 404
-    standard: RFC 8414
-  - path: /.well-known/oauth-protected-resource
-    status: 404
-    standard: RFC 9728
-  - path: /.well-known/api-catalog
-    status: 404
-    standard: RFC 9727
-  - path: /.well-known/apis.json
-    status: 404
-    standard: APIs.json
-  - path: /.well-known/ai-plugin.json
-    status: 404
-    standard: OpenAI plugin manifest
-  - path: /.well-known/aauth-resource.json
-    status: 404
-    standard: AAuth
-  - path: /.well-known/ucp.json
-    status: 404
-    standard: UCP
-  - path: /.well-known/acp.json
-    status: 404
-    standard: ACP
-  - path: /.well-known/mcp/server-card.json
-    status: 404
-    standard: MCP server card
-- host: cpaaswa.netcorecloud.net
-  control:
-    path: /.well-known/apis-io-negative-control-7f3ab91c.json
-    status: 403
-    bytes: 0
-  documents:
-  - path: /.well-known/security.txt
-    status: 403
-    standard: RFC 9116
-  - path: /.well-known/openid-configuration
-    status: 403
-    standard: OpenID Connect Discovery 1.0
-  - path: /.well-known/oauth-authorization-server
-    status: 403
-    standard: RFC 8414
-  - path: /.well-known/oauth-protected-resource
-    status: 403
-    standard: RFC 9728
-  - path: /.well-known/api-catalog
-    status: 403
-    standard: RFC 9727
-  - path: /.well-known/apis.json
-    status: 403
-    standard: APIs.json
-  - path: /.well-known/ai-plugin.json
-    status: 403
-    standard: OpenAI plugin manifest
-  - path: /.well-known/aauth-resource.json
-    status: 403
-    standard: AAuth
-  - path: /.well-known/ucp.json
-    status: 403
-    standard: UCP
-  - path: /.well-known/acp.json
-    status: 403
-    standard: ACP
-  - path: /.well-known/mcp/server-card.json
-    status: 403
-    standard: MCP server card
-- host: soipapi.netcorecloud.com
-  control:
-    path: /.well-known/apis-io-negative-control-7f3ab91c.json
-    status: 404
-    bytes: 0
-  documents:
-  - path: /.well-known/security.txt
-    status: 404
-    standard: RFC 9116
-  - path: /.well-known/openid-configuration
-    status: 404
-    standard: OpenID Connect Discovery 1.0
-  - path: /.well-known/oauth-authorization-server
-    status: 404
-    standard: RFC 8414
-  - path: /.well-known/oauth-protected-resource
-    status: 404
-    standard: RFC 9728
-  - path: /.well-known/api-catalog
-    status: 404
-    standard: RFC 9727
-  - path: /.well-known/apis.json
-    status: 404
-    standard: APIs.json
-  - path: /.well-known/ai-plugin.json
-    status: 404
-    standard: OpenAI plugin manifest
-  - path: /.well-known/aauth-resource.json
-    status: 404
-    standard: AAuth
-  - path: /.well-known/ucp.json
-    status: 404
-    standard: UCP
-  - path: /.well-known/acp.json
-    status: 404
-    standard: ACP
-  - path: /.well-known/mcp/server-card.json
-    status: 404
-    standard: MCP server card
-- host: smsapi.netcorecloud.net
   control:
     path: /.well-known/apis-io-negative-control-7f3ab91c.json
     status: 404
@@ -281,7 +86,124 @@ hosts:
   - path: /.well-known/mcp/server-card.json
     status: 404
     standard: MCP server card
+- host: netcore.ai
+  control:
+    path: /.well-known/apis-io-negative-control-7f3ab91c.json
+    status: 404
+    bytes: 0
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+    standard: RFC 9116
+  - path: /.well-known/openid-configuration
+    status: 404
+    standard: OpenID Connect Discovery 1.0
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+    standard: RFC 8414
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+    standard: RFC 9728
+  - path: /.well-known/api-catalog
+    status: 404
+    standard: RFC 9727
+  - path: /.well-known/apis.json
+    status: 404
+    standard: APIs.json
+  - path: /.well-known/ai-plugin.json
+    status: 404
+    standard: OpenAI plugin manifest
+  - path: /.well-known/aauth-resource.json
+    status: 404
+    standard: AAuth
+  - path: /.well-known/ucp.json
+    status: 404
+    standard: UCP
+  - path: /.well-known/acp.json
+    status: 404
+    standard: ACP
+  - path: /.well-known/mcp/server-card.json
+    status: 404
+    standard: MCP server card
 - host: emaildocs.netcorecloud.com
+  control:
+    path: /.well-known/apis-io-negative-control-7f3ab91c.json
+    status: 404
+    bytes: 0
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+    standard: RFC 9116
+  - path: /.well-known/openid-configuration
+    status: 404
+    standard: OpenID Connect Discovery 1.0
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+    standard: RFC 8414
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+    standard: RFC 9728
+  - path: /.well-known/api-catalog
+    status: 404
+    standard: RFC 9727
+  - path: /.well-known/apis.json
+    status: 404
+    standard: APIs.json
+  - path: /.well-known/ai-plugin.json
+    status: 404
+    standard: OpenAI plugin manifest
+  - path: /.well-known/aauth-resource.json
+    status: 404
+    standard: AAuth
+  - path: /.well-known/ucp.json
+    status: 404
+    standard: UCP
+  - path: /.well-known/acp.json
+    status: 404
+    standard: ACP
+  - path: /.well-known/mcp/server-card.json
+    status: 404
+    standard: MCP server card
+- host: cedocs.netcorecloud.com
+  control:
+    path: /.well-known/apis-io-negative-control-7f3ab91c.json
+    status: 404
+    bytes: 0
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+    standard: RFC 9116
+  - path: /.well-known/openid-configuration
+    status: 404
+    standard: OpenID Connect Discovery 1.0
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+    standard: RFC 8414
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+    standard: RFC 9728
+  - path: /.well-known/api-catalog
+    status: 404
+    standard: RFC 9727
+  - path: /.well-known/apis.json
+    status: 404
+    standard: APIs.json
+  - path: /.well-known/ai-plugin.json
+    status: 404
+    standard: OpenAI plugin manifest
+  - path: /.well-known/aauth-resource.json
+    status: 404
+    standard: AAuth
+  - path: /.well-known/ucp.json
+    status: 404
+    standard: UCP
+  - path: /.well-known/acp.json
+    status: 404
+    standard: ACP
+  - path: /.well-known/mcp/server-card.json
+    status: 404
+    standard: MCP server card
+- host: netcorecloud.com
   control:
     path: /.well-known/apis-io-negative-control-7f3ab91c.json
     status: 404
@@ -370,7 +292,7 @@ hosts:
     status: null
     standard: MCP server card
     note: 'unreachable: URLError'
-- host: cedocs.netcorecloud.com
+- host: trust.netcorecloud.com
   control:
     path: /.well-known/apis-io-negative-control-7f3ab91c.json
     status: 404
@@ -380,92 +302,22 @@ hosts:
     status: 404
     standard: RFC 9116
   - path: /.well-known/openid-configuration
-    status: 404
+    status: 200
     standard: OpenID Connect Discovery 1.0
+    note: '200 but issued by app.safebase.io: the hosting platform''s document, not the provider''s'
+    platform_issuer: app.safebase.io
   - path: /.well-known/oauth-authorization-server
-    status: 404
+    status: 200
     standard: RFC 8414
+    note: '200 but issued by app.safebase.io: the hosting platform''s document, not the provider''s'
+    platform_issuer: app.safebase.io
   - path: /.well-known/oauth-protected-resource
-    status: 404
+    status: 200
     standard: RFC 9728
-  - path: /.well-known/api-catalog
-    status: 404
-    standard: RFC 9727
-  - path: /.well-known/apis.json
-    status: 404
-    standard: APIs.json
-  - path: /.well-known/ai-plugin.json
-    status: 404
-    standard: OpenAI plugin manifest
-  - path: /.well-known/aauth-resource.json
-    status: 404
-    standard: AAuth
-  - path: /.well-known/ucp.json
-    status: 404
-    standard: UCP
-  - path: /.well-known/acp.json
-    status: 404
-    standard: ACP
-  - path: /.well-known/mcp/server-card.json
-    status: 404
-    standard: MCP server card
-- host: netcore.ai
-  control:
-    path: /.well-known/apis-io-negative-control-7f3ab91c.json
-    status: 404
-    bytes: 0
-  documents:
-  - path: /.well-known/security.txt
-    status: 404
-    standard: RFC 9116
-  - path: /.well-known/openid-configuration
-    status: 404
-    standard: OpenID Connect Discovery 1.0
-  - path: /.well-known/oauth-authorization-server
-    status: 404
-    standard: RFC 8414
-  - path: /.well-known/oauth-protected-resource
-    status: 404
-    standard: RFC 9728
-  - path: /.well-known/api-catalog
-    status: 404
-    standard: RFC 9727
-  - path: /.well-known/apis.json
-    status: 404
-    standard: APIs.json
-  - path: /.well-known/ai-plugin.json
-    status: 404
-    standard: OpenAI plugin manifest
-  - path: /.well-known/aauth-resource.json
-    status: 404
-    standard: AAuth
-  - path: /.well-known/ucp.json
-    status: 404
-    standard: UCP
-  - path: /.well-known/acp.json
-    status: 404
-    standard: ACP
-  - path: /.well-known/mcp/server-card.json
-    status: 404
-    standard: MCP server card
-- host: netcorecloud.com
-  control:
-    path: /.well-known/apis-io-negative-control-7f3ab91c.json
-    status: 404
-    bytes: 0
-  documents:
-  - path: /.well-known/security.txt
-    status: 404
-    standard: RFC 9116
-  - path: /.well-known/openid-configuration
-    status: 404
-    standard: OpenID Connect Discovery 1.0
-  - path: /.well-known/oauth-authorization-server
-    status: 404
-    standard: RFC 8414
-  - path: /.well-known/oauth-protected-resource
-    status: 404
-    standard: RFC 9728
+    content_type: application/json; charset=utf-8
+    file: netcorecloud-trust-oauth-protected-resource.json
+    platform_authorization_servers:
+    - app.safebase.io
   - path: /.well-known/api-catalog
     status: 404
     standard: RFC 9727

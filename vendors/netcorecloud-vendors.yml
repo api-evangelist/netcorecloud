@@ -43,8 +43,3 @@ checked:
 - emaildocs.netcorecloud.com (APIReference)
 - cedocs.netcorecloud.com (Documentation)
 - netcoreapi-main-prod-us.netcorein.com (baseURL)
-- emailapi.netcorecloud.net (baseURL)
-- orbitus.netcorecloud.com (baseURL)
-- cpaaswa.netcorecloud.net (baseURL)
-- soipapi.netcorecloud.com (baseURL)
-- smsapi.netcorecloud.net (baseURL)
