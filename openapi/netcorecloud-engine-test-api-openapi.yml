@@ -56,6 +56,31 @@ paths:
                 $ref: '#/components/schemas/EngineErrorResponse'
 components:
   schemas:
+    TestSendRequest:
+      type: object
+      required:
+      - from
+      - to
+      - api_key
+      - host
+      properties:
+        from:
+          type: string
+          format: email
+        to:
+          type: string
+          format: email
+        api_key:
+          type: string
+          description: Provider API key (sent directly to provider).
+        host:
+          type: string
+          format: uri
+          description: 'Provider endpoint URL. Provider detection:
+
+            `pepipost.com` → Netcore, `sendgrid.com` → SendGrid, other → 400.
+
+            '
     TestSendResponse:
       type: object
       properties:
@@ -96,31 +121,6 @@ components:
           - provider_timeout
         req_id:
           type: string
-    TestSendRequest:
-      type: object
-      required:
-      - from
-      - to
-      - api_key
-      - host
-      properties:
-        from:
-          type: string
-          format: email
-        to:
-          type: string
-          format: email
-        api_key:
-          type: string
-          description: Provider API key (sent directly to provider).
-        host:
-          type: string
-          format: uri
-          description: 'Provider endpoint URL. Provider detection:
-
-            `pepipost.com` → Netcore, `sendgrid.com` → SendGrid, other → 400.
-
-            '
   securitySchemes:
     BackendJWT:
       type: http

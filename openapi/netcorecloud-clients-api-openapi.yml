@@ -109,14 +109,6 @@ paths:
         '200':
           description: Client updated.
 components:
-  parameters:
-    ResourceId:
-      name: id
-      in: path
-      required: true
-      schema:
-        type: integer
-      description: Resource ID.
   schemas:
     ClientSummary:
       type: object
@@ -130,6 +122,14 @@ components:
           enum:
           - active
           - inactive
+  parameters:
+    ResourceId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+      description: Resource ID.
   securitySchemes:
     BackendJWT:
       type: http

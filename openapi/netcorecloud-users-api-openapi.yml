@@ -142,36 +142,7 @@ paths:
         '404':
           description: User not found.
 components:
-  parameters:
-    ResourceId:
-      name: id
-      in: path
-      required: true
-      schema:
-        type: integer
-      description: Resource ID.
   schemas:
-    UserProfile:
-      type: object
-      properties:
-        id:
-          type: integer
-        username:
-          type: string
-        email:
-          type: string
-          format: email
-        full_name:
-          type: string
-        role:
-          type: string
-          enum:
-          - admin
-          - viewer
-        client_id:
-          type: integer
-        two_factor_enabled:
-          type: boolean
     BackendErrorResponse:
       type: object
       properties:
@@ -206,6 +177,35 @@ components:
           items:
             type: integer
           description: Sub-client IDs this user may access.
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        full_name:
+          type: string
+        role:
+          type: string
+          enum:
+          - admin
+          - viewer
+        client_id:
+          type: integer
+        two_factor_enabled:
+          type: boolean
+  parameters:
+    ResourceId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+      description: Resource ID.
   securitySchemes:
     BackendJWT:
       type: http

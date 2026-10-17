@@ -210,86 +210,6 @@ paths:
                 $ref: '#/components/schemas/EngineErrorResponse'
 components:
   schemas:
-    SendGridContent:
-      type: object
-      required:
-      - type
-      - value
-      properties:
-        type:
-          type: string
-          enum:
-          - text/plain
-          - text/html
-        value:
-          type: string
-    NetcorePayload:
-      type: object
-      required:
-      - personalizations
-      - from
-      properties:
-        personalizations:
-          type: array
-          items:
-            $ref: '#/components/schemas/SendGridPersonalization'
-          minItems: 1
-        from:
-          $ref: '#/components/schemas/EmailAddress'
-        subject:
-          type: string
-        content:
-          type: array
-          items:
-            $ref: '#/components/schemas/NetcoreContent'
-        tags:
-          type: array
-          items:
-            type: string
-          description: Equivalent to SendGrid `categories`.
-        settings:
-          type: object
-          properties:
-            open_track:
-              type: boolean
-            click_track:
-              type: boolean
-    SendGridPersonalization:
-      type: object
-      required:
-      - to
-      properties:
-        to:
-          type: array
-          items:
-            $ref: '#/components/schemas/EmailAddress'
-          minItems: 1
-        cc:
-          type: array
-          items:
-            $ref: '#/components/schemas/EmailAddress'
-        bcc:
-          type: array
-          items:
-            $ref: '#/components/schemas/EmailAddress'
-        subject:
-          type: string
-          description: Overrides top-level subject for this personalization.
-    EngineSuccessResponse:
-      type: object
-      properties:
-        success:
-          type: string
-          example: ok
-        req_id:
-          type: string
-          description: 'Unique request ID: `{rand6}-{clusterID}-{providerID}-{timestamp}-{sequence}-{clientID}-{routeID}`.
-
-            '
-          example: f85l13-1-2-260310161455-000-2-11
-        message:
-          type: string
-          example: Message relayed successfully
     EngineErrorResponse:
       type: object
       properties:
@@ -332,36 +252,6 @@ components:
           description: '`html` maps to `text/html`, `plain` maps to `text/plain`.'
         value:
           type: string
-    SendGridAttachment:
-      type: object
-      required:
-      - content
-      - filename
-      properties:
-        content:
-          type: string
-          description: Base64-encoded file content.
-        type:
-          type: string
-          description: MIME type.
-        filename:
-          type: string
-        disposition:
-          type: string
-          enum:
-          - attachment
-          - inline
-          default: attachment
-    EmailAddress:
-      type: object
-      required:
-      - email
-      properties:
-        email:
-          type: string
-          format: email
-        name:
-          type: string
     SendGridPayload:
       type: object
       required:
@@ -391,31 +281,117 @@ components:
           type: array
           items:
             type: string
+    EmailAddress:
+      type: object
+      required:
+      - email
+      properties:
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+    SendGridContent:
+      type: object
+      required:
+      - type
+      - value
+      properties:
+        type:
+          type: string
+          enum:
+          - text/plain
+          - text/html
+        value:
+          type: string
+    SendGridAttachment:
+      type: object
+      required:
+      - content
+      - filename
+      properties:
+        content:
+          type: string
+          description: Base64-encoded file content.
+        type:
+          type: string
+          description: MIME type.
+        filename:
+          type: string
+        disposition:
+          type: string
+          enum:
+          - attachment
+          - inline
+          default: attachment
+    SendGridPersonalization:
+      type: object
+      required:
+      - to
+      properties:
+        to:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmailAddress'
+          minItems: 1
+        cc:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmailAddress'
+        bcc:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmailAddress'
+        subject:
+          type: string
+          description: Overrides top-level subject for this personalization.
+    EngineSuccessResponse:
+      type: object
+      properties:
+        success:
+          type: string
+          example: ok
+        req_id:
+          type: string
+          description: 'Unique request ID: `{rand6}-{clusterID}-{providerID}-{timestamp}-{sequence}-{clientID}-{routeID}`.
+
+            '
+          example: f85l13-1-2-260310161455-000-2-11
+        message:
+          type: string
+          example: Message relayed successfully
+    NetcorePayload:
+      type: object
+      required:
+      - personalizations
+      - from
+      properties:
+        personalizations:
+          type: array
+          items:
+            $ref: '#/components/schemas/SendGridPersonalization'
+          minItems: 1
+        from:
+          $ref: '#/components/schemas/EmailAddress'
+        subject:
+          type: string
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/NetcoreContent'
+        tags:
+          type: array
+          items:
+            type: string
+          description: Equivalent to SendGrid `categories`.
+        settings:
+          type: object
+          properties:
+            open_track:
+              type: boolean
+            click_track:
+              type: boolean
   responses:
-    EngineInternalError:
-      description: Internal server error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/EngineErrorResponse'
-    EngineAuthFailed:
-      description: API key missing or invalid.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/EngineErrorResponse'
-    EngineForbidden:
-      description: IP or domain restriction violation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/EngineErrorResponse'
-    EngineProviderError:
-      description: Upstream provider returned an error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/EngineErrorResponse'
     EnginePayloadTooLarge:
       description: Payload exceeds `max_request_body_size_mb`.
       content:
@@ -430,6 +406,30 @@ components:
             $ref: '#/components/schemas/EngineErrorResponse'
     EngineBadRequest:
       description: Invalid request (empty body, invalid JSON, payload validation, transform error).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EngineErrorResponse'
+    EngineAuthFailed:
+      description: API key missing or invalid.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EngineErrorResponse'
+    EngineInternalError:
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EngineErrorResponse'
+    EngineForbidden:
+      description: IP or domain restriction violation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EngineErrorResponse'
+    EngineProviderError:
+      description: Upstream provider returned an error.
       content:
         application/json:
           schema:

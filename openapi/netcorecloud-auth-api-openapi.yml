@@ -327,6 +327,76 @@ paths:
                 - $ref: '#/components/schemas/LoginResponse'
 components:
   schemas:
+    BackendErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        field:
+          type: string
+          description: Optional field that caused the error.
+    LoginRequest:
+      type: object
+      required:
+      - account_name
+      - password
+      properties:
+        account_name:
+          type: string
+          description: Client/workspace name from `client_details.clientname`.
+        username:
+          type: string
+          description: Username (provide either `username` or `email`).
+        email:
+          type: string
+          format: email
+          description: Alternative to `username`.
+        password:
+          type: string
+          format: password
+    SignupRequest:
+      type: object
+      required:
+      - accountName
+      - fullName
+      - email
+      - password
+      properties:
+        accountName:
+          type: string
+          description: Unique account name.
+        fullName:
+          type: string
+        email:
+          type: string
+          format: email
+          description: Unique across all users (case-insensitive).
+        password:
+          type: string
+          format: password
+    TwoFactorRequiredResponse:
+      type: object
+      properties:
+        two_factor_required:
+          type: boolean
+          example: true
+        user_id:
+          type: integer
+        client_id:
+          type: integer
+    TwoFactorSetupResponse:
+      type: object
+      properties:
+        secret:
+          type: string
+          description: TOTP secret key.
+          example: JBSWY3DPEHPK3PXP
+        provisioning_uri:
+          type: string
+          description: OTP auth URI for authenticator apps.
+        qr_code:
+          type: string
+          description: Base64-encoded QR code image (data URI).
     LoginResponse:
       type: object
       properties:
@@ -349,99 +419,6 @@ components:
           type: boolean
         user:
           $ref: '#/components/schemas/UserProfile'
-    TwoFactorSetupResponse:
-      type: object
-      properties:
-        secret:
-          type: string
-          description: TOTP secret key.
-          example: JBSWY3DPEHPK3PXP
-        provisioning_uri:
-          type: string
-          description: OTP auth URI for authenticator apps.
-        qr_code:
-          type: string
-          description: Base64-encoded QR code image (data URI).
-    TwoFactorSetupConfirmResponse:
-      type: object
-      properties:
-        success:
-          type: boolean
-          example: true
-        backup_codes:
-          type: array
-          items:
-            type: string
-          description: One-time backup codes; store securely.
-    ClientSummary:
-      type: object
-      properties:
-        client_id:
-          type: integer
-        clientname:
-          type: string
-        status:
-          type: string
-          enum:
-          - active
-          - inactive
-    TwoFactorVerifyRequest:
-      type: object
-      required:
-      - user_id
-      - client_id
-      - code
-      properties:
-        user_id:
-          type: integer
-        client_id:
-          type: integer
-        code:
-          type: string
-          description: 6-digit TOTP code.
-          pattern: ^\d{6}$
-        setup:
-          type: boolean
-          default: false
-          description: Set to `true` during initial 2FA setup confirmation.
-    TwoFactorRequiredResponse:
-      type: object
-      properties:
-        two_factor_required:
-          type: boolean
-          example: true
-        user_id:
-          type: integer
-        client_id:
-          type: integer
-    SignupRequest:
-      type: object
-      required:
-      - accountName
-      - fullName
-      - email
-      - password
-      properties:
-        accountName:
-          type: string
-          description: Unique account name.
-        fullName:
-          type: string
-        email:
-          type: string
-          format: email
-          description: Unique across all users (case-insensitive).
-        password:
-          type: string
-          format: password
-    BackendErrorResponse:
-      type: object
-      properties:
-        error:
-          type: string
-        field:
-          type: string
-          description: Optional field that caused the error.
     UserProfile:
       type: object
       properties:
@@ -463,25 +440,48 @@ components:
           type: integer
         two_factor_enabled:
           type: boolean
-    LoginRequest:
+    ClientSummary:
+      type: object
+      properties:
+        client_id:
+          type: integer
+        clientname:
+          type: string
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+    TwoFactorSetupConfirmResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        backup_codes:
+          type: array
+          items:
+            type: string
+          description: One-time backup codes; store securely.
+    TwoFactorVerifyRequest:
       type: object
       required:
-      - account_name
-      - password
+      - user_id
+      - client_id
+      - code
       properties:
-        account_name:
+        user_id:
+          type: integer
+        client_id:
+          type: integer
+        code:
           type: string
-          description: Client/workspace name from `client_details.clientname`.
-        username:
-          type: string
-          description: Username (provide either `username` or `email`).
-        email:
-          type: string
-          format: email
-          description: Alternative to `username`.
-        password:
-          type: string
-          format: password
+          description: 6-digit TOTP code.
+          pattern: ^\d{6}$
+        setup:
+          type: boolean
+          default: false
+          description: Set to `true` during initial 2FA setup confirmation.
   securitySchemes:
     BackendJWT:
       type: http

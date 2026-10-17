@@ -668,27 +668,6 @@ paths:
                 Data: {}
 components:
   schemas:
-    PublishFlowSuccessResponse:
-      type: object
-      required:
-      - status
-      - message
-      - data
-      properties:
-        status:
-          type: string
-          example: Success
-        message:
-          type: string
-          example: Successfully Published Flow
-        data:
-          type: object
-          required:
-          - success
-          properties:
-            success:
-              type: boolean
-              example: true
     FlowPreviewSuccessResponse:
       type: object
       required:
@@ -718,6 +697,73 @@ components:
             flow_id:
               type: string
               example: '1097149801870954'
+    CreateFlowSuccessResponse:
+      type: object
+      required:
+      - status
+      - message
+      - data
+      properties:
+        status:
+          type: string
+          example: Successfull
+        message:
+          type: string
+          example: Flow Created Successfully
+        data:
+          type: object
+          required:
+          - id
+          - success
+          properties:
+            id:
+              type: string
+              example: '1292530015172565'
+            success:
+              type: boolean
+              example: true
+    DeprecateFlowSuccessResponse:
+      type: object
+      required:
+      - status
+      - message
+      - data
+      properties:
+        status:
+          type: string
+          example: Success
+        message:
+          type: string
+          example: Flow Deprecated Successfully
+        data:
+          type: object
+          required:
+          - success
+          properties:
+            success:
+              type: boolean
+              example: true
+    EditFlowSuccessResponse:
+      type: object
+      required:
+      - status
+      - message
+      - data
+      properties:
+        status:
+          type: string
+          example: Success
+        message:
+          type: string
+          example: Successfully edited Flow
+        data:
+          type: object
+          required:
+          - success
+          properties:
+            success:
+              type: boolean
+              example: true
     FlowListSuccessResponse:
       type: object
       required:
@@ -773,73 +819,6 @@ components:
                 before:
                   type: string
                   example: QVFIUnRsZAE95OXVkaFk1YURfYm9m...
-    EditFlowSuccessResponse:
-      type: object
-      required:
-      - status
-      - message
-      - data
-      properties:
-        status:
-          type: string
-          example: Success
-        message:
-          type: string
-          example: Successfully edited Flow
-        data:
-          type: object
-          required:
-          - success
-          properties:
-            success:
-              type: boolean
-              example: true
-    CreateFlowSuccessResponse:
-      type: object
-      required:
-      - status
-      - message
-      - data
-      properties:
-        status:
-          type: string
-          example: Successfull
-        message:
-          type: string
-          example: Flow Created Successfully
-        data:
-          type: object
-          required:
-          - id
-          - success
-          properties:
-            id:
-              type: string
-              example: '1292530015172565'
-            success:
-              type: boolean
-              example: true
-    DeprecateFlowSuccessResponse:
-      type: object
-      required:
-      - status
-      - message
-      - data
-      properties:
-        status:
-          type: string
-          example: Success
-        message:
-          type: string
-          example: Flow Deprecated Successfully
-        data:
-          type: object
-          required:
-          - success
-          properties:
-            success:
-              type: boolean
-              example: true
     DeleteFlowSuccessResponse:
       type: object
       required:
@@ -853,6 +832,27 @@ components:
         message:
           type: string
           example: Successfully Deleted Flow
+        data:
+          type: object
+          required:
+          - success
+          properties:
+            success:
+              type: boolean
+              example: true
+    PublishFlowSuccessResponse:
+      type: object
+      required:
+      - status
+      - message
+      - data
+      properties:
+        status:
+          type: string
+          example: Success
+        message:
+          type: string
+          example: Successfully Published Flow
         data:
           type: object
           required:

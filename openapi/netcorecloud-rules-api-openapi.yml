@@ -168,22 +168,37 @@ paths:
                     valid: false
                     error: unexpected token EOF (1:42)
 components:
-  parameters:
-    ClientIdHeader:
-      name: X-Client-ID
-      in: header
-      required: false
-      schema:
-        type: integer
-      description: Switch client context (multi-tenant).
-    ResourceId:
-      name: id
-      in: path
-      required: true
-      schema:
-        type: integer
-      description: Resource ID.
   schemas:
+    BackendErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        field:
+          type: string
+          description: Optional field that caused the error.
+    RuleRouteAssignment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        provider_name:
+          type: string
+          readOnly: true
+        route_id:
+          type: integer
+        route_name:
+          type: string
+          readOnly: true
+        weight:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description: Distribution weight.
+        enabled:
+          type: boolean
+          default: true
     RuleCreate:
       type: object
       required:
@@ -259,36 +274,21 @@ components:
         created_at:
           type: string
           format: date-time
-    RuleRouteAssignment:
-      type: object
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        provider_name:
-          type: string
-          readOnly: true
-        route_id:
-          type: integer
-        route_name:
-          type: string
-          readOnly: true
-        weight:
-          type: integer
-          minimum: 0
-          maximum: 100
-          description: Distribution weight.
-        enabled:
-          type: boolean
-          default: true
-    BackendErrorResponse:
-      type: object
-      properties:
-        error:
-          type: string
-        field:
-          type: string
-          description: Optional field that caused the error.
+  parameters:
+    ResourceId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+      description: Resource ID.
+    ClientIdHeader:
+      name: X-Client-ID
+      in: header
+      required: false
+      schema:
+        type: integer
+      description: Switch client context (multi-tenant).
   securitySchemes:
     BackendJWT:
       type: http

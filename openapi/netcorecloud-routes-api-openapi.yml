@@ -131,22 +131,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/BackendErrorResponse'
 components:
-  parameters:
-    ClientIdHeader:
-      name: X-Client-ID
-      in: header
-      required: false
-      schema:
-        type: integer
-      description: Switch client context (multi-tenant).
-    ResourceId:
-      name: id
-      in: path
-      required: true
-      schema:
-        type: integer
-      description: Resource ID.
   schemas:
+    BackendErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        field:
+          type: string
+          description: Optional field that caused the error.
     Route:
       type: object
       properties:
@@ -249,14 +242,21 @@ components:
           - starttls
           - tls
           - none
-    BackendErrorResponse:
-      type: object
-      properties:
-        error:
-          type: string
-        field:
-          type: string
-          description: Optional field that caused the error.
+  parameters:
+    ResourceId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+      description: Resource ID.
+    ClientIdHeader:
+      name: X-Client-ID
+      in: header
+      required: false
+      schema:
+        type: integer
+      description: Switch client context (multi-tenant).
   securitySchemes:
     BackendJWT:
       type: http

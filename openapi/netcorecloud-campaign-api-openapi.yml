@@ -1086,18 +1086,51 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    ContentDetails:
+    ValidationFailureResponse:
       type: object
       properties:
-        template_id:
+        request_id:
           type: string
-          description: 'Template ID for the content.
-
-
-            '
-      description: Content details for the campaign. Note - This is not a mandatory block as long as the campaign is in "draft" state
+        description:
+          type: string
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              message:
+                type: string
+            required:
+            - field
+            - message
+        status:
+          type: string
+        code:
+          type: string
       required:
-      - template_id
+      - request_id
+      - description
+      - errors
+      - status
+      - code
+    ServerErrorsResponse:
+      type: object
+      properties:
+        request_id:
+          type: string
+        description:
+          type: string
+        error:
+          type: string
+        code:
+          type: integer
+      required:
+      - request_id
+      - description
+      - error
+      - code
     OutputBlock:
       type: object
       properties:
@@ -1133,61 +1166,6 @@ components:
           description: 'Should not be present if get_count is True. The fields which should be present in the output. Allowed Values : campaign_id, channel, campaign_name, campaign_state, campaign_type, tags, google_analytics, conversion_tracking, audience_details, content_details, frequency_capping, schedule_details, campaign_specific_details'
       required:
       - get_count
-    ValidationFailureResponse:
-      type: object
-      properties:
-        request_id:
-          type: string
-        description:
-          type: string
-        errors:
-          type: array
-          items:
-            type: object
-            properties:
-              field:
-                type: string
-              message:
-                type: string
-            required:
-            - field
-            - message
-        status:
-          type: string
-        code:
-          type: string
-      required:
-      - request_id
-      - description
-      - errors
-      - status
-      - code
-    GoogleAnalytics:
-      type: object
-      properties:
-        enable_ga_tracking:
-          type: boolean
-        global_level_ga_tracking:
-          type: boolean
-        utm_source:
-          type: string
-        utm_medium:
-          type: string
-        utm_campaign:
-          type: string
-        utm_content:
-          type: string
-        custom_key_value_parameters:
-          type: object
-          properties:
-            key1:
-              type: string
-            key2:
-              type: string
-          description: Custom keys apart from utm_*
-      description: Google Analytics Tracking.
-      required:
-      - enable_ga_tracking
     ConversionTracking:
       type: object
       properties:
@@ -1220,48 +1198,77 @@ components:
       required:
       - enable_conversion_tracking
       description: Conversion details for the campaign. In Development
-    FilterBlock:
+    FrequencyCapping:
       type: object
       properties:
-        filtering_criteria_operator:
-          type: string
-          description: 'Allowed : and, or'
-        filtering_criteria:
-          type: array
-          items:
-            type: object
-            properties:
-              condition_operator:
-                type: string
-                description: 'Allowed : and, or'
-              condition_details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    field:
-                      type: string
-                      description: 'Field Name '
-                    field_category:
-                      type: string
-                      description: 'Allowed : Channel Name. Fields which are epcific to channel need this key to be present to be searched successfully.'
-                    operation:
-                      type: string
-                      description: 'Allowed : "equals" | "not_equals" | "greater_than" | "less_than" | "greater_than_or_equal_to" | "less_than_or_equal_to" | "between" | "in" | "not_in" | "contains" | "does_not_contain" | "starts_with" | "ends_with" | "is_null" | "is_not_null" | "matches_regex"'
-                    value:
-                      type: array
-                      items:
-                        type: string
-                  required:
-                  - field
-                  - operation
-                  - value
-            required:
-            - condition_operator
-            - condition_details
+        enable_frequency_capping:
+          type: boolean
+          description: 'Indicates if frequency capping is enabled.
+
+
+            '
+      description: This is used to manage how often a campaign is sent to the same user. Limit the number of times a user can receive the campaign within a specified time frame. Details of sub-parameter is provided below.
       required:
-      - filtering_criteria_operator
-      - filtering_criteria
+      - enable_frequency_capping
+    AudienceDetails:
+      type: object
+      properties:
+        include_audience:
+          type: object
+          properties:
+            contact_master:
+              type: boolean
+            data:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: array
+                    items:
+                      type: integer
+                    description: Unique identifier for the audience.
+                  name:
+                    type: array
+                    items:
+                      type: string
+                    description: Name of the audience.
+                  audience_type:
+                    type: string
+                    description: 'Type of the audience. Allowed values: list, segment, udt'
+              description: 'You can include by Either ID or name. You can also combine them. '
+          required:
+          - contact_master
+          description: List of audiences to include. We can use either Contact Master OR List/Segment OR UDT ID while creating the campaign.
+        exclude_audience:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: array
+                    items:
+                      type: integer
+                    description: Unique identifier for the audience.
+                  name:
+                    type: array
+                    items:
+                      type: string
+                    description: Name of the audience.
+                  audience_type:
+                    type: string
+                    description: 'Type of the audience. UDT is not allowed. Alowed values: list, segment'
+              description: 'You can exclude by Either ID or name. You can also combine them. '
+          description: List of audiences to exclude.
+          required:
+          - data
+      required:
+      - include_audience
+      - exclude_audience
+      description: Details of the audience for the campaign. Section to specify Audience Details to be included or excluded for the campaign via Contact Master, List IDs, Segment IDs or UDT ID. Note - This is not a mandatory block as long as the campaign is in "draft" state.
     CampaignSpecific:
       type: object
       properties:
@@ -1508,89 +1515,86 @@ components:
           type: integer
           description: '[ANY] Max audience limit. Limits the no. of users that the campaign needs to be sent out to. Frequency Capping and Limit cannot be used together for a single campaign. Manditory block if campaign_state is schedule.'
       description: Channel Specific details for the campaign.
-    FrequencyCapping:
+    FilterBlock:
       type: object
       properties:
-        enable_frequency_capping:
+        filtering_criteria_operator:
+          type: string
+          description: 'Allowed : and, or'
+        filtering_criteria:
+          type: array
+          items:
+            type: object
+            properties:
+              condition_operator:
+                type: string
+                description: 'Allowed : and, or'
+              condition_details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    field:
+                      type: string
+                      description: 'Field Name '
+                    field_category:
+                      type: string
+                      description: 'Allowed : Channel Name. Fields which are epcific to channel need this key to be present to be searched successfully.'
+                    operation:
+                      type: string
+                      description: 'Allowed : "equals" | "not_equals" | "greater_than" | "less_than" | "greater_than_or_equal_to" | "less_than_or_equal_to" | "between" | "in" | "not_in" | "contains" | "does_not_contain" | "starts_with" | "ends_with" | "is_null" | "is_not_null" | "matches_regex"'
+                    value:
+                      type: array
+                      items:
+                        type: string
+                  required:
+                  - field
+                  - operation
+                  - value
+            required:
+            - condition_operator
+            - condition_details
+      required:
+      - filtering_criteria_operator
+      - filtering_criteria
+    GoogleAnalytics:
+      type: object
+      properties:
+        enable_ga_tracking:
           type: boolean
-          description: 'Indicates if frequency capping is enabled.
+        global_level_ga_tracking:
+          type: boolean
+        utm_source:
+          type: string
+        utm_medium:
+          type: string
+        utm_campaign:
+          type: string
+        utm_content:
+          type: string
+        custom_key_value_parameters:
+          type: object
+          properties:
+            key1:
+              type: string
+            key2:
+              type: string
+          description: Custom keys apart from utm_*
+      description: Google Analytics Tracking.
+      required:
+      - enable_ga_tracking
+    ContentDetails:
+      type: object
+      properties:
+        template_id:
+          type: string
+          description: 'Template ID for the content.
 
 
             '
-      description: This is used to manage how often a campaign is sent to the same user. Limit the number of times a user can receive the campaign within a specified time frame. Details of sub-parameter is provided below.
+      description: Content details for the campaign. Note - This is not a mandatory block as long as the campaign is in "draft" state
       required:
-      - enable_frequency_capping
-    ScheduleDetails:
-      type: object
-      properties:
-        schedule_type:
-          type: string
-          description: 'sto, slice and send are in development. Values allowed: now, later, sto, slice and send'
-        schedule_time:
-          type: string
-          description: 'Use : ISO 8601 UTC Time format - yyyy-mm-ddThh:mm:ssZ eg: (2023-12-11T08:58:09Z)'
-      description: Schedule details for the campaign. Not a Mandatory parameter till campaign is in Draft State.
-      required:
-      - schedule_type
-    AudienceDetails:
-      type: object
-      properties:
-        include_audience:
-          type: object
-          properties:
-            contact_master:
-              type: boolean
-            data:
-              type: array
-              items:
-                type: object
-                properties:
-                  id:
-                    type: array
-                    items:
-                      type: integer
-                    description: Unique identifier for the audience.
-                  name:
-                    type: array
-                    items:
-                      type: string
-                    description: Name of the audience.
-                  audience_type:
-                    type: string
-                    description: 'Type of the audience. Allowed values: list, segment, udt'
-              description: 'You can include by Either ID or name. You can also combine them. '
-          required:
-          - contact_master
-          description: List of audiences to include. We can use either Contact Master OR List/Segment OR UDT ID while creating the campaign.
-        exclude_audience:
-          type: object
-          properties:
-            data:
-              type: array
-              items:
-                type: object
-                properties:
-                  id:
-                    type: array
-                    items:
-                      type: integer
-                    description: Unique identifier for the audience.
-                  name:
-                    type: array
-                    items:
-                      type: string
-                    description: Name of the audience.
-                  audience_type:
-                    type: string
-                    description: 'Type of the audience. UDT is not allowed. Alowed values: list, segment'
-              description: 'You can exclude by Either ID or name. You can also combine them. '
-          description: List of audiences to exclude.
-          required:
-          - data
-      required:
-      - include_audience
-      - exclude_audience
-      description: Details of the audience for the campaign. Section to specify Audience Details to be included or excluded for the campaign via Contact Master, List IDs, Segment IDs or UDT ID. Note - This is not a mandatory block as long as the campaign is in "draft" state.
+      - template_id
     TestCampaign:
       type: object
       properties:
@@ -1615,22 +1619,18 @@ components:
       - campaign_id
       - channel
       - test_user_details
-    ServerErrorsResponse:
+    ScheduleDetails:
       type: object
       properties:
-        request_id:
+        schedule_type:
           type: string
-        description:
+          description: 'sto, slice and send are in development. Values allowed: now, later, sto, slice and send'
+        schedule_time:
           type: string
-        error:
-          type: string
-        code:
-          type: integer
+          description: 'Use : ISO 8601 UTC Time format - yyyy-mm-ddThh:mm:ssZ eg: (2023-12-11T08:58:09Z)'
+      description: Schedule details for the campaign. Not a Mandatory parameter till campaign is in Draft State.
       required:
-      - request_id
-      - description
-      - error
-      - code
+      - schedule_type
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

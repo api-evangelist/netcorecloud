@@ -132,28 +132,7 @@ paths:
                 - sendgrid_backup
                 - OTP Rule
 components:
-  parameters:
-    ClientIdHeader:
-      name: X-Client-ID
-      in: header
-      required: false
-      schema:
-        type: integer
-      description: Switch client context (multi-tenant).
   schemas:
-    AuditLogPage:
-      type: object
-      properties:
-        logs:
-          type: array
-          items:
-            $ref: '#/components/schemas/AuditLogEntry'
-        total:
-          type: integer
-        page:
-          type: integer
-        limit:
-          type: integer
     DashboardStats:
       type: object
       properties:
@@ -168,6 +147,19 @@ components:
         totalProviders:
           type: integer
         totalUsers:
+          type: integer
+    AuditLogPage:
+      type: object
+      properties:
+        logs:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogEntry'
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
           type: integer
     AuditLogEntry:
       type: object
@@ -202,6 +194,14 @@ components:
         created_at:
           type: string
           format: date-time
+  parameters:
+    ClientIdHeader:
+      name: X-Client-ID
+      in: header
+      required: false
+      schema:
+        type: integer
+      description: Switch client context (multi-tenant).
   securitySchemes:
     BackendJWT:
       type: http

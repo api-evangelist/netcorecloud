@@ -219,32 +219,6 @@ components:
         allowed_domains:
           type: string
           description: Comma-separated domains or `*` for wildcard.
-    ApiKeyCreated:
-      type: object
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-        key:
-          type: string
-          description: Full plaintext API key (shown once).
-        type:
-          type: string
-          enum:
-          - http
-          - smtp
-        created_at:
-          type: string
-          format: date-time
-    IpWhitelist:
-      type: object
-      properties:
-        enabled:
-          type: boolean
-        ips:
-          type: string
-          description: Comma-separated IP addresses.
     IncomingAuthUpsert:
       type: object
       required:
@@ -274,6 +248,47 @@ components:
         allowed_domains:
           type: string
           description: Comma-separated domains or `*`.
+    SmtpConfig:
+      type: object
+      properties:
+        default_from_email:
+          type: string
+          format: email
+        default_from_name:
+          type: string
+        bounce_email:
+          type: string
+          format: email
+        max_retries:
+          type: string
+        retry_interval_seconds:
+          type: string
+    ApiKeyCreated:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        key:
+          type: string
+          description: Full plaintext API key (shown once).
+        type:
+          type: string
+          enum:
+          - http
+          - smtp
+        created_at:
+          type: string
+          format: date-time
+    IpWhitelist:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        ips:
+          type: string
+          description: Comma-separated IP addresses.
     ApiKeySummary:
       type: object
       properties:
@@ -292,21 +307,6 @@ components:
         created_at:
           type: string
           format: date-time
-    SmtpConfig:
-      type: object
-      properties:
-        default_from_email:
-          type: string
-          format: email
-        default_from_name:
-          type: string
-        bounce_email:
-          type: string
-          format: email
-        max_retries:
-          type: string
-        retry_interval_seconds:
-          type: string
   parameters:
     ResourceId:
       name: id

@@ -219,6 +219,36 @@ paths:
           $ref: '#/paths/~1v3~1metainfo~1webhook~1list_webhook/get/responses/500'
 components:
   schemas:
+    WebhookOperationResponse:
+      type: object
+      required:
+      - status
+      - message
+      properties:
+        status:
+          type: string
+          enum:
+          - success
+          - failure
+          description: Indicates if the operation was successful.
+          example: success
+        message:
+          type: string
+          description: Message describing the operation result.
+          example: Webhook updated successfully.
+        data:
+          type: object
+          description: Includes webhook operation details.
+          properties:
+            webhook_name:
+              type: string
+              example: ChatBot_Webhook
+            type:
+              type: string
+              example: incoming
+            status:
+              type: string
+              example: enabled
     WebhookInfo:
       type: object
       required:
@@ -259,36 +289,6 @@ components:
           type: string
           description: Optional identifier for the source or service associated with this webhook.
           example: cpaas_360
-    WebhookOperationResponse:
-      type: object
-      required:
-      - status
-      - message
-      properties:
-        status:
-          type: string
-          enum:
-          - success
-          - failure
-          description: Indicates if the operation was successful.
-          example: success
-        message:
-          type: string
-          description: Message describing the operation result.
-          example: Webhook updated successfully.
-        data:
-          type: object
-          description: Includes webhook operation details.
-          properties:
-            webhook_name:
-              type: string
-              example: ChatBot_Webhook
-            type:
-              type: string
-              example: incoming
-            status:
-              type: string
-              example: enabled
     ManageWebhookRequest:
       type: object
       required:

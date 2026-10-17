@@ -475,50 +475,6 @@ paths:
           $ref: '#/paths/~1v2~1payments~1configuration/post/responses/4XX'
 components:
   schemas:
-    RefundRequest:
-      type: object
-      description: Defines the payload required to initiate a refund.
-      properties:
-        reference_id:
-          type: string
-          description: Unique identifier for the refund request.
-          example: '100'
-        speed:
-          type: string
-          description: Determines refund processing speed.
-          enum:
-          - normal
-          - instant
-          example: normal
-        payment_config_id:
-          type: string
-          description: Unique ID of the payment configuration used for the refund.
-          example: vishal_test_10_10
-        amount:
-          type: object
-          description: Defines refund amount details including offset.
-          properties:
-            currency:
-              type: string
-              description: Currency used for the refund (ISO 4217).
-              example: INR
-            value:
-              type: integer
-              description: Numeric value of the refund.
-              example: 100
-            offset:
-              type: integer
-              description: Value of any applied offset.
-              example: 100
-          required:
-          - currency
-          - value
-          - offset
-      required:
-      - reference_id
-      - speed
-      - payment_config_id
-      - amount
     PaymentStatusResponse:
       type: object
       description: Contains payment status response details.
@@ -630,6 +586,50 @@ components:
       - status
       - message
       - data
+    RefundRequest:
+      type: object
+      description: Defines the payload required to initiate a refund.
+      properties:
+        reference_id:
+          type: string
+          description: Unique identifier for the refund request.
+          example: '100'
+        speed:
+          type: string
+          description: Determines refund processing speed.
+          enum:
+          - normal
+          - instant
+          example: normal
+        payment_config_id:
+          type: string
+          description: Unique ID of the payment configuration used for the refund.
+          example: vishal_test_10_10
+        amount:
+          type: object
+          description: Defines refund amount details including offset.
+          properties:
+            currency:
+              type: string
+              description: Currency used for the refund (ISO 4217).
+              example: INR
+            value:
+              type: integer
+              description: Numeric value of the refund.
+              example: 100
+            offset:
+              type: integer
+              description: Value of any applied offset.
+              example: 100
+          required:
+          - currency
+          - value
+          - offset
+      required:
+      - reference_id
+      - speed
+      - payment_config_id
+      - amount
   securitySchemes:
     bearerAuth:
       type: http

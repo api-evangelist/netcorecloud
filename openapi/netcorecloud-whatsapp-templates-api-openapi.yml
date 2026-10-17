@@ -1231,6 +1231,43 @@ paths:
           $ref: '#/paths/~1v3~1metainfo~1template~1list/get/responses/500'
 components:
   schemas:
+    EditTemplateSuccessResponse:
+      type: object
+      required:
+      - status
+      - message
+      - data
+      properties:
+        status:
+          type: string
+          enum:
+          - success
+          - error
+          description: Indicates if the request was successful or not.
+          example: success
+        message:
+          type: string
+          description: A descriptive message about the outcome of the operation.
+          example: Template updated successfully
+        data:
+          type: object
+          properties:
+            category:
+              type: string
+              example: MARKETING
+            facebook_template_id:
+              type: string
+              example: '3011422432341769'
+            template_id:
+              type: string
+              example: '8199'
+      example:
+        status: success
+        message: Template updated successfully
+        data:
+          category: MARKETING
+          facebook_template_id: '3011422432341769'
+          template_id: '8199'
     CreateTemplateSuccessResponse:
       type: object
       required:
@@ -1351,51 +1388,6 @@ components:
                   type: integer
                 total:
                   type: integer
-    EditTemplateSuccessResponse:
-      type: object
-      required:
-      - status
-      - message
-      - data
-      properties:
-        status:
-          type: string
-          enum:
-          - success
-          - error
-          description: Indicates if the request was successful or not.
-          example: success
-        message:
-          type: string
-          description: A descriptive message about the outcome of the operation.
-          example: Template updated successfully
-        data:
-          type: object
-          properties:
-            category:
-              type: string
-              example: MARKETING
-            facebook_template_id:
-              type: string
-              example: '3011422432341769'
-            template_id:
-              type: string
-              example: '8199'
-      example:
-        status: success
-        message: Template updated successfully
-        data:
-          category: MARKETING
-          facebook_template_id: '3011422432341769'
-          template_id: '8199'
-    DeleteTemplateSuccessResponse:
-      type: object
-      required:
-      - success
-      properties:
-        success:
-          type: boolean
-          example: true
     PreviewTemplateSuccessResponse:
       type: object
       required:
@@ -1412,6 +1404,14 @@ components:
         preview_data:
           type: object
           description: Template preview information
+    DeleteTemplateSuccessResponse:
+      type: object
+      required:
+      - success
+      properties:
+        success:
+          type: boolean
+          example: true
   securitySchemes:
     bearerAuth:
       type: http

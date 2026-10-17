@@ -218,43 +218,6 @@ paths:
                 message: Internal Server Error. Some internal error while serving request.
 components:
   schemas:
-    DLRErrorResponse:
-      type: object
-      required:
-      - status
-      - message
-      properties:
-        status:
-          type: string
-          enum:
-          - failure
-          example: failure
-        message:
-          type: string
-          description: Human-readable error description
-          example: Bad Request. missing required field in request.
-    DLRReportResponse:
-      type: object
-      required:
-      - status
-      properties:
-        status:
-          type: string
-          enum:
-          - success
-          - failure
-          example: success
-        message:
-          type: string
-          description: Present only on failure
-        scroll_id:
-          type: string
-          description: Scroll ID for fetching the next page. Omitted when no more data is available.
-          example: FGluY2x1ZGVfY29udGV4dF91dWlkDXF1ZX...
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/DLRReportItem'
     DLRReportItem:
       type: object
       properties:
@@ -312,6 +275,43 @@ components:
           - Unicode
           - Flash
           example: Text
+    DLRErrorResponse:
+      type: object
+      required:
+      - status
+      - message
+      properties:
+        status:
+          type: string
+          enum:
+          - failure
+          example: failure
+        message:
+          type: string
+          description: Human-readable error description
+          example: Bad Request. missing required field in request.
+    DLRReportResponse:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          type: string
+          enum:
+          - success
+          - failure
+          example: success
+        message:
+          type: string
+          description: Present only on failure
+        scroll_id:
+          type: string
+          description: Scroll ID for fetching the next page. Omitted when no more data is available.
+          example: FGluY2x1ZGVfY29udGV4dF91dWlkDXF1ZX...
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/DLRReportItem'
   securitySchemes:
     headerAuth:
       type: apiKey

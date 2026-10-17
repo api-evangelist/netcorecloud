@@ -1670,6 +1670,30 @@ components:
       - code
       - status
       - errors
+    SuccessSearchSchemaForCounts:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: '200 '
+        status:
+          type: string
+          description: success. (Max length 7 chars)
+        description:
+          type: string
+          description: Search Successfully. (Max length 32 chars)
+        count:
+          type: integer
+          description: Count of data as per generated query.
+        request_id:
+          type: string
+          description: Alphanumeric Characters, max length (32 chars)
+      required:
+      - code
+      - status
+      - description
+      - count
+      - request_id
     ValidationFailureResponse:
       type: object
       properties:
@@ -1706,30 +1730,6 @@ components:
       - errors
       - status
       - code
-    SuccessSearchSchemaForCounts:
-      type: object
-      properties:
-        code:
-          type: integer
-          description: '200 '
-        status:
-          type: string
-          description: success. (Max length 7 chars)
-        description:
-          type: string
-          description: Search Successfully. (Max length 32 chars)
-        count:
-          type: integer
-          description: Count of data as per generated query.
-        request_id:
-          type: string
-          description: Alphanumeric Characters, max length (32 chars)
-      required:
-      - code
-      - status
-      - description
-      - count
-      - request_id
     UnauthorizedAccessResponse:
       type: object
       properties:
