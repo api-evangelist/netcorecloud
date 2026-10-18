@@ -240,6 +240,8 @@ apis:
   humanURL: https://developer.netcorecloud.com/reference
   baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
   tags:
+  - Authentication
+  tags_raw:
   - Auth
   properties:
   - type: OpenAPI
@@ -2077,6 +2079,8 @@ apis:
   humanURL: https://developer.netcorecloud.com/reference
   baseURL: https://netcoreapi-main-prod-us.netcorein.com/v5/
   tags:
+  - User
+  tags_raw:
   - Users
   properties:
   - type: OpenAPI
