@@ -15,42 +15,8 @@
   evidence: https://zapier.com/apps/hubspot/integrations/netcore-cloud/1627905/create-or-update-hubspot-contacts-from-new-netcore-cloud-response-submissions
   template: https://zapier.com/apps/hubspot/integrations/netcore-cloud/1627905/create-or-update-hubspot-contacts-from-new-netcore-cloud-response-submissions
   source: template
+  relationship: ipaas-bridge
   status: pending-generation
-  arazzo: null
-- slug: netcorecloud-zoho-crm
-  label: Zoho CRM
-  partner: zoho-crm
-  partner_name: Zoho CRM
-  category: CRM (Customer Relationship Management)
-  type: marketplace
-  marketplace: zapier
-  channel: ipaas-usage
-  evidence: https://zapier.com/apps/netcore-cloud/integrations/zoho-crm
-  source: edge
-  status: pending-generation
-  arazzo: null
-- slug: netcorecloud-facebook-lead-ads
-  label: Facebook Lead Ads
-  partner: facebook-lead-ads
-  partner_name: Facebook Lead Ads
-  category: Ads & Conversion
-  type: marketplace
-  marketplace: zapier
-  channel: ipaas-usage
-  evidence: https://zapier.com/apps/netcore-cloud/integrations/facebook-lead-ads
-  source: edge
-  status: pending-generation
-  arazzo: null
-- slug: netcorecloud-microsoft-excel
-  label: Microsoft Excel
-  partner_name: Microsoft Excel
-  category: Microsoft
-  type: marketplace
-  marketplace: zapier
-  channel: ipaas-usage
-  evidence: https://zapier.com/apps/netcore-cloud/integrations/excel
-  source: edge
-  status: pending-partner-spec
   arazzo: null
 - slug: netcorecloud-rcs
   label: RCS
@@ -133,4 +99,42 @@
     beta: false
     builder: unknown (not in the directory record)
   status: not-a-workflow
+  arazzo: null
+- slug: netcorecloud-zoho-crm
+  label: Zoho CRM
+  partner: zoho-crm
+  partner_name: Zoho CRM
+  category: CRM (Customer Relationship Management)
+  type: marketplace
+  marketplace: zapier
+  channel: ipaas-usage
+  evidence: https://zapier.com/apps/netcore-cloud/integrations/zoho-crm
+  source: edge
+  relationship: ipaas-bridge
+  status: pending-generation
+  arazzo: null
+- slug: netcorecloud-facebook-lead-ads
+  label: Facebook Lead Ads
+  partner: facebook-lead-ads
+  partner_name: Facebook Lead Ads
+  category: Ads & Conversion
+  type: marketplace
+  marketplace: zapier
+  channel: ipaas-usage
+  evidence: https://zapier.com/apps/netcore-cloud/integrations/facebook-lead-ads
+  source: edge
+  relationship: ipaas-bridge
+  status: pending-generation
+  arazzo: null
+- slug: netcorecloud-microsoft-excel
+  label: Microsoft Excel
+  partner_name: Microsoft Excel
+  category: Microsoft
+  type: marketplace
+  marketplace: zapier
+  channel: ipaas-usage
+  evidence: https://zapier.com/apps/netcore-cloud/integrations/excel
+  source: edge
+  relationship: ipaas-bridge
+  status: pending-partner-spec
   arazzo: null
